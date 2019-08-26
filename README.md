@@ -1,29 +1,9 @@
+# 本项目是 远古帝国 网页版的VUE前端项目
 
-# ancient-empire-web
+使用了ElementUI作为css框架
 
-# ancient-empire
+使用 axios处理http请求
 
-> A Vue.js project
+使用Vuex 保存游戏运行状态
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-
-
-# ancient-empire-web
-ancient-empire 的前端项目
-
+使用 sockjs 和 stomp 连接服务端ws
