@@ -7,3 +7,7 @@
 使用Vuex 保存游戏运行状态
 
 使用 sockjs 和 stomp 连接服务端ws
+
+# 项目后端地址
+
+https://github.com/therNoY/ancient-empire/
