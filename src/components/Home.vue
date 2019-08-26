@@ -1,7 +1,7 @@
 <template>
   <!--首页-->
   <div class="home">
-    <img class="logo" src="../assets/images/assist/logo.png" alt="">
+    <img class="logo" src="../assets/images/assist/logo.png" alt />
     <div class="buttons">
       <button class="home_button" @click="getUserInfo">玩家</button>
       <button class="home_button" @click="get">战役</button>
@@ -12,11 +12,26 @@
       <button class="home_button" @click="router('mapEdit')">地图编辑器</button>
       <button class="home_button">帮助</button>
     </div>
-    
+
     <register v-show="registerVisible" @close="registerVisible = false"></register>
-    <my_dialog v-show="dialogVisible" @login="goLogin" @close="dialogVisible = false">由于该功能需要联网，请先登录使用此功能</my_dialog>
-    <login v-show="loginVisible" :user="loginUser"  @register="register" @close="loginVisible = false"></login>
-    <user_info v-show="userInfoDialog" :user="loginUser" @logout="logout" :isDisable ="true"  @close="userInfoDialog = false"></user_info>
+    <my_dialog
+      v-show="dialogVisible"
+      @login="goLogin"
+      @close="dialogVisible = false"
+    >由于该功能需要联网，请先登录使用此功能</my_dialog>
+    <login
+      v-show="loginVisible"
+      :user="loginUser"
+      @register="register"
+      @close="loginVisible = false"
+    ></login>
+    <user_info
+      v-show="userInfoDialog"
+      :user="loginUser"
+      @logout="logout"
+      :isDisable="true"
+      @close="userInfoDialog = false"
+    ></user_info>
   </div>
 </template>
 
@@ -24,7 +39,7 @@
 import my_dialog from "./MyDialog";
 import login from "./Login";
 import register from "./Register";
-import user_info from './UserInfo'
+import user_info from "./UserInfo";
 export default {
   components: {
     my_dialog,
@@ -37,8 +52,8 @@ export default {
       loginUser: {},
       dialogVisible: false,
       loginVisible: false,
-      registerVisible:false,
-      userInfoDialog:false,
+      registerVisible: false,
+      userInfoDialog: false
     };
   },
   methods: {
@@ -48,8 +63,8 @@ export default {
         this.loginUser = this.$store.getters.user;
         console.log(this.loginUser);
         this.userInfoDialog = true;
-      }else {
-         this.loginVisible = true;
+      } else {
+        this.loginVisible = true;
       }
     },
     register() {
@@ -80,10 +95,14 @@ export default {
       }
     },
     router(path) {
-      if (this.isHaveToken()) {
+      if (path == "mapEdit") {
+        if (!this.isHaveToken()) {
+          this.dialogVisible = true;
+        }else {
+          this.$router.push("/" + path);
+        }
+      }else {
         this.$router.push("/" + path);
-      } else {
-        this.dialogVisible = true;
       }
     },
     async get() {

@@ -1,5 +1,6 @@
 <template>
   <div class="body">
+    <el-page-header @back="goHome"></el-page-header>
     <!--可选单位-->
     <div class="unit">
       <div class="color_select" style="margin-top: 20px">
@@ -141,7 +142,7 @@
       <el-input-number size="mini" v-model="new_init_row"></el-input-number>
       <el-button type="primary" @click="getNewInitMap" size="mini">确定</el-button>
     </el-dialog>
-
+    <!--保存地图-->
     <el-dialog
       class="save_dialog"
       title="保存地图"
@@ -188,6 +189,7 @@
       </el-container>
     </el-dialog>
 
+    <!--预览地图-->
     <el-dialog
       v-if="selectMapIndex != -1"
       :title="myMaps[selectMapIndex].map_name"
@@ -292,6 +294,9 @@ export default {
     }
   },
   methods: {
+    goHome() {
+       this.$router.push("/");
+    },
     // 用户点击单位
     getUnit(unit) {
       this.selectUnit = unit;
@@ -313,16 +318,16 @@ export default {
     getMapInfo(index) {
       // 首先获取当前点击的哪个位置
       this.currentEditMap.index = index;
-      if ((index + 1) % this.userSetting.map_init_column == 0) {
+      if ((index + 1) % this.new_init_column == 0) {
         this.currentEditMap.row = Math.floor(
-          (index + 1) / this.userSetting.map_init_column
+          (index + 1) / this.new_init_column
         );
-        this.currentEditMap.column = this.userSetting.map_init_column;
+        this.currentEditMap.column = this.new_init_column;
       } else {
         this.currentEditMap.row =
-          Math.floor((index + 1) / this.userSetting.map_init_column) + 1;
+          Math.floor((index + 1) / this.new_init_column) + 1;
         this.currentEditMap.column =
-          (index + 1) % this.userSetting.map_init_column;
+          (index + 1) % this.new_init_column;
       }
       console.log(this.currentEditMap);
       // 判断现在的行为 是不是绘画
@@ -589,7 +594,7 @@ export default {
       userMap.column = this.new_init_column;
       const resp = await SaveTempMap(userMap);
       if (resp.res_code != 0) {
-        this.$message.error(resp.res_mes + " 暂时不能同步地图!!");
+        // this.$message.error(resp.res_mes + " 暂时不能同步地图!!");
       }
     }
   },

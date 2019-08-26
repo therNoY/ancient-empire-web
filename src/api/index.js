@@ -27,6 +27,16 @@ export const SimpleDrawing = (args) => request('/api/userMap/simpleDrawing', arg
 export const GetUserMap = () => request('/api/userMap', '', "GET");
 export const DelUserMap = (url) => request(url, '', "DELETE");
 
+// 获取遭遇地图
+export const GetEncounterMap = () => request("/encounterMap", '', "GET");
+// 初始化map 信息
+export const InitEncounterMap = (args) => request("/encounter/initSetting", args, "GET");
+// 生成record
+export const RecordInit = (args) => request("/record/init", args, "POST");
+// 获取记录
+export const GetRecordById =(url) => request(url, '', "GET");
+
+
 
 
 
