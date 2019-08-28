@@ -9,14 +9,14 @@
             :style="{width: mapSize(record.init_map.column), height: mapSize(record.init_map.row)}"
           >
             <div class="map">
+              <!--地形-->
+              <region :init_map="record.init_map" :castleTitles="castleTitles"></region>
               <!--攻击移动区域图-->
-              <area :mapSt="mapSt" :mapDt="mapDt"></area>
+              <maparea :mapSt="mapSt" :mapDt="mapDt"></maparea>
               <!--指针框-->
               <point :singo="singo" :mapSt="mapSt"></point>
               <!--单位-->
-              <unit :armyList="record.army_list" :singo="singo" :mapSt="mapSt"></unit>
-              <!--地形-->
-              <region :init_map="record.init_map" :castleTitles="castleTitles"></region>
+              <unit :armyList="record.army_list" :currColor="record.curr_color" :singo="singo" :mapSt="mapSt"></unit>
             </div>
           </div>
         </el-main>
@@ -33,14 +33,14 @@
 import region from "./region_map";
 import unit from "./unit_map";
 import point from "./assits_map/Point";
-import area from "./assits_map/Area";
+import maparea from "./assits_map/Area";
 import { GetRecordById } from "@/api";
 export default {
   components: {
     region,
     unit,
     point,
-    area
+    maparea
   },
   data() {
     return {
@@ -82,7 +82,6 @@ export default {
             this.castleTitles.push(castleTitle);
           }
         }
-        console.log(this.castleTitles);
       } else {
         this.$message.error(resp.res_mes);
         this.$router.push("/");
@@ -97,7 +96,7 @@ export default {
     },
     testSendWS() {
       let args = {};
-      args.url = "/getMoveArea";
+      args.url = "/ws/test";
       args.mes = "获取移动范围";
       this.$store.dispatch("wsSendMes", args);
     },
@@ -118,6 +117,7 @@ export default {
   created() {
     if ((this.recordId = this.$store.getters.recordId) == null) {
       this.$router.push("/");
+      return;
     }
     this.getRecord();
     this.mapSt = this.$store.getters.mapSt;

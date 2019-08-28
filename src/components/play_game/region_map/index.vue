@@ -1,16 +1,17 @@
 <template>
   <div :style="{width: mapSize(init_map.column), height: mapSize(init_map.row)}">
+    
+    <img
+      v-for="(region,index) in init_map.regions"
+      :src="regionImg(region.type, region.color)"
+      @click="getRegionMes(index)"
+    />
     <img
       style="position: absolute"
       v-for="(title,index) in castleTitles"
       src="../../../assets/images/Region/castle_title.png"
       @click="getCastleTitle(title.row, title.column)"
       :style="{top: position(title.row), left: position(title.column)}"
-    />
-    <img
-      v-for="(region,index) in init_map.regions"
-      :src="regionImg(region.type, region.color)"
-      @click="getRegionMes(index)"
     />
   </div>
 </template>

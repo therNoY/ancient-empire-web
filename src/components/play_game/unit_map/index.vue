@@ -55,45 +55,50 @@
 
 <script>
 export default {
-  props: ["armyList", "singo", "mapSt"],
+  props: ["armyList", "currColor", "singo", "mapSt"],
   data() {
     return {
       currentUnit: null,
       moveLength: null,
-      showAttachArea: null,
+      showAttachArea: null
     };
   },
   methods: {
     // 鼠标点击单位
     operationUnit(armyIndex, index) {
-      // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
-      console.log("开始判断");
-       // 判断当前是准备攻击阶段 如果
-       
-      // if (this.showAttachArea && (this.currentUnit.row != this.armyList[armyIndex].units[index].row || this.currentUnit.column != this.armyList[armyIndex].units[index].column)) {
-      //   this.beAttachArmyIndex = armyIndex;
-      //   this.beAttachUnitIndex = index;
-      //   this.beAttachUnit = this.armys[armyIndex].units[index];
-      //   console.log("是准备被攻击的");
-      //   console.log(this.beAttachUnit);
-      //   this.showAttachPoint = true;
-      //   return;
-      // }
+      // 判断是不是点击的当前回合的军队
+      if (this.armyList[armyIndex].color == this.currColor) {
+        // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
+        console.log("开始判断");
+        // 判断当前是准备攻击阶段 如果
 
-      // this.currentArmyIndex = armyIndex;
-      // this.currentUnitIndex = index;
-      // this.currentUnit = this.armys[armyIndex].units[index];
-      let currentUnit = this.armyList[armyIndex].units[index];
-      let currentPoint = {};
-      currentPoint.row = currentUnit.row;
-      currentPoint.column = currentUnit.column;
-      this.$store.commit("changeCurrentPoint", currentPoint);
-      // 获取可移动区域
-      let indexInfo = {};
-      indexInfo.armyIndex = armyIndex;
-      indexInfo.index = index;
-      this.$store.dispatch("getMoveArea", indexInfo);
-      this.$store.commit("changeShowMoveArea", true);
+        // if (this.showAttachArea && (this.currentUnit.row != this.armyList[armyIndex].units[index].row || this.currentUnit.column != this.armyList[armyIndex].units[index].column)) {
+        //   this.beAttachArmyIndex = armyIndex;
+        //   this.beAttachUnitIndex = index;
+        //   this.beAttachUnit = this.armys[armyIndex].units[index];
+        //   console.log("是准备被攻击的");
+        //   console.log(this.beAttachUnit);
+        //   this.showAttachPoint = true;
+        //   return;
+        // }
+
+        // this.currentArmyIndex = armyIndex;
+        // this.currentUnitIndex = index;
+        // this.currentUnit = this.armys[armyIndex].units[index];
+        let currentUnit = this.armyList[armyIndex].units[index];
+        let currentPoint = {};
+        currentPoint.row = currentUnit.row;
+        currentPoint.column = currentUnit.column;
+        this.$store.commit("changeCurrentPoint", currentPoint);
+        // 获取可移动区域
+        let indexInfo = {};
+        indexInfo.armyIndex = armyIndex;
+        indexInfo.index = index;
+        this.$store.dispatch("getMoveArea", indexInfo);
+        this.$store.commit("changeShowMoveArea", true);
+      }else {
+        console.log("点击敌方单位");
+      }
     },
     // 展示当前单位的移动目的
     showAimArea(row, column) {
@@ -104,7 +109,7 @@ export default {
     }
   },
   computed: {
-     // 通过 单位所属的颜色 找到相应的图片
+    // 通过 单位所属的颜色 找到相应的图片
     unitImg() {
       return function(color, type, num = "") {
         return require("../../../assets/images/unit/" +
@@ -194,7 +199,7 @@ export default {
   transition-timing-function: linear;
   transition-delay: 0s;
 }
-.unit:hover{
+.unit:hover {
   cursor: pointer;
 }
 .unit_level {

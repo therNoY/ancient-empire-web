@@ -24,9 +24,13 @@ const ws = {
       // 建立连接并订阅主题
       store.state.stompClient.connect({}, (frame) => {
 
-        store.state.stompClient.subscribe("/user/queue/user", val => {
-          console.log("收到个人消息");
-          console.log(val);
+        store.state.stompClient.subscribe("/user/queue/user", resps => {
+          const resp = JSON.parse(resps.body);
+          if (resp.method == "moveAreas") {
+            store.commit("changeMoveArea", resp.value);
+          }else {
+            console.error("没有handle");
+          }
         });
 
         store.state.stompClient.subscribe("/topic/room/" + recordId, val => {

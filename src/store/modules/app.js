@@ -29,13 +29,24 @@ const app = {
     },
     changeShowMoveArea(state, status) {
       state.mapSt.showMoveArea = status;
+    },
+    changeMoveArea(state, areas){
+      state.mapDt.moveAreas = areas;
     }
   },
   actions: {
+    // 获取可移动区域
     getMoveArea(state, indexInfo) {
       let args = {};
-      args.url = "/getMoveArea"
+      args.url = "/ws/getMoveArea"
       args.mes = indexInfo;
+      state.dispatch("wsSendMes",  args);
+    },
+    // 获取移动路线
+    getMovePath(state, aimPostion) {
+      let args = {};
+      args.url = "/ws/getMovePath"
+      args.mes = aimPostion;
       state.dispatch("wsSendMes",  args);
     }
   }
