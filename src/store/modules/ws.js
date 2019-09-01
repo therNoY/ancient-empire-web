@@ -28,6 +28,8 @@ const ws = {
           const resp = JSON.parse(resps.body);
           if (resp.method == "moveAreas") {
             store.commit("changeMoveArea", resp.value);
+          }else if (resp.method == "movePath") {
+            store.commit("changePathPoints", resp.value.movePath);
           }else {
             console.error("没有handle");
           }

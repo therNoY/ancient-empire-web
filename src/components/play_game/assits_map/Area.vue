@@ -1,14 +1,16 @@
 <!--包含单位的移动区域和攻击区域-->
 <template>
   <div>
+
     <!--可移动区域-->
     <div v-if="mapSt.showMoveArea" class="move_area" v-for="moveArea in mapDt.moveAreas">
       <img
         src="../../../assets/images/assist/alpha.png"
-        @mouseover="showAimArea(moveArea.row, moveArea.column)"
+        @click="showAimArea(moveArea.row, moveArea.column)"
         :style="{top: position(1, moveArea.row), left: position(2, moveArea.column)}"
       />
     </div>
+
     <!--攻击范围区域-->
     <!-- <div v-if="mapSt.showAttachArea" class="attach_area" v-for="attachArea in attachAreas">
       <img
@@ -18,21 +20,14 @@
       /> -->
 
       <!--移动路线-->
-      <!-- <div class="movePath" v-for="(pathPoint,index) in pathPoints">
+      <div class="movePath" v-if="mapSt.showMoveArea" v-for="(pathPoint,index) in mapDt.pathPoints">
         <div
-          v-if="index < pathPoints.length - 1"
-          :style="{top: movePathTop(pathPoint, pathPoints[index+1]), left: movePathLeft(pathPoint, pathPoints[index+1]) ,width: movePathWidth(pathPoint, pathPoints[index+1]), height: movePathHeight(pathPoint, pathPoints[index+1])}"
+          v-if="index < mapDt.pathPoints.length - 1"
+          :style="{top: movePathTop(pathPoint, mapDt.pathPoints[index+1]), left: movePathLeft(pathPoint, mapDt.pathPoints[index+1]) ,width: movePathWidth(pathPoint, mapDt.pathPoints[index+1]), height: movePathHeight(pathPoint, mapDt.pathPoints[index+1])}"
         ></div>
-      </div> -->
+      </div>
 
-      <!--目的地指针 只在移动区域显示的时候才会显示-->
-      <!-- <div class="aimPoint" @click="goAimPoint">
-        <img
-          v-show="showMoveArea"
-          src="../../../assets/images/assist/cursor_target.png"
-          :style="{top: position(1, currentPoint.row), left: position(1, currentPoint.column)}"
-        />
-      </div> -->
+     
     </div>
   </div>
 </template>
@@ -47,19 +42,61 @@ export default {
         return (row - num) * 24 + "px";
       };
     },
+    // 根据 得到最短距离需要拐弯的几个点 画出一条红线
+    movePathTop() {
+      return function(point, point2) {
+        if (point.row <= point2.row) {
+          return (point.row - 1) * 24 + 8 + "px";
+        } else {
+          return (point2.row - 1) * 24 + 8 + "px";
+        }
+      };
+    },
+    movePathLeft() {
+      return function(point, point2) {
+        if (point.column < point2.column) {
+          return (point.column - 1) * 24 + 8 + "px";
+        } else {
+          return (point2.column - 1) * 24 + 8 + "px";
+        }
+      };
+    },
+    movePathWidth() {
+      return function(point1, point2) {
+        if (point1.column == point2.column) {
+          return "8px";
+        } else {
+          return Math.abs(point2.column - point1.column) * 24 + 8 + "px";
+        }
+      };
+    },
+    movePathHeight() {
+      return function(point1, point2) {
+        if (point1.row == point2.row) {
+          return "8px";
+        } else {
+          return Math.abs(point2.row - point1.row) * 24 + "px";
+        }
+      };
+    }
   },
   methods: {
     showAimArea(row, column) {
-      return;
       let aimPoint = {};
       aimPoint.row = row;
       aimPoint.column = column;
+      let currentPoint = {};
+      currentPoint.row = this.mapSt.currentUnit.row;
+      currentPoint.column = this.mapSt.currentUnit.column;
       let moveInfo = {};
       moveInfo.aimPoint = aimPoint;
-      moveInfo.positions = this.$store.mapDt.moveAreas;
-      moveInfo.currentPoint = this.$store.mapDt.currentPoint;
+      moveInfo.positions = this.mapDt.moveAreas;
+      moveInfo.currentPoint = currentPoint;
+      moveInfo.currentUnitIndex = this.mapSt.currentUnitIndex;
+      this.$store.commit("changeCurrentPoint", aimPoint);
       this.$store.dispatch("getMovePath", moveInfo);
-    }
+    },
+    
   },
 };
 </script>
@@ -67,6 +104,13 @@ export default {
 <style lang="css" scoped>
 .move_area img{
   position: absolute;
+  cursor: pointer;
   clip: rect(0px, 48px, 24px, 24px);
+}
+
+.movePath div {
+  position: absolute;
+  pointer-events: none;
+  background-color: #e10052;
 }
 </style>

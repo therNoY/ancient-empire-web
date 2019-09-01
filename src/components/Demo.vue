@@ -409,6 +409,10 @@ export default {
           name: "end",
           row: 5.3,
           column: 7
+        },{
+          name: "end",
+          row: 5.3,
+          column: 7
         }
       ];
     },

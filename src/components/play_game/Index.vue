@@ -14,9 +14,9 @@
               <!--攻击移动区域图-->
               <maparea :mapSt="mapSt" :mapDt="mapDt"></maparea>
               <!--指针框-->
-              <point :singo="singo" :mapSt="mapSt"></point>
+              <point :singo="singo" :mapSt="mapSt" :mapDt="mapDt"></point>
               <!--单位-->
-              <unit :armyList="record.army_list" :currColor="record.curr_color" :singo="singo" :mapSt="mapSt"></unit>
+              <unit :armyList="record.army_list" :tombs="record.tomb" :currColor="record.curr_color" :singo="singo" :mapSt="mapSt"></unit>
             </div>
           </div>
         </el-main>

@@ -69,7 +69,7 @@ export default {
       this.$store.commit("changeCurrentPoint", currentPoint);
       // 如果当前是点击单位准备启动的阶段 则取消移动
       if (this.mapSt.showMoveArea) {
-        this.$store.commit("changeShowMoveArea");
+        this.$store.commit("changeShowMoveArea", false);
       }
     },
     getCastleTitle(row, cloumn) {
@@ -79,7 +79,7 @@ export default {
       this.$store.commit("changeCurrentPoint", currentPoint);
 
       if (this.mapSt.showMoveArea) {
-        this.$store.commit("changeShowMoveArea");
+        this.$store.commit("changeShowMoveArea", false);
       }
     }
   },

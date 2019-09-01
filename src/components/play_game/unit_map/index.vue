@@ -13,18 +13,18 @@
           <img
             v-if="unit.isDone"
             :src="isDoneImg(unit.type)"
-            :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (moveLength*0.25) + 's'}"
+            :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           />
           <div v-else>
             <img
               v-if="singo"
               :src="unitImg(army.color, unit.type)"
-              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (moveLength*0.25) + 's'}"
+              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />
             <img
               v-else
               :src="unitImg(army.color, unit.type, '2')"
-              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (moveLength*0.25) + 's'}"
+              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />
           </div>
         </div>
@@ -34,7 +34,7 @@
           <div
             v-if="isNot100(unit.life)"
             class="lifeNum"
-            :style="{top: lifeNumTop(unit), left: lifeNumLeft(unit), transitionDuration: (moveLength*0.25) + 's'}"
+            :style="{top: lifeNumTop(unit), left: lifeNumLeft(unit), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           >
             <img v-for="lifeNum in unit.life" :src="liftImg(lifeNum)" />
           </div>
@@ -42,7 +42,7 @@
           <div
             v-if="unit.level > 0"
             class="unit_level"
-            :style="{top: levelTop(unit.row), left: levelLeft(unit.column), transitionDuration: (moveLength*0.25) + 's'}"
+            :style="{top: levelTop(unit.row), left: levelLeft(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           >
             <img :src="levelImg(unit.level)" />
           </div>
@@ -50,16 +50,24 @@
         </div>
       </div>
     </div>
+
+    <!--坟墓-->
+    <div class="tomb">
+      <img
+        v-for="tomb in tombs"
+        src="../../../assets/images/unit/tomb.png"
+        :style="{top: position(1, tomb.row), left: position(1, tomb.column)}"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["armyList", "currColor", "singo", "mapSt"],
+  props: ["armyList", "currColor", "singo", "mapSt", "tombs"],
   data() {
     return {
       currentUnit: null,
-      moveLength: null,
       showAttachArea: null
     };
   },
@@ -89,11 +97,15 @@ export default {
         let currentPoint = {};
         currentPoint.row = currentUnit.row;
         currentPoint.column = currentUnit.column;
+        this.$store.commit("changeCurrntUnitIndex", index);
+        this.$store.commit("changeCurrentUnit", currentUnit);
         this.$store.commit("changeCurrentPoint", currentPoint);
+        this.$store.commit("changePathPoints", {});
         // 获取可移动区域
         let indexInfo = {};
         indexInfo.armyIndex = armyIndex;
         indexInfo.index = index;
+        this.$store.commit("changeMoveArea", []);
         this.$store.dispatch("getMoveArea", indexInfo);
         this.$store.commit("changeShowMoveArea", true);
       }else {
@@ -207,5 +219,8 @@ export default {
   transition-property: all;
   transition-timing-function: linear !important;
   transition-delay: 0s;
+}
+.tomb img {
+  position: absolute;
 }
 </style>
