@@ -274,7 +274,7 @@ export default {
       record.army_list = this.initArmys;
       const resp = await RecordInit(record);
       if (resp.res_code == 0) {
-        this.$store.commit("SET_RECORD_ID", resp.res_val);
+        this.$store.commit("setRecordId", resp.res_val);
         this.$router.push("/play")
       }else {
         this.$message.error(resp.res_mes);

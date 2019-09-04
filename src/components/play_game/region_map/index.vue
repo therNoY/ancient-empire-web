@@ -1,6 +1,5 @@
 <template>
   <div :style="{width: mapSize(init_map.column), height: mapSize(init_map.row)}">
-    
     <img
       v-for="(region,index) in init_map.regions"
       :src="regionImg(region.type, region.color)"
@@ -66,21 +65,27 @@ export default {
         currentPoint.row = Math.floor((index + 1) / this.init_map.column) + 1;
         currentPoint.column = (index + 1) % this.init_map.column;
       }
-      this.$store.commit("changeCurrentPoint", currentPoint);
-      // 如果当前是点击单位准备启动的阶段 则取消移动
-      if (this.mapSt.showMoveArea) {
-        this.$store.commit("changeShowMoveArea", false);
-      }
+      this.changePoint(currentPoint);
     },
     getCastleTitle(row, cloumn) {
       let currentPoint = {};
       currentPoint.row = row;
       currentPoint.column = cloumn;
-      this.$store.commit("changeCurrentPoint", currentPoint);
-
-      if (this.mapSt.showMoveArea) {
-        this.$store.commit("changeShowMoveArea", false);
+      this.changePoint(currentPoint);
+    },
+    // 改变当前点
+    changePoint(currentPoint) {
+      if (this.mapSt.unitStatus == "moveIng") {
+        console.log("等待移动完毕");
+        return;
       }
+      this.$store.commit("changeCurrentPoint", currentPoint);
+      if (this.mapSt.mapStatus == "showAction" || this.mapSt.mapStatus == "willAttach") {
+        console.log("move back");
+        this.$store.commit("changeMoveLength", 0);
+        this.$store.commit("moveBack");
+      }
+      this.$store.commit("setMapStatus", "noAction");
     }
   },
 

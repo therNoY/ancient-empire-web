@@ -15,9 +15,8 @@
     </div>
 
     <!--目的地指针 只在移动区域显示的时候才会显示-->
-    <div class="aim_point" @click="goAimPoint">
+    <div class="aim_point" @click="goAimPoint" v-if="mapSt.mapStatus == 'showMoveArea'">
       <img
-        v-if="mapSt.showMoveArea"
         src="../../../assets/images/assist/cursor_target.png"
         :style="{top: position(1, mapSt.currentPoint.row), left: position(1, mapSt.currentPoint.column)}"
       />
@@ -31,7 +30,6 @@ export default {
   data() {
     return {
       movePointIndex: 0, // 单位移动的辅助值 用于表示当前移动到第几个点了
-      willMove: false, // 表示单位是否准备移动
     };
   },
   computed: {
@@ -54,7 +52,8 @@ export default {
   methods: {
     // 单位的移动
     goAimPoint() {
-      this.willMove = true;
+      this.$store.commit("setUnitStatus", "moveIng");
+      
       // 1.移动之前计算将要移动的移动距离, 点击就开始移动
       this.moveUnit();
       // 如果只移动一段距离 就不需要
@@ -87,6 +86,8 @@ export default {
     },
     // 通过当前移动的点movePointIndex 计算出下一段的距离
     getMoveLength() {
+      console.log(this.movePointIndex);
+       console.log(this.mapDt.pathPoints);
       let point1 = this.mapDt.pathPoints[this.movePointIndex];
       let point2 = this.mapDt.pathPoints[this.movePointIndex + 1];
       if (point1.row == point2.row) {
@@ -98,28 +99,16 @@ export default {
     // 单位到达要移动的地方 判断单位能进行的action
     moveFinish() {
       // 单位移动完毕
-      this.showMoveArea = false;
-      this.willMove = false;
-      this.moveDone = true;
-      this.showAction = true;
+      this.movePointIndex = 0;
+      this.$store.commit("setMapStatus", "showAction");
+      this.$store.commit("setUnitStatus", "moveDone");
+      // 是action 图标动态显示
       setTimeout(this.showAtcionLogo, 50);
-      console.log("移动完成");
     },
 
     // 异步执行动画显示行为logo
     showAtcionLogo() {
-      this.unitActions = [
-        {
-          name: "attack",
-          row: 2.7,
-          column: 7
-        },
-        {
-          name: "end",
-          row: 5.3,
-          column: 7
-        }
-      ];
+      this.$store.commit("moveAction");
     },
   }
 };

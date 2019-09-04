@@ -1,7 +1,9 @@
 import '@/lib/sockjs'
 import '@/lib/stomp'
 import { baseUrl } from '@/api/env'
-import app from './app'
+
+// map 状态
+const status = ["showMoveArea", "showAction", "willAttach", "willSummon", "willEnd"];
 
 const ws = {
   state: {
@@ -28,9 +30,25 @@ const ws = {
           const resp = JSON.parse(resps.body);
           if (resp.method == "moveAreas") {
             store.commit("changeMoveArea", resp.value);
-          }else if (resp.method == "movePath") {
+            store.commit("setMapStatus", "showMoveArea");
+          } else if (resp.method == "movePath") {
             store.commit("changePathPoints", resp.value.movePath);
-          }else {
+            store.commit("changeUnitAction", resp.value.actions.cAction);
+            store.commit("changeUnitMoveActions", resp.value.actions.mAction);
+          } else if (resp.method == "moveAction") {
+            // 只有load 首次移动且在自己的城堡时
+            store.commit("setMapStatus", "showAction");
+            store.commit("changeUnitAction", resp.value.cAction);
+            store.commit("changeUnitMoveActions", resp.value.mAction);
+            store.commit("setMapStatus", "showAction");
+            store.commit("changeLastPosition", store.getters.mapSt.currentUnit);
+            setTimeout(() => {
+              this.commit("moveAction");
+            }, 50);
+          } else if (resp.method == "attachArea") {
+            store.commit("changeAttachArea", resp.value);
+            store.commit("setMapStatus", "willAttach");
+          } else {
             console.error("没有handle");
           }
         });
@@ -52,4 +70,7 @@ const ws = {
 
   }
 }
+
+
+
 export default ws

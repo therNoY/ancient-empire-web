@@ -1,5 +1,6 @@
 <template>
   <div class="body">
+    <div style="font-size:12px; float:left; width:9%">{{mapSt}}</div>
     <div class="map_body">
       <el-container style="width: 100%;height:100%; border: 1px solid #eee;padding-right: 20px;">
         <el-main style="text-align: center;">
@@ -17,11 +18,13 @@
               <point :singo="singo" :mapSt="mapSt" :mapDt="mapDt"></point>
               <!--单位-->
               <unit :armyList="record.army_list" :tombs="record.tomb" :currColor="record.curr_color" :singo="singo" :mapSt="mapSt"></unit>
+              <!--展示行动图标-->
+              <actions :mapStatus="mapSt.mapStatus" :unitActions="mapDt.unitActions"></actions>
             </div>
           </div>
         </el-main>
         <el-footer>
-          <div style="font-size:12px">{{mapSt}}</div>
+          
           <el-button @click="testSendWS">发送ws</el-button>
         </el-footer>
       </el-container>
@@ -34,13 +37,15 @@ import region from "./region_map";
 import unit from "./unit_map";
 import point from "./assits_map/Point";
 import maparea from "./assits_map/Area";
+import actions from "./assits_map/Action";
 import { GetRecordById } from "@/api";
 export default {
   components: {
     region,
     unit,
     point,
-    maparea
+    maparea,
+    actions
   },
   data() {
     return {

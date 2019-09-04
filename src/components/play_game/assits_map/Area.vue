@@ -1,39 +1,44 @@
 <!--包含单位的移动区域和攻击区域-->
 <template>
   <div>
-
     <!--可移动区域-->
-    <div v-if="mapSt.showMoveArea" class="move_area" v-for="moveArea in mapDt.moveAreas">
+    <div
+      v-if="mapSt.mapStatus == 'showMoveArea'"
+      class="move_area"
+      v-for="moveArea in mapDt.moveAreas"
+    >
       <img
         src="../../../assets/images/assist/alpha.png"
         @click="showAimArea(moveArea.row, moveArea.column)"
         :style="{top: position(1, moveArea.row), left: position(2, moveArea.column)}"
       />
     </div>
-
+    <!--移动路线-->
+    <div
+      class="movePath"
+      v-if="mapSt.mapStatus == 'showMoveArea'"
+      v-for="(pathPoint,index) in mapDt.pathPoints"
+    >
+      <div
+        v-if="index < mapDt.pathPoints.length - 1"
+        :style="{top: movePathTop(pathPoint, mapDt.pathPoints[index+1]), left: movePathLeft(pathPoint, mapDt.pathPoints[index+1]) ,width: movePathWidth(pathPoint, mapDt.pathPoints[index+1]), height: movePathHeight(pathPoint, mapDt.pathPoints[index+1])}"
+      ></div>
+    </div>
     <!--攻击范围区域-->
-    <!-- <div v-if="mapSt.showAttachArea" class="attach_area" v-for="attachArea in attachAreas">
+    <div
+      v-if="mapSt.mapStatus == 'willAttach'"
+      class="attach_area"
+      v-for="attachArea in mapDt.attachArea"
+    >
       <img
         src="../../../assets/images/assist/alpha.png"
-        @mouseover="showAimArea(attachArea.row, attachArea.column)"
         :style="{top: position(1, attachArea.row), left: position(1, attachArea.column)}"
-      /> -->
-
-      <!--移动路线-->
-      <div class="movePath" v-if="mapSt.showMoveArea" v-for="(pathPoint,index) in mapDt.pathPoints">
-        <div
-          v-if="index < mapDt.pathPoints.length - 1"
-          :style="{top: movePathTop(pathPoint, mapDt.pathPoints[index+1]), left: movePathLeft(pathPoint, mapDt.pathPoints[index+1]) ,width: movePathWidth(pathPoint, mapDt.pathPoints[index+1]), height: movePathHeight(pathPoint, mapDt.pathPoints[index+1])}"
-        ></div>
-      </div>
-
-     
+      />
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   props: ["mapSt", "mapDt"],
   computed: {
@@ -94,15 +99,15 @@ export default {
       moveInfo.currentPoint = currentPoint;
       moveInfo.currentUnitIndex = this.mapSt.currentUnitIndex;
       this.$store.commit("changeCurrentPoint", aimPoint);
+      this.$store.commit("changeLastPosition", currentPoint);
       this.$store.dispatch("getMovePath", moveInfo);
-    },
-    
-  },
+    }
+  }
 };
 </script>
 
 <style lang="css" scoped>
-.move_area img{
+.move_area img {
   position: absolute;
   cursor: pointer;
   clip: rect(0px, 48px, 24px, 24px);
@@ -112,5 +117,11 @@ export default {
   position: absolute;
   pointer-events: none;
   background-color: #e10052;
+}
+
+.attach_area img {
+  position: absolute;
+  cursor: pointer;
+  clip: rect(0px, 24px, 24px, 0px);
 }
 </style>

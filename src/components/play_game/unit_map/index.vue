@@ -8,14 +8,13 @@
         <div
           class="unit"
           @click="operationUnit(armyIndex, index)"
-          @mousemove="showAimArea(unit.row, unit.column)"
         >
           <img
             v-if="unit.isDone"
             :src="isDoneImg(unit.type)"
             :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           />
-          <div v-else>
+          <div v-else @mouseover="makeAction(army.color, unit)">
             <img
               v-if="singo"
               :src="unitImg(army.color, unit.type)"
@@ -74,49 +73,54 @@ export default {
   methods: {
     // 鼠标点击单位
     operationUnit(armyIndex, index) {
-      // 判断是不是点击的当前回合的军队
-      if (this.armyList[armyIndex].color == this.currColor) {
-        // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
-        console.log("开始判断");
-        // 判断当前是准备攻击阶段 如果
+      if (this.mapSt.mapStatus == "noAction") {
+        // 判断是不是点击的当前回合的军队
+        if (this.armyList[armyIndex].color == this.currColor) {
+          // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
+          console.log("开始判断");
+          // 判断当前是准备攻击阶段 如果
 
-        // if (this.showAttachArea && (this.currentUnit.row != this.armyList[armyIndex].units[index].row || this.currentUnit.column != this.armyList[armyIndex].units[index].column)) {
-        //   this.beAttachArmyIndex = armyIndex;
-        //   this.beAttachUnitIndex = index;
-        //   this.beAttachUnit = this.armys[armyIndex].units[index];
-        //   console.log("是准备被攻击的");
-        //   console.log(this.beAttachUnit);
-        //   this.showAttachPoint = true;
-        //   return;
-        // }
+          // if (this.showAttachArea && (this.currentUnit.row != this.armyList[armyIndex].units[index].row || this.currentUnit.column != this.armyList[armyIndex].units[index].column)) {
+          //   this.beAttachArmyIndex = armyIndex;
+          //   this.beAttachUnitIndex = index;
+          //   this.beAttachUnit = this.armys[armyIndex].units[index];
+          //   console.log("是准备被攻击的");
+          //   console.log(this.beAttachUnit);
+          //   this.showAttachPoint = true;
+          //   return;
+          // }
 
-        // this.currentArmyIndex = armyIndex;
-        // this.currentUnitIndex = index;
-        // this.currentUnit = this.armys[armyIndex].units[index];
-        let currentUnit = this.armyList[armyIndex].units[index];
-        let currentPoint = {};
-        currentPoint.row = currentUnit.row;
-        currentPoint.column = currentUnit.column;
-        this.$store.commit("changeCurrntUnitIndex", index);
-        this.$store.commit("changeCurrentUnit", currentUnit);
-        this.$store.commit("changeCurrentPoint", currentPoint);
-        this.$store.commit("changePathPoints", {});
-        // 获取可移动区域
-        let indexInfo = {};
-        indexInfo.armyIndex = armyIndex;
-        indexInfo.index = index;
-        this.$store.commit("changeMoveArea", []);
-        this.$store.dispatch("getMoveArea", indexInfo);
-        this.$store.commit("changeShowMoveArea", true);
-      }else {
-        console.log("点击敌方单位");
+          // this.currentArmyIndex = armyIndex;
+          // this.currentUnitIndex = index;
+          // this.currentUnit = this.armys[armyIndex].units[index];
+          let currentUnit = this.armyList[armyIndex].units[index];
+          let currentPoint = {};
+          currentPoint.row = currentUnit.row;
+          currentPoint.column = currentUnit.column;
+          this.$store.commit("changeCurrntUnitIndex", index);
+          this.$store.commit("changeCurrentUnit", currentUnit);
+          this.$store.commit("changeCurrentPoint", currentPoint);
+          this.$store.commit("changePathPoints", {});
+          // 获取可移动区域
+          let indexInfo = {};
+          indexInfo.armyIndex = armyIndex;
+          indexInfo.index = index;
+          this.$store.commit("changeMoveArea", []);
+          this.$store.dispatch("getMoveArea", indexInfo);
+        } else {
+          console.log("点击敌方单位");
+        }
       }
     },
-    // 展示当前单位的移动目的
-    showAimArea(row, column) {
-      if (this.showMoveArea) {
-        this.currentPoint.row = row;
-        this.currentPoint.column = column;
+    // 准备对其他单位展开行动
+    makeAction(color, unit){
+      if (color != this.currColor) {
+        // 判断现在的情况
+        if (this.mapSt.mapStatus == 'willAttach') {
+          // 准备攻击阶段 判断该单位是否在在
+          
+        }
+        console.log("展开行动");
       }
     }
   },
