@@ -56,6 +56,9 @@ export default {
   },
   methods: {
     getRegionMes(index) {
+      if (this.mapSt.mapStatus == "secendMove") {
+        return;
+      }
       // 移动鼠标
       let currentPoint = {};
       if ((index + 1) % this.init_map.row == 0) {
@@ -80,10 +83,22 @@ export default {
         return;
       }
       this.$store.commit("changeCurrentPoint", currentPoint);
-      if (this.mapSt.mapStatus == "showAction" || this.mapSt.mapStatus == "willAttach") {
+      if (this.mapSt.mapStatus == "showAction" || this.mapSt.mapStatus == "willAttach" || this.mapSt.mapStatus == 'willSummon') {
         console.log("move back");
         this.$store.commit("changeMoveLength", 0);
         this.$store.commit("moveBack");
+      }
+
+      // 改变当前点的Region 信息
+      const regions = this.init_map.regions;
+      const column = this.init_map.column;
+      const index = (currentPoint.row - 1) * column + currentPoint.column -1;
+      const region = regions[index];
+      let regionInfo = this.$store.getters.regionInfo[region.type];
+      if (regionInfo == null) {
+        this.$store.dispatch("getRegionInfo", region.type)
+      }else {
+        this.$store.commit("currentRegionInfo", regionInfo);
       }
       this.$store.commit("setMapStatus", "noAction");
     }

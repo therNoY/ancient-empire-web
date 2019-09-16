@@ -47,8 +47,37 @@ const ws = {
             }, 50);
           } else if (resp.method == "attachArea") {
             store.commit("changeAttachArea", resp.value);
-            store.commit("setMapStatus", "willAttach");
-          } else {
+          } else if (resp.method == "attachResult") {
+            console.log(resp.value);
+            if (resp.value.second_move != null) {
+              store.commit("changeSecendMove", resp.value.second_move);
+              store.commit("changeMoveArea", resp.value.move_area);
+              store.commit("changePathPoints", []);
+            }
+            store.commit("changeAttachResult", resp.value);
+            store.commit("setAttachTimer");
+          } else if (resp.method == "summonResult") {
+            if (resp.value.second_move != null) {
+              store.commit("changePathPoints", []);
+              store.commit("changeSecendMove", resp.value.second_move.second_move);
+              store.commit("changeMoveArea", resp.value.second_move.move_area);
+            }
+            store.commit("doSummon", resp.value);
+          } else if (resp.method == "endResult") {
+            if (resp.value != null && resp.value.life_changes != null) {
+              let lifeChanges = resp.value.life_changes;
+              store.commit("setEndResult", lifeChanges);
+            } else {
+              store.commit("endCurrentUnit");
+            }
+          } else if (resp.method == "unitAction") {
+            store.commit("setMapStatus", "showAction");
+            store.commit("changeUnitAction", resp.value.cAction); 
+            store.commit("changeUnitMoveActions", resp.value.mAction);   
+            setTimeout(()=>{
+              store.commit("moveAction");
+            }, 50);       
+          }else {
             console.error("没有handle");
           }
         });

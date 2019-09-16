@@ -3,7 +3,7 @@
   <div>
     <!--可移动区域-->
     <div
-      v-if="mapSt.mapStatus == 'showMoveArea'"
+      v-if="mapSt.mapStatus == 'showMoveArea'  || mapSt.mapStatus == 'secendMove'"
       class="move_area"
       v-for="moveArea in mapDt.moveAreas"
     >
@@ -16,7 +16,7 @@
     <!--移动路线-->
     <div
       class="movePath"
-      v-if="mapSt.mapStatus == 'showMoveArea'"
+      v-if="mapSt.mapStatus == 'showMoveArea' || mapSt.mapStatus == 'secendMove'"
       v-for="(pathPoint,index) in mapDt.pathPoints"
     >
       <div
@@ -26,7 +26,7 @@
     </div>
     <!--攻击范围区域-->
     <div
-      v-if="mapSt.mapStatus == 'willAttach'"
+      v-if="mapSt.mapStatus == 'willAttach' || mapSt.mapStatus == 'willSummon'"
       class="attach_area"
       v-for="attachArea in mapDt.attachArea"
     >
@@ -86,6 +86,7 @@ export default {
     }
   },
   methods: {
+    // 
     showAimArea(row, column) {
       let aimPoint = {};
       aimPoint.row = row;

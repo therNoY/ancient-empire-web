@@ -36,6 +36,11 @@ export const RecordInit = (args) => request("/record/init", args, "POST");
 // 获取记录
 export const GetRecordById =(url) => request(url, '', "GET");
 
+// 获取一个单位的详细信息
+export const GetUnitInfo =(args) => request('/unitInfo', args, "GET");
+
+export const GetRegionInfo =(args) => request('/regionInfo', args, "GET");
+
 
 
 

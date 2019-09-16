@@ -5,16 +5,14 @@
     <div class="armys" v-for="(army, armyIndex) in armyList">
       <!--每个单位-->
       <div v-for="(unit, index) in army.units" :key="index" v-if="!unit.isDead">
-        <div
-          class="unit"
-          @click="operationUnit(armyIndex, index)"
-        >
+        <!--单位-->
+        <div class="unit" @click="operationUnit(armyIndex, index)">
           <img
-            v-if="unit.isDone"
+            v-if="unit.done"
             :src="isDoneImg(unit.type)"
             :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           />
-          <div v-else @mouseover="makeAction(army.color, unit)">
+          <div v-else @click="makeAction(army.camp, unit)">
             <img
               v-if="singo"
               :src="unitImg(army.color, unit.type)"
@@ -28,7 +26,7 @@
           </div>
         </div>
         <!--单位的状态 血量 等级 buff-->
-        <div class="unit_status">
+        <div>
           <!--血量-->
           <div
             v-if="isNot100(unit.life)"
@@ -46,6 +44,13 @@
             <img :src="levelImg(unit.level)" />
           </div>
           <!--状态-->
+          <div
+            v-if="unit.status != null"
+            class="unit_status"
+            :style="{top: statusTop(unit.row), left: statusLeft(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
+          >
+            <img :src="statusImg(unit.status)" />
+          </div>
         </div>
       </div>
     </div>
@@ -55,6 +60,7 @@
       <img
         v-for="tomb in tombs"
         src="../../../assets/images/unit/tomb.png"
+        @click="operationTomb(tomb)"
         :style="{top: position(1, tomb.row), left: position(1, tomb.column)}"
       />
     </div>
@@ -63,7 +69,15 @@
 
 <script>
 export default {
-  props: ["armyList", "currColor", "singo", "mapSt", "tombs"],
+  props: [
+    "armyList",
+    "currCamp",
+    "currColor",
+    "singo",
+    "mapSt",
+    "tombs",
+    "init_map"
+  ],
   data() {
     return {
       currentUnit: null,
@@ -73,34 +87,41 @@ export default {
   methods: {
     // 鼠标点击单位
     operationUnit(armyIndex, index) {
+      // 获取当前单位
+      let currentUnit = this.armyList[armyIndex].units[index];
+      let currentPoint = {};
+      currentPoint.row = currentUnit.row;
+      currentPoint.column = currentUnit.column;
+
+      // 改变当前点的Region 信息 为单位脚下的地图
+      const regions = this.init_map.regions;
+      const column = this.init_map.column;
+      const regionIndex =
+        (currentPoint.row - 1) * column + currentPoint.column - 1;
+      const region = regions[regionIndex];
+      let regionInfo = this.$store.getters.regionInfo[region.type];
+      if (regionInfo == null) {
+        this.$store.dispatch("getRegionInfo", region.type);
+      } else {
+        this.$store.commit("currentRegionInfo", regionInfo);
+      }
+
       if (this.mapSt.mapStatus == "noAction") {
         // 判断是不是点击的当前回合的军队
-        if (this.armyList[armyIndex].color == this.currColor) {
+        let color = this.armyList[armyIndex].color;
+        if (color == this.currColor) {
+          this.$store.commit("changeCurrentPoint", currentPoint);
           // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
+
           console.log("开始判断");
-          // 判断当前是准备攻击阶段 如果
-
-          // if (this.showAttachArea && (this.currentUnit.row != this.armyList[armyIndex].units[index].row || this.currentUnit.column != this.armyList[armyIndex].units[index].column)) {
-          //   this.beAttachArmyIndex = armyIndex;
-          //   this.beAttachUnitIndex = index;
-          //   this.beAttachUnit = this.armys[armyIndex].units[index];
-          //   console.log("是准备被攻击的");
-          //   console.log(this.beAttachUnit);
-          //   this.showAttachPoint = true;
-          //   return;
-          // }
-
-          // this.currentArmyIndex = armyIndex;
-          // this.currentUnitIndex = index;
-          // this.currentUnit = this.armys[armyIndex].units[index];
-          let currentUnit = this.armyList[armyIndex].units[index];
-          let currentPoint = {};
-          currentPoint.row = currentUnit.row;
-          currentPoint.column = currentUnit.column;
           this.$store.commit("changeCurrntUnitIndex", index);
           this.$store.commit("changeCurrentUnit", currentUnit);
-          this.$store.commit("changeCurrentPoint", currentPoint);
-          this.$store.commit("changePathPoints", {});
+          this.$store.commit("changeCurrentColor", color);
+          if (currentUnit.done) {
+            return;
+          }
+
+          this.$store.commit("changePathPoints", []);
           // 获取可移动区域
           let indexInfo = {};
           indexInfo.armyIndex = armyIndex;
@@ -109,18 +130,72 @@ export default {
           this.$store.dispatch("getMoveArea", indexInfo);
         } else {
           console.log("点击敌方单位");
+          let currentUnit = this.armyList[armyIndex].units[index];
+          let color = this.armyList[armyIndex].color;
+
+          this.$store.commit("changeCurrentUnit", currentUnit);
+          let currentPoint = {};
+          currentPoint.row = currentUnit.row;
+          currentPoint.column = currentUnit.column;
+          this.$store.commit("changeCurrentPoint", currentPoint);
+          this.$store.commit("changeCurrentColor", color);
+        }
+      } else if (this.mapSt.mapStatus == "showMoveArea") {
+        if (
+          currentUnit.row == this.mapSt.currentUnit.row &&
+          currentUnit.column == this.mapSt.currentUnit.column
+        ) {
+          console.log("不移动了 就是这");
+          let actionInfo = {};
+          actionInfo.currentUnitIndex = this.mapSt.currentUnitIndex;
+          actionInfo.aimPoint = this.mapSt.currentPoint;
+          actionInfo.positions = [];
+          actionInfo.currentPoint = this.mapSt.currentPoint;
+          this.$store.dispatch("getActions", actionInfo);
         }
       }
     },
+    // 鼠标点击坟墓
+    operationTomb(tomb) {
+      let currentPoint = {};
+      currentPoint.row = tomb.row;
+      currentPoint.column = tomb.column;
+      // 改变当前点的Region 信息 为单位脚下的地图
+      const regions = this.init_map.regions;
+      const mapColumn = this.init_map.column;
+      const regionIndex = (tomb.row - 1) * mapColumn + tomb.column - 1;
+      const region = regions[regionIndex];
+      let regionInfo = this.$store.getters.regionInfo[region.type];
+      if (regionInfo == null) {
+        this.$store.dispatch("getRegionInfo", region.type);
+      } else {
+        this.$store.commit("currentRegionInfo", regionInfo);
+      }
+      // 改变当前点的信息
+      this.$store.commit("changeCurrentPoint", currentPoint);
+
+      if (this.mapSt.mapStatus == "willSummon") {
+        console.log("召唤");
+        this.$store.commit("changeBeSummonTomb", tomb);
+      }
+    },
     // 准备对其他单位展开行动
-    makeAction(color, unit){
-      if (color != this.currColor) {
-        // 判断现在的情况
-        if (this.mapSt.mapStatus == 'willAttach') {
-          // 准备攻击阶段 判断该单位是否在在
-          
+    makeAction(camp, unit) {
+      if (this.mapSt.mapStatus == "willAttach") {
+        // 准备攻击阶段 判断该单位是否在在
+        if (camp != this.currCamp) {
+          // 并且该单位在被攻击范围内
+          const attachArea = this.$store.getters.mapDt.attachArea;
+          for (let index = 0; index < attachArea.length; index++) {
+            const element = attachArea[index];
+            if (element.row == unit.row && element.column == unit.column) {
+              // 判断现在的情况
+              console.log("展开行动");
+              this.$store.commit("changeBeAttachUnit", unit);
+              return;
+            }
+          }
         }
-        console.log("展开行动");
       }
     }
   },
@@ -134,6 +209,19 @@ export default {
           type +
           num +
           ".png");
+      };
+    },
+    isDoneImg() {
+      return function(type) {
+        if (type == "lord") {
+          const color = this.$store.getters.record.curr_color;
+          return require("../../../assets/images/unit/done/" +
+            color +
+            "_" +
+            type +
+            ".png");
+        }
+        return require("../../../assets/images/unit/done/" + type + ".png");
       };
     },
     position() {
@@ -180,13 +268,33 @@ export default {
     // 计算等级的位置
     levelTop() {
       return function(row) {
-        let top = (row - 1) * 24 + "px";
+        let top = (row - 1.1) * 24 + "px";
         return top;
       };
     },
     levelLeft() {
       return function(column) {
         let left = (column - 0.35) * 24 + "px";
+        return left;
+      };
+    },
+    statusImg() {
+      return function(liftImg) {
+        return require("../../../assets/images/assist/status_" +
+          liftImg +
+          ".png");
+      };
+    },
+    // 计算状态的位置
+    statusTop() {
+      return function(row) {
+        let top = (row - 1.05) * 24 + "px";
+        return top;
+      };
+    },
+    statusLeft() {
+      return function(column) {
+        let left = (column - 0.95) * 24 + "px";
         return left;
       };
     },
@@ -218,7 +326,8 @@ export default {
 .unit:hover {
   cursor: pointer;
 }
-.unit_level {
+.unit_level,
+.unit_status {
   position: absolute;
   transition-property: all;
   transition-timing-function: linear !important;
@@ -226,5 +335,17 @@ export default {
 }
 .tomb img {
   position: absolute;
+  cursor: pointer;
+}
+.lifeNum {
+  position: absolute;
+  transition-property: all;
+  transition-timing-function: linear !important;
+  transition-delay: 0s;
+}
+.lifeNum img {
+  position: relative;
+  width: 6px;
+  float: left;
 }
 </style>

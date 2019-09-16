@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  props:["mapStatus", "unitActions"],
+  props: ["mapStatus", "unitActions"],
   computed: {
     position() {
       return function(num, row) {
@@ -25,34 +25,43 @@ export default {
       return function(name) {
         return require("../../../assets/images/assist/action_" + name + ".png");
       };
-    },
+    }
   },
   methods: {
-     // 展示单位将要进行的行动
+    // 展示单位将要进行的行动
     doAction(name) {
       if (name == "attack") {
         // 攻击
         this.$store.dispatch("getAttachArea");
+        this.$store.commit("setMapStatus", "willAttach");
+        this.$store.commit("changeBeAttachUnit", {});
       } else if (name == "end") {
         // 结束
-        this.$store.commit("setMapStatus", "end");
+        this.$store.dispatch("getEndResult");
+        this.$store.commit("setMapStatus", "noAction");
       } else if (name == "buy") {
         // 购买
         this.$store.commit("setMapStatus", "buy");
-      }else if (name == "move") {
+      } else if (name == "move") {
         // 将军移动
         this.$store.commit("setMapStatus", "end");
-      }else if (name == "occupied") {
+        // 获取可移动区域
+        let indexInfo = {};
+        indexInfo.index = this.$store.getters.mapSt.currentUnitIndex;
+        this.$store.commit("changeMoveArea", []);
+        this.$store.dispatch("getMoveArea", indexInfo);
+      } else if (name == "occupied") {
         // 占领/修复
         this.$store.commit("setMapStatus", "end");
-      }else if (name == "summon") {
+      } else if (name == "summon") {
         // 召唤
-        this.$store.commit("setMapStatus", "summon");
-      }else {
+        this.$store.dispatch("getAttachArea");
+        this.$store.commit("setMapStatus", "willSummon");
+      } else {
         alert(1);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
