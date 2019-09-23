@@ -41,7 +41,8 @@ export default {
         this.$store.commit("setMapStatus", "noAction");
       } else if (name == "buy") {
         // 购买
-        this.$store.commit("setMapStatus", "buy");
+        this.$store.commit("changeLordWillBuy", true);
+        this.$store.dispatch("getCanByUnit");
       } else if (name == "move") {
         // 将军移动
         this.$store.commit("setMapStatus", "end");
@@ -51,8 +52,11 @@ export default {
         this.$store.commit("changeMoveArea", []);
         this.$store.dispatch("getMoveArea", indexInfo);
       } else if (name == "occupied") {
-        // 占领/修复
-        this.$store.commit("setMapStatus", "end");
+        // 占领
+        this.$store.dispatch("getOccupiedResult");
+      }else if (name == "repair") {
+        // 修复
+        this.$store.dispatch("getRepairResult");
       } else if (name == "summon") {
         // 召唤
         this.$store.dispatch("getAttachArea");

@@ -1,4 +1,6 @@
+import { GetUnitInfoList } from '../../api'
 import { log } from "util";
+import { from } from "_array-flatten@2.1.2@array-flatten";
 
 const mapStatus = ["noAction", "showMoveArea", "move", "showAction",
   "willAttach", "attachIng", "levelUp", "attachDone", "actionDone", "secendMove", "lifeChange",
@@ -16,13 +18,15 @@ const app = {
       unitStatus: "noActon", // 当前单位的状态 
       currentUnitIndex: -1, // 当前单位所处的index
       currentPoint: { row: 1, column: 1 },// 当前点的位置
-      currentUnit: {}, // 记录当前单位
+      currentUnit: null, // 记录当前单位
       currentColor: null, // 记录当前军队颜色
       beAttachUnit: {}, // 记录被攻击的单位
       moveLength: -1, // 将要移动的距离
       lastPositon: {}, // 用于记录单位移动以前 的位置 便于回退
       secendMove: false,
       beSummonTomb: {}, // 准备被召唤的单位
+      buyUnitDialog: false, // 购买军队的开关
+      currentRegionColor: "",
     },
     // 和地图有关的数据
     mapDt: {
@@ -33,6 +37,7 @@ const app = {
       unitMoveActions: [], // 辅助显示action时动态效果
       attachResult: {},
       lifeChangeUnit: [],
+      buyUnitsInfo: [], // 可以购买的单位信息
     },
     // 和展示有关的辅助数据
     mapAs: {
@@ -46,10 +51,35 @@ const app = {
       attachDustNum: 0, // 辅助让反击击杀 的单位变成坟墓
       leveupImg: {}, // 辅助单位升级
       summonSpark: 0, // 辅助展示召唤特效
+      lordWillBuy: false, // 标记是否是从领主查看招募信息
+      lordBuy: false, // 标记为领主招募
     },
 
   },
   mutations: {
+    changeArmyList(state, armys) {
+      state.record.army_list = armys;
+    },
+    // 设置可以购买的军队的信息
+    changeBuyUnitsInfo(state, unitsInfo) {
+      state.mapDt.buyUnitsInfo = unitsInfo;
+    },
+    // 是否是领主购买的 是的话购买的棋子要立马移动
+    changeLordWillBuy(state, flag) {
+      state.mapAs.lordWillBuy = flag;
+    },
+    // 是否是领主购买的 是的话购买的棋子要立马移动
+    changeLordBuy(state, flag) {
+      state.mapAs.lordBuy = flag;
+    },
+    // 关闭购买提示框
+    changeBuyUnitDialog(state, flag) {
+      state.mapSt.buyUnitDialog = flag;
+    },
+    // 修改当前地形的color
+    setCurrentRegionColor(state, color) {
+      state.mapSt.currentRegionColor = color;
+    },
     // 修改map 状态
     setMapStatus(state, status) {
       state.mapSt.mapStatus = status;
@@ -343,6 +373,7 @@ const app = {
       } else {
         this.dispatch("getEndResult", "getEndResult");
       }
+      state.mapDt.pathPoints = [];
     },
     // 改变当前状态
     endCurrentUnit(state) {
@@ -440,6 +471,38 @@ const app = {
           state.mapAs.summonSpark++;
         }
       }, 100);
+    },
+    //购买军队
+    doBuyUnit(state, unitIno) {
+      // 增加单位 改变人口和金币
+      for (let i = 0; i < state.record.army_list.length; i++) {
+        let army = state.record.army_list[i];
+        if (army.color == state.record.curr_color) {
+          army.units.push(unitIno.unit);
+          army.money = unitIno.last_money;
+          army.pop = unitIno.end_pop;
+          this.commit("changeCurrentUnit", unitIno.unit);
+          this.commit("changeCurrntUnitIndex", army.units.length - 1);
+          break;
+        }
+      }
+    },
+    // 修改地形
+    updateRegion(state, result) {
+      state.record.init_map.regions[result.region_index] = result.square;
+      console.log(state.record.init_map.regions[result.region_index]);
+    },
+    // 新回合
+    newRound(state, record) {
+      state.record.curr_color = record.curr_color;
+      state.record.army_list = record.army_list;
+      state.record.current_round = record.current_round;
+      state.record.curr_camp = record.curr_camp;
+      state.mapSt.mapStatus = 'noAction'
+      state.mapSt.currentUnitIndex = -1;
+      state.mapSt.currentUnit = null;
+      state.mapSt.moveLength = -1;
+      state.mapSt.currentPoint = {row: 1, column: 1};
     }
   },
   actions: {
@@ -506,7 +569,53 @@ const app = {
       mes.tomb = state.getters.mapSt.beSummonTomb;
       args.mes = mes;
       state.dispatch("wsSendMes", args);
+    },
+    // 获取修复结果
+    getRepairResult(state) {
+      let args = {};
+      args.url = "/ws/getRepairResult"
+      let mes = {};
+      mes.index = state.getters.mapSt.currentUnitIndex;
+      mes.region = state.getters.mapSt.currentPoint;
+      args.mes = mes;
+      state.dispatch("wsSendMes", args);
+    },
+    // 获取占领结果
+    getOccupiedResult(state) {
+      let args = {};
+      args.url = "/ws/getOccupiedResult"
+      let mes = {};
+      mes.index = state.getters.mapSt.currentUnitIndex;
+      mes.region = state.getters.mapSt.currentPoint;
+      args.mes = mes;
+      state.dispatch("wsSendMes", args);
+    },
+    // 获取可购买单位信息
+    getCanByUnit(state) {
+      let args = {};
+      args.uuid = this.getters.record.uuid;
+      GetUnitInfoList(args).then((resp) => {
+        console.log("得到的结果");
+        state.commit("changeBuyUnitsInfo", resp.res_val);
+        state.commit("changeBuyUnitDialog", true);
+      });
+    },
+    // 购买单位
+    byUnit(state, type) {
+      let args = {};
+      args.url = "/ws/buyUnit"
+      let mes = {};
+      mes.type = type;
+      mes.site = this.getters.mapSt.currentPoint;
+      args.mes = mes;
+      state.dispatch("wsSendMes", args);
+    },
+    getNewRound(state) {
+      let args = {};
+      args.url = "/ws/getNewRound"
+      state.dispatch("wsSendMes", args);
     }
+
   }
 }
 

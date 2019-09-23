@@ -200,7 +200,7 @@ export default {
       previewVisible: false,
       currentColor: null,
       money: 500,
-      maxPop: 15,
+      maxPop: 40,
       initArmys: []
     };
   },

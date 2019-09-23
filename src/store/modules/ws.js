@@ -1,6 +1,8 @@
 import '@/lib/sockjs'
 import '@/lib/stomp'
 import { baseUrl } from '@/api/env'
+import { Message } from 'element-ui'
+import { log } from 'util';
 
 // map 状态
 const status = ["showMoveArea", "showAction", "willAttach", "willSummon", "willEnd"];
@@ -56,6 +58,9 @@ const ws = {
             }
             store.commit("changeAttachResult", resp.value);
             store.commit("setAttachTimer");
+            if (this.getters.mapAs.lordBuy) {
+              store.commit("changeLordBuy", false);
+            }
           } else if (resp.method == "summonResult") {
             if (resp.value.second_move != null) {
               store.commit("changePathPoints", []);
@@ -63,6 +68,9 @@ const ws = {
               store.commit("changeMoveArea", resp.value.second_move.move_area);
             }
             store.commit("doSummon", resp.value);
+            if (this.getters.mapAs.lordBuy) {
+              store.commit("changeLordBuy", false);
+            }
           } else if (resp.method == "endResult") {
             if (resp.value != null && resp.value.life_changes != null) {
               let lifeChanges = resp.value.life_changes;
@@ -70,14 +78,47 @@ const ws = {
             } else {
               store.commit("endCurrentUnit");
             }
+            if (this.getters.mapAs.lordBuy) {
+              store.commit("changeLordBuy", false);
+            }
+            store.commit("changePathPoints", []);
           } else if (resp.method == "unitAction") {
             store.commit("setMapStatus", "showAction");
-            store.commit("changeUnitAction", resp.value.cAction); 
-            store.commit("changeUnitMoveActions", resp.value.mAction);   
-            setTimeout(()=>{
+            store.commit("changeUnitAction", resp.value.cAction);
+            store.commit("changeUnitMoveActions", resp.value.mAction);
+            setTimeout(() => {
               store.commit("moveAction");
-            }, 50);       
-          }else {
+            }, 50);
+          } else if (resp.method == "repairResult") {
+            console.log("修理结果");
+            if (resp.value.second_move != null) {
+            }
+            store.commit("updateRegion", resp.value);
+            store.commit("doEndAction");
+            if (this.getters.mapAs.lordBuy) {
+              store.commit("changeLordBuy", false);
+            }
+          } else if (resp.method == "buyUnit") {
+            console.log(resp.value);
+            store.commit("doBuyUnit", resp.value.buy_unit_dto);
+            store.commit("changeMoveArea", resp.value.move_area);
+            store.commit("setMapStatus", "showMoveArea");
+            store.commit("changeBuyUnitDialog", false);
+            if (store.getters.mapAs.lordWillBuy) {
+              // 如果是从购买领主
+              store.commit("changeLordWillBuy", false);
+              store.commit("changeLordBuy", true);
+            }
+          } else if (resp.method == "newRound") {
+            console.log("新的回合");
+            Message.success({
+              message: ("新 的 回 合  收 入  + " + resp.value.add_money)
+            });
+            // 初始化所有辅助对象
+            store.commit("newRound", resp.value.record);
+          } else if (resp.method == "error") {
+            console.log("错误");
+          } else {
             console.error("没有handle");
           }
         });

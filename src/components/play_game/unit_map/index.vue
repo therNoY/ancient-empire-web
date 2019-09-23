@@ -72,7 +72,6 @@ export default {
   props: [
     "armyList",
     "currCamp",
-    "currColor",
     "singo",
     "mapSt",
     "tombs",
@@ -100,6 +99,13 @@ export default {
         (currentPoint.row - 1) * column + currentPoint.column - 1;
       const region = regions[regionIndex];
       let regionInfo = this.$store.getters.regionInfo[region.type];
+
+      if (region.color != null && region.color != "") {
+        this.$store.commit("setCurrentRegionColor", region.color);
+      } else {
+        this.$store.commit("setCurrentRegionColor", "");
+      }
+
       if (regionInfo == null) {
         this.$store.dispatch("getRegionInfo", region.type);
       } else {
@@ -109,10 +115,10 @@ export default {
       if (this.mapSt.mapStatus == "noAction") {
         // 判断是不是点击的当前回合的军队
         let color = this.armyList[armyIndex].color;
-        if (color == this.currColor) {
+        if (color == this.$store.getters.record.curr_color) {
           this.$store.commit("changeCurrentPoint", currentPoint);
+          
           // todo 判断是不是敌军 判断被点击的单位的地方是不是在攻击的区域内
-
           console.log("开始判断");
           this.$store.commit("changeCurrntUnitIndex", index);
           this.$store.commit("changeCurrentUnit", currentUnit);

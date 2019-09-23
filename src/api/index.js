@@ -41,7 +41,7 @@ export const GetUnitInfo =(args) => request('/unitInfo', args, "GET");
 
 export const GetRegionInfo =(args) => request('/regionInfo', args, "GET");
 
-
+export const GetUnitInfoList =(args) => request('/unitInfo/list', args, "GET");
 
 
 

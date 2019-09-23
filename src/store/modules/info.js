@@ -25,7 +25,6 @@ const info = {
     // 设置当前地形信息
     currentRegionInfo(store, currentRegionInfo) {
       store.currentRegionInfo = currentRegionInfo;
-      console.log(store.currentRegionInfo );
     },
   },
 

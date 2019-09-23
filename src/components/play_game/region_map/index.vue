@@ -1,7 +1,8 @@
+<!--地形显示-->
 <template>
-  <div :style="{width: mapSize(init_map.column), height: mapSize(init_map.row)}">
+  <div :style="{width: mapSize(record.init_map.column), height: mapSize(record.init_map.row)}">
     <img
-      v-for="(region,index) in init_map.regions"
+      v-for="(region,index) in record.init_map.regions"
       :src="regionImg(region.type, region.color)"
       @click="getRegionMes(index)"
     />
@@ -12,16 +13,16 @@
       @click="getCastleTitle(title.row, title.column)"
       :style="{top: position(title.row), left: position(title.column)}"
     />
+    {{record.init_map.regions}}
   </div>
 </template>
 
 <script>
 export default {
-  props: ["init_map", "castleTitles"],
+  props: ["record", "castleTitles", "mapSt"],
   data() {
     return {
-      mapSt: null
-    };
+    }
   },
   computed: {
     // 返回地形的位置
@@ -61,12 +62,12 @@ export default {
       }
       // 移动鼠标
       let currentPoint = {};
-      if ((index + 1) % this.init_map.row == 0) {
-        currentPoint.row = Math.floor((index + 1) / this.init_map.column);
-        currentPoint.column = this.init_map.column;
+      if ((index + 1) % this.record.init_map.row == 0) {
+        currentPoint.row = Math.floor((index + 1) / this.record.init_map.column);
+        currentPoint.column = this.record.init_map.column;
       } else {
-        currentPoint.row = Math.floor((index + 1) / this.init_map.column) + 1;
-        currentPoint.column = (index + 1) % this.init_map.column;
+        currentPoint.row = Math.floor((index + 1) / this.record.init_map.column) + 1;
+        currentPoint.column = (index + 1) % this.record.init_map.column;
       }
       this.changePoint(currentPoint);
     },
@@ -90,8 +91,8 @@ export default {
       }
 
       // 改变当前点的Region 信息
-      const regions = this.init_map.regions;
-      const column = this.init_map.column;
+      const regions = this.record.init_map.regions;
+      const column = this.record.init_map.column;
       const index = (currentPoint.row - 1) * column + currentPoint.column -1;
       const region = regions[index];
       let regionInfo = this.$store.getters.regionInfo[region.type];
@@ -103,9 +104,7 @@ export default {
       this.$store.commit("setMapStatus", "noAction");
     }
   },
-
   created() {
-    this.mapSt = this.$store.getters.mapSt;
   }
 };
 </script>
