@@ -503,117 +503,118 @@ const app = {
       state.mapSt.currentUnit = null;
       state.mapSt.moveLength = -1;
       state.mapSt.currentPoint = {row: 1, column: 1};
+      // 新的回合 判断是不是电脑 如果是电脑就主动发起robot 选择请求
     }
   },
   actions: {
     // 获取可移动区域
-    getMoveArea(state, indexInfo) {
+    getMoveArea(store, indexInfo) {
       let args = {};
       args.url = "/ws/getMoveArea"
       args.mes = indexInfo;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取移动路线 同时获取 单位能进行的行动
-    getMovePath(state, aimPostion) {
+    getMovePath(store, aimPostion) {
       let args = {};
       args.url = "/ws/getMovePath"
       args.mes = aimPostion;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取单位的可选行为
-    getActions(state, aimPostion) {
+    getActions(store, aimPostion) {
       let args = {};
       args.url = "/ws/getActions"
       args.mes = aimPostion;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取攻击范围 
-    getAttachArea(state) {
+    getAttachArea(store) {
       let args = {};
       args.url = "/ws/getAttachArea"
       let mes = {};
-      mes.index = state.getters.mapSt.currentUnitIndex;
-      mes.position = state.getters.mapSt.currentPoint;
+      mes.index = store.getters.mapSt.currentUnitIndex;
+      mes.position = store.getters.mapSt.currentPoint;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取攻击结果
-    getAttachResult(state) {
+    getAttachResult(store) {
       let args = {};
       args.url = "/ws/getAttachResult"
       let mes = {};
-      mes.attachUnit = state.getters.mapSt.currentUnit;
-      mes.beAttachUnit = state.getters.mapSt.beAttachUnit;
-      mes.path = state.getters.mapDt.pathPoints;
+      mes.attachUnit = store.getters.mapSt.currentUnit;
+      mes.beAttachUnit = store.getters.mapSt.beAttachUnit;
+      mes.path = store.getters.mapDt.pathPoints;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取结束移动
-    getEndResult(state) {
-      state.commit("changeSecendMove", false);
-      state.commit("setMapStatus", 'actionDone');
+    getEndResult(store) {
+      store.commit("changeSecendMove", false);
+      store.commit("setMapStatus", 'actionDone');
 
       let args = {};
       args.url = "/ws/getEndResult"
       let mes = {};
-      mes = state.getters.mapSt.currentUnit;
+      mes = store.getters.mapSt.currentUnit;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取召唤结果
-    getSummonResult(state) {
+    getSummonResult(store) {
       let args = {};
       args.url = "/ws/getSummonResult"
       let mes = {};
-      mes.index = state.getters.mapSt.currentUnitIndex;
-      mes.tomb = state.getters.mapSt.beSummonTomb;
+      mes.index = store.getters.mapSt.currentUnitIndex;
+      mes.tomb = store.getters.mapSt.beSummonTomb;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取修复结果
-    getRepairResult(state) {
+    getRepairResult(store) {
       let args = {};
       args.url = "/ws/getRepairResult"
       let mes = {};
-      mes.index = state.getters.mapSt.currentUnitIndex;
-      mes.region = state.getters.mapSt.currentPoint;
+      mes.index = store.getters.mapSt.currentUnitIndex;
+      mes.region = store.getters.mapSt.currentPoint;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取占领结果
-    getOccupiedResult(state) {
+    getOccupiedResult(store) {
       let args = {};
       args.url = "/ws/getOccupiedResult"
       let mes = {};
-      mes.index = state.getters.mapSt.currentUnitIndex;
-      mes.region = state.getters.mapSt.currentPoint;
+      mes.index = store.getters.mapSt.currentUnitIndex;
+      mes.region = store.getters.mapSt.currentPoint;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
     // 获取可购买单位信息
-    getCanByUnit(state) {
+    getCanByUnit(store) {
       let args = {};
       args.uuid = this.getters.record.uuid;
       GetUnitInfoList(args).then((resp) => {
         console.log("得到的结果");
-        state.commit("changeBuyUnitsInfo", resp.res_val);
-        state.commit("changeBuyUnitDialog", true);
+        store.commit("changeBuyUnitsInfo", resp.res_val);
+        store.commit("changeBuyUnitDialog", true);
       });
     },
     // 购买单位
-    byUnit(state, type) {
+    byUnit(store, type) {
       let args = {};
       args.url = "/ws/buyUnit"
       let mes = {};
       mes.type = type;
       mes.site = this.getters.mapSt.currentPoint;
       args.mes = mes;
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     },
-    getNewRound(state) {
+    getNewRound(store) {
       let args = {};
       args.url = "/ws/getNewRound"
-      state.dispatch("wsSendMes", args);
+      store.dispatch("wsSendMes", args);
     }
 
   }

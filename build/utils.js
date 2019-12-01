@@ -47,6 +47,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
+        // 此处修改 解决element图片显示方框的问题
+        //  publicPath:'../../', 
         fallback: 'vue-style-loader'
       })
     } else {

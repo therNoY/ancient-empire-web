@@ -5,7 +5,7 @@ import { baseUrl } from './env'
 // 创建axios实例
 const service = axios.create({
   baseURL: baseUrl, // api的base_url
-  timeout: 15000 // 请求超时时间
+  timeout: 50000 // 请求超时时间
 })
 
 // request拦截器

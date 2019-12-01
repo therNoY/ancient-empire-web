@@ -96,7 +96,7 @@ export default {
       currentPoint.column = this.mapSt.currentUnit.column;
       let moveInfo = {};
       moveInfo.aimPoint = aimPoint;
-      moveInfo.positions = this.mapDt.moveAreas;
+      moveInfo.moveArea = this.mapDt.moveAreas;
       moveInfo.currentPoint = currentPoint;
       moveInfo.currentUnitIndex = this.mapSt.currentUnitIndex;
       this.$store.commit("changeCurrentPoint", aimPoint);

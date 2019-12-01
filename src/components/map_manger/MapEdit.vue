@@ -427,8 +427,8 @@ export default {
       let args = {};
       args.index = index;
       args.type = type;
-      args.row = this.userSetting.map_init_row;
-      args.column = this.userSetting.map_init_column;
+      args.row = this.new_init_row;
+      args.column = this.new_init_column;
       args.region_list = this.maps;
       // 获取优化结果
       const resp = await SimpleDrawing(args);

@@ -41,8 +41,10 @@ export const GetUnitInfo =(args) => request('/unitInfo', args, "GET");
 
 export const GetRegionInfo =(args) => request('/regionInfo', args, "GET");
 
+// 获取所有的地图
 export const GetUnitInfoList =(args) => request('/unitInfo/list', args, "GET");
 
-
+// 保存游戏
+export const SaveUserRecord =(args) => request('/unitInfo/list', args, "GET");
 
 

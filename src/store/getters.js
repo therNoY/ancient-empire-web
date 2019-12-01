@@ -14,5 +14,6 @@ const getters = {
   currentUnitInfo: state => state.info.currentUnitInfo,
   regionInfo: state => state.info.regionInfo,
   currentRegion: state => state.info.currentRegionInfo,
+  aiProperty: state => state.ai.aiProperty,
 }
 export default getters

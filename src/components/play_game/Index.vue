@@ -98,7 +98,9 @@
             </div>
             <div class="bar_button">
               <el-button size="mini" type="primary" @click="testSendWS">test</el-button>
+              <el-button size="mini" type="primary">主菜单</el-button>
               <el-button size="mini" type="primary">小地图</el-button>
+              <el-button size="mini" type="primary" @click="saveUserRecord">保存游戏</el-button>
               <el-button size="mini" type="primary" @click="getNewRound">结束回合</el-button>
             </div>
           </div>
@@ -127,7 +129,7 @@ import levelupanimation from "./assits_map/LevelUpAnimation";
 import summonanimation from "./assits_map/SummonAnimation";
 import regionmes from "./map_mes/RegionMes";
 import unitmes from "./map_mes/UnitMes";
-import { GetRecordById } from "@/api";
+import { GetRecordById, SaveUserRecord } from "@/api";
 export default {
   components: {
     // region,
@@ -357,10 +359,13 @@ export default {
       }
       this.$store.commit("setMapStatus", "noAction");
     },
-
     // 结束回合开始新的回合
     getNewRound() {
       this.$store.dispatch("getNewRound");
+    },
+    // 保存用户地图
+    saveUserRecord() {
+      //
     }
   },
   created() {
@@ -428,7 +433,7 @@ export default {
   float: left;
 }
 .bar_button {
-  float: right;
+  float: left;
 }
 .bar_button .el-button {
   margin-top: 3px;
