@@ -3,9 +3,9 @@
     <!--展示单位可以进行行动 攻击 召唤 购买 修复-->
     <div class="actionLogo" v-if="mapStatus == 'showAction'" v-for="action in unitActions">
       <img
-        :src="actionImg(action.name)"
+        :src="$appHelper.getActionImg(action.name)"
         @click="doAction(action.name)"
-        :style="{top: position(1, action.row), left: position(1, action.column)}"
+        :style="{top: $appHelper.getUnitPosition(action.row), left: $appHelper.getUnitPosition(action.column)}"
       />
     </div>
   </div>
@@ -14,19 +14,6 @@
 <script>
 export default {
   props: ["mapStatus", "unitActions"],
-  computed: {
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
-      };
-    },
-    // 根据单位的action名字 来计算出图片
-    actionImg() {
-      return function(name) {
-        return require("../../../assets/images/assist/action_" + name + ".png");
-      };
-    }
-  },
   methods: {
     // 展示单位将要进行的行动
     doAction(name) {

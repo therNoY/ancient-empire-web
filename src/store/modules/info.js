@@ -1,5 +1,5 @@
+// 作为单位信息的缓存存在
 import { GetUnitInfo, GetRegionInfo } from '@/api'
-import { log } from 'util';
 
 const info = {
   state: {

@@ -42,8 +42,7 @@ export default {
     },
     logout() {
       if (this.user) {
-        this.$store.commit("LOGOUT");
-        Logout();
+        this.$store.dispatch("logout");
         this.$emit("logout");
       }
     },

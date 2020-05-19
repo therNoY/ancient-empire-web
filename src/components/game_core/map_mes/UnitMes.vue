@@ -28,7 +28,7 @@
       <div class="unit_p">
         <div class="unit_border">
           <img class="region" v-for="item in 9" src="../../../assets/images/Region/grove.png" />
-          <img class="unit" :src="unitImg($store.getters.currentUnitInfo.unit.type)" />
+          <img class="unit" :src="$appHelper.getUnitImg($store.getters.currentUnitInfo.unit.type, $store.getters.mapSt.currentColor)" />
           <div>
             <!--等级-->
             <div v-if="mapSt.currentUnit.level > 0" class="unit_level">
@@ -132,18 +132,6 @@ export default {
           return life - 100 + "%";
         }
         return life + "%";
-      };
-    },
-    // 通过 单位所属的颜色 找到相应的图片
-    unitImg() {
-      return function(type, num = "") {
-        const color = this.$store.getters.mapSt.currentColor;
-        return require("../../../assets/images/unit/" +
-          color +
-          "/" +
-          type +
-          num +
-          ".png");
       };
     },
     UnitLift() {

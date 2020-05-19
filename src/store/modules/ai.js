@@ -1,5 +1,7 @@
+// 和人机交互有关的需要整理
 
 const ai = {
+  
   state: {
     aiProperty: {
       aiMovePointIndex: 0,
@@ -15,10 +17,9 @@ const ai = {
 
   actions: {
     // 单位的移动
-    aiMove(store) {
+    aiMove(store, doEndFunction) {
       console.log("准备移动");
       console.log(store.getters.mapDt.pathPoints);
-
       store.commit("setUnitStatus", "moveIng");
       // 1.移动之前计算将要移动的移动距离, 点击就开始移动
       store.dispatch("aiMoveUnit");
@@ -30,12 +31,12 @@ const ai = {
           // 循环出下一段 然后计算出 需要定时的时间
           sumTime = sumTime + store.getters.mapDt.pathPoints[i].length * 250;
           console.log(sumTime);
-          setTimeout(() => { store.dispatch("aiMoveUnit") }, sumTime + "");
+          setTimeout(() => { store.dispatch("aiMoveUnit", doEndFunction) }, sumTime + "");
         }
       }
     },
     // 使单位移动一段距离的方法
-    aiMoveUnit(store) {
+    aiMoveUnit(store, doEndFunction) {
       console.log("realMove");
       // 先计算出移动距离
       store.dispatch("aiGetMoveLength");
@@ -47,7 +48,7 @@ const ai = {
       // 判断如果是倒数第二段 就设置一个和倒数第一段相同的计时器 用来处理移动结束的逻辑
       if (store.getters.aiProperty.aiMovePointIndex + 1 == store.getters.mapDt.pathPoints.length) {
         let time = store.getters.mapDt.pathPoints[store.getters.mapDt.pathPoints.length - 2].length * 250;
-        setTimeout(() => { store.dispatch("aiMoveFinish") }, time + "");
+        setTimeout(() => { store.dispatch("aiMoveFinish", doEndFunction) }, time + "");
         // 获取此时单位可进行的移动 比如 attach等
       }
     },
@@ -57,7 +58,7 @@ const ai = {
       store.commit("changeMoveLength", point.length);
     },
     // 单位到达要移动的地方 判断单位能进行的action
-    aiMoveFinish(store) {
+    aiMoveFinish(store, doEndFunction) {
       store.commit("changeCurrentPoint", store.getters.mapDt.pathPoints[store.getters.mapDt.pathPoints.length - 1]);
       console.log("AI单位完成");
       // 单位移动完毕
@@ -68,6 +69,9 @@ const ai = {
         return;
       }
       store.commit("setUnitStatus", "moveDone");
+      if (typeof doEndFunction == "function") {
+        doEndFunction();
+      }
     },
     aiBuyUnit(store, aiBuyUnitInfo) {
       // 增加单位 改变人口和金币

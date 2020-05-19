@@ -4,12 +4,12 @@
     <div class="spark_attack" v-if="mapAs.attachSpark > 0 && mapAs.attachSpark < 7">
       <img
         :src="attachSparkImg(mapAs.attachSpark)"
-        :style="{top: position(1, mapAs.beAttachUnitBak.row), left: position(1, mapAs.beAttachUnitBak.column)}"
+        :style="{top: $appHelper.getPosition( mapAs.beAttachUnitBak.row), left: $appHelper.getPosition( mapAs.beAttachUnitBak.column)}"
       />
       <!--减少的生命值-->
       <div
         class="attach_num"
-        :style="{top: attachNumTop(mapAs.beAttachUnitBak.row), left: position(1, mapAs.beAttachUnitBak.column)}"
+        :style="{top: attachNumTop(mapAs.beAttachUnitBak.row), left: $appHelper.getPosition( mapAs.beAttachUnitBak.column)}"
       >
         <img v-for="attachNum in attachResult.attach_result.attach" :src="lifeCImg(attachNum)" />
       </div>
@@ -18,12 +18,12 @@
     <div class="spark_attack" v-if="mapAs.selfAttachSpark > 0 && mapAs.selfAttachSpark < 7">
       <img
         :src="attachSparkImg(mapAs.selfAttachSpark)"
-        :style="{top: position(1, mapAs.beAttachUnitBak.row), left: position(1, mapAs.beAttachUnitBak.column)}"
+        :style="{top: $appHelper.getPosition( mapAs.beAttachUnitBak.row), left: $appHelper.getPosition( mapAs.beAttachUnitBak.column)}"
       />
       <!--减少的生命值-->
       <div
         class="attach_num"
-        :style="{top: attachNumTop(mapAs.beAttachUnitBak.row), left: position(1, mapAs.beAttachUnitBak.column)}"
+        :style="{top: attachNumTop(mapAs.beAttachUnitBak.row), left: $appHelper.getPosition( mapAs.beAttachUnitBak.column)}"
       >
         <img
           v-for="attachNum in attachResult.counterattack_result.attach"
@@ -36,7 +36,7 @@
     <div v-if="mapStatus == 'lifeChange'" v-for="unit in lifeChangeUnit">
       <div
         class="attach_num animated bounce"
-        :style="{top: attachNumTop(unit.row), left: position(1, unit.column)}"
+        :style="{top: attachNumTop(unit.row), left: $appHelper.getPosition( unit.column)}"
       >
         <img v-for="num in unit.change" :src="lifeCImg(num)" />
       </div>
@@ -61,12 +61,6 @@ export default {
       return function(row) {
         let top = (row - 0.48) * 24 + "px";
         return top;
-      };
-    },
-    // 根据后端传过来的和row 和column 返回图片相对于父布局的 top和left
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
       };
     },
     // 获取生命数字的图片

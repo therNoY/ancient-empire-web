@@ -1,56 +1,38 @@
+// 存放和用户身份验证有关的
 import { removeToken } from '@/utils/auth'
 
 const user = {
   state: {
     admin_token: null,
-    token: '',
-    user: {},
+    token: '', // 普通token
+    user: {}, // 保存登录的用户
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
-      console.log("设置token");
+    setToken: (state, token) => {
+      console.log("设置token" + token);
       state.token = token
     },
-    SET_USER: (state, user) => {
+    setUser: (state, user) => {
       console.log("设置User");
       state.user = user
     },
-    SET_ADMIN_TOKEN:(state, token) => {
+    setAdminToken: (state, token) => {
       console.log("设置AdminToken");
       state.admin_token = token
-    },
-    LOGOUT: (state) => {
-      console.log("清除state");
-      state.user = {};
-      state.token = null
     },
   },
 
   actions: {
-
     // 登出
-    LogOut({ commit, state }) {
+    logout({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_USER', [])
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        commit('setToken', '');
+        commit('setUser', {});
+        removeToken();
+        resolve();
       })
     },
-
-    // 前端 登出
-    FedLogOut({ commit }) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
-        resolve()
-      })
-    }
   }
 }
 

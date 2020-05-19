@@ -4,7 +4,7 @@
     <div class="spark_summon" v-if="summonSpark > 0 && summonSpark < 7">
       <img
         :src="summonSparkImg(summonSpark)"
-        :style="{top: position(1, beSummonTomb.row), left: position(1, beSummonTomb.column)}"
+        :style="{top: $appHelper.getPosition(beSummonTomb.row), left: $appHelper.getPosition(beSummonTomb.column)}"
       />
     </div>
   </div>
@@ -20,12 +20,6 @@ export default {
         return require("../../../assets/images/assist/spark_white_" +
           summonSpark +
           ".png");
-      };
-    },
-    // 根据row 和column 返回图片相对于父布局的 top和left
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
       };
     },
   },

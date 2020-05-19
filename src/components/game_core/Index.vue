@@ -10,12 +10,12 @@
           <div
             class="map_div"
             v-if="record.init_map"
-            :style="{width: mapSize(record.init_map.column), height: mapSize(record.init_map.row)}"
+            :style="{width: $appHelper.getMapSize(record.init_map.column), height: $appHelper.getMapSize(record.init_map.row)}"
           >
             <div class="map">
               <!--地形-->
               <div
-                :style="{width: mapSize(record.init_map.column), height: mapSize(record.init_map.row)}"
+                :style="{width: $appHelper.getMapSize(record.init_map.column), height: $appHelper.getMapSize(record.init_map.row)}"
               >
                 <img
                   v-for="(region,index) in record.init_map.regions"
@@ -27,7 +27,7 @@
                   v-for="(title,index) in castleTitles"
                   src="../../assets/images/Region/castle_title.png"
                   @click="getCastleTitle(title.row, title.column)"
-                  :style="{top: position(title.row), left: position(title.column)}"
+                  :style="{top: $appHelper.getPosition(title.row), left: $appHelper.getPosition(title.column)}"
                 />
               </div>
               <!-- <region :record="record" :mapSt="mapSt" :castleTitles="castleTitles"></region> -->
@@ -65,7 +65,7 @@
           </div>
         </el-main>
         <el-footer class="bars" >
-          <div v-if="record.init_map" :style="{width: mapSize(record.init_map.column)}">
+          <div v-if="record.init_map" :style="{width: $appHelper.getMapSize(record.init_map.column)}">
             <!--当前回合信息-->
             <div class="bar_mes" v-for="currentArmy in currenyArmyInfo()">
               <el-tooltip content="金币" placement="top" effect="light">
@@ -175,16 +175,6 @@ export default {
         } else {
           return require("@/assets/images/Region/" + type + ".png");
         }
-      };
-    },
-    position() {
-      return function(num) {
-        return (num - 1) * 24 + "px";
-      };
-    },
-    mapSize() {
-      return function(num) {
-        return num * 24 + "px";
       };
     },
     currenyArmyInfo() {

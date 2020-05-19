@@ -36,7 +36,10 @@
           />
           <img class="region" v-else src="../../../assets/images/Region/castle_title.png" />
           <img class="region" v-for="item in 2" src="../../../assets/images/Region/flat.png" />
-          <img class="region" :src="regionImg($store.getters.currentRegion.type)" />
+          <img
+            class="region"
+            :src=" $appHelper.getRegionImg($store.getters.currentRegion.type, mapSt.currentRegionColor)"
+          />
           <img class="region" v-for="item in 4" src="../../../assets/images/Region/flat.png" />
         </div>
       </div>
@@ -94,23 +97,6 @@ export default {
           return "#96d9f4";
         }
       };
-    },
-    // 返回地形的位置
-    regionImg() {
-      return function(type) {
-        if (type == "castle" || type == "town") {
-          if (this.mapSt.currentRegionColor != "") {
-            const color = this.mapSt.currentRegionColor;
-            console.log(color);
-            return require("../../../assets/images/Region/" +
-              color +
-              "/" +
-              type +
-              ".png");
-          }
-        }
-        return require("../../../assets/images/Region/" + type + ".png");
-      };
     }
   }
 };
@@ -140,7 +126,7 @@ export default {
   height: 72px;
   margin: auto;
   position: absolute;
-  background-color: #F4F4E6;
+  background-color: #f4f4e6;
 }
 .unit_border .unit {
   position: absolute;

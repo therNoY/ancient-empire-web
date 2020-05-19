@@ -15,10 +15,10 @@
         <img
           class="select_unit"
           v-if="unit.id == selectUnit.id"
-          :src="unitImg(unit.type)"
+          :src="$appHelper.getUnitImg(unit.type, color)"
           @click="getUnit(unit)"
         />
-        <img class="un_select_unit" v-else :src="unitImg(unit.type)" @click="getUnit(unit)" />
+        <img class="un_select_unit" v-else :src="$appHelper.getUnitImg(unit.type, color)" @click="getUnit(unit)" />
       </div>
       <div class="unit_info">{{selectUnit.name}}:{{selectUnit.description}}</div>
     </div>
@@ -29,19 +29,19 @@
           <div class="map_div">
             <div
               class="map"
-              :style="{width: mapSize(new_init_column), height: mapSize(new_init_row)}"
+              :style="{width: $appHelper.getMapSize(new_init_column), height: $appHelper.getMapSize(new_init_row)}"
             >
               <img
                 class="unit_img"
                 v-for="(unit,index) in unitList"
-                :src="unitImg(unit.type, unit.color)"
-                :style="{top: position(unit.row), left: position(unit.column)}"
+                :src="$appHelper.getUnitImg(unit.type, unit.color)"
+                :style="{top: $appHelper.getUnitPosition(unit.row), left: $appHelper.getUnitPosition(unit.column)}"
                 @click="getMapInfoByUnid(unit, index)"
               />
               <img
                 v-for="(map,index) in maps"
                 @click="getMapInfo(index)"
-                :src="regionImg(map.type, map.color)"
+                :src="$appHelper.getRegionImg(map.type, map.color)"
               />
             </div>
           </div>
@@ -121,10 +121,10 @@
         <img
           class="select_unit"
           v-if="region.id == selectRegion.id"
-          :src="regionImg(region.type)"
+          :src="$appHelper.getRegionImg(region.type, regionColor)"
           @click="getRegion(region)"
         />
-        <img class="un_select_unit" v-else :src="regionImg(region.type)" @click="getRegion(region)" />
+        <img class="un_select_unit" v-else :src="$appHelper.getRegionImg(region.type, regionColor)" @click="getRegion(region)" />
       </div>
     </div>
 
@@ -194,23 +194,23 @@
       v-if="selectMapIndex != -1"
       :title="myMaps[selectMapIndex].map_name"
       :visible.sync="previewVisible"
-      :width="mapSize(myMaps[selectMapIndex].column)"
+      :width="$appHelper.getMapSize(myMaps[selectMapIndex].column)"
     >
       <!--预览地图-->
       <div class="preview_map">
         <div
           style="position: absolute"
-          :style="{width: mapSize(myMaps[selectMapIndex].column), height: mapSize(myMaps[selectMapIndex].row)}"
+          :style="{width: $appHelper.getMapSize(myMaps[selectMapIndex].column), height: $appHelper.getMapSize(myMaps[selectMapIndex].row)}"
         >
           <img
             class="unit_img"
             v-for="(unit,index) in myMaps[selectMapIndex].units"
-            :src="unitImg(unit.type, unit.color)"
-            :style="{top: position(unit.row), left: position(unit.column)}"
+            :src="$appHelper.getUnitImg(unit.type, unit.color)"
+            :style="{top: $appHelper.getUnitPosition(unit.row), left: $appHelper.getUnitPosition(unit.column)}"
           />
           <img
             v-for="(region,index) in myMaps[selectMapIndex].regions"
-            :src="regionImg(region.type, region.color)"
+            :src="$appHelper.getRegionImg(region.type, region.color)"
           />
         </div>
       </div>
@@ -254,44 +254,6 @@ export default {
       selectMapIndex: -1,
       saveMapName: null // 保存地图名
     };
-  },
-  computed: {
-    // 返回单位的位置
-    position() {
-      return function(num) {
-        return (num - 1) * 24 + "px";
-      };
-    },
-    // 返回单位的图片位置
-    unitImg() {
-      return function(type, color = this.color) {
-        return require("@/assets/images/unit/" + color + "/" + type + ".png");
-      };
-    },
-    // 返回地形的位置
-    regionImg() {
-      return function(type, color = this.regionColor) {
-        if (color == "") {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
-
-        if (type == "castle" || type == "town") {
-          return require("@/assets/images/Region/" +
-            color +
-            "/" +
-            type +
-            ".png");
-        } else {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
-      };
-    },
-    // 返回地图的size
-    mapSize() {
-      return function(num) {
-        return num * 24 + "px";
-      };
-    }
   },
   methods: {
     goHome() {

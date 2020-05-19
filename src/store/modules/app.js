@@ -1,6 +1,6 @@
+// 都会用到的一些 common
+
 import { GetUnitInfoList } from '../../api'
-import { log } from "util";
-import { from } from "_array-flatten@2.1.2@array-flatten";
 
 const mapStatus = ["noAction", "showMoveArea", "move", "showAction",
   "willAttach", "attachIng", "levelUp", "attachDone", "actionDone", "secendMove", "lifeChange",

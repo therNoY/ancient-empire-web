@@ -1,3 +1,4 @@
+// 路由拦截
 import router from './router'
 import store from './store'
 
@@ -5,7 +6,7 @@ import { Login } from './api'
 import { setToken, getCookieToken, getUser, } from '@/utils/auth' // 验权
 
 var isFrist = true;
-// 路由的拦截
+// 路由的拦截 根据路径对两个token 进行封装
 router.beforeEach((to, from, next) => {
 
   console.log("cookie token");
@@ -21,8 +22,10 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.admin_token == null) {
         console.log("没有管理员token");
-        next({ path: '/admin/login' })
+        // 没有管理员token 访问管理员登录界面
+        next({ path: '/admin/login' });
       }
+      // hava token go next
       next();
     }
   } else {
@@ -35,7 +38,7 @@ router.beforeEach((to, from, next) => {
         // 有用户信息
         console.log("cookie 中有用户信息");
         // 向store 中保存Cookie
-        store.commit("SET_USER", user);
+        store.commit("setUser", user);
         getToken(user);
       }
     }
@@ -44,13 +47,17 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-async function getToken(user) {
-  const resp = await Login(user);
-  // 如果成功设置
-  console.log(resp);
-  if (resp.res_code == "0") {
-    console.log("成功获取token");
-    // 向Cookie 中设置Cookie
-    setToken(resp.res_val.token);
-  }
+function getToken(user) {
+  Login(user).then(resp => {
+    // 如果成功设置
+    console.log(resp);
+    if (resp.res_code == "0") {
+      console.log("成功获取token 刷新token");
+      // 向Cookie 中设置Cookie
+      setToken(resp.res_val.token);
+    }else{
+      console.warn("TODO ... 错误的用户信息 需要重新登录");
+    }
+  })
+
 }

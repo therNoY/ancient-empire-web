@@ -8,7 +8,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 import axios from 'axios'
-import animated from 'animate.css' 
+import animated from 'animate.css'
+import appHelper from '../src/utils/appHelper'
 
 
 
@@ -16,8 +17,12 @@ import './permission' // 引入权限控制器
 
 Vue.use(ElementUI)
 Vue.use(animated)
-Vue.prototype.$http=axios
+Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
+Vue.prototype.$appHelper = appHelper;
+
+
 
 /* eslint-disable no-new */
 new Vue({

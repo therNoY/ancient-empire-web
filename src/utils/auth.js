@@ -1,8 +1,11 @@
+// 管理身份验证的js
 import Cookies from 'js-cookie'
 import store from '../store'
 
+// 为了保存本地记录
 const userNameKey = 'AEUserName' // cookie中保存name的Key
 const userPwdKey = 'AEPwd' // cookie 中保存pwd的key
+
 const TokenKey = 'AEToken' // cookie 中保存token的key
 
 export function getCookieToken() {
@@ -15,7 +18,7 @@ export function getCookieToken() {
  */
 export function setToken(token) {
   console.log("更新缓存的token"+ token);
-  store.commit("SET_TOKEN", token);
+  store.commit("setToken", token);
   return Cookies.set(TokenKey, token);
 }
 /**
@@ -37,19 +40,20 @@ export function getUser() {
 export function setUser(user) {
   Cookies.set(userNameKey, user.user_name);
   Cookies.set(userPwdKey, user.password);
-  store.commit("SET_USER", user);
+  store.commit("setUser", user);
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  console.log("清除Cookie");
+  Cookies.remove(userNameKey);
+  Cookies.remove(userPwdKey);
+  Cookies.remove(TokenKey)
 }
 /**
  * 
  * @param {更新token同时更新 store} token 
 */
 export function Logout() {
-  console.log("清除Cookie");
-  Cookies.remove(userNameKey);
-  Cookies.remove(userPwdKey);
+  
   Cookies.remove(TokenKey);
 }

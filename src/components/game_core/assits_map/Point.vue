@@ -4,12 +4,12 @@
     <div class="cursor_normal" v-if="mapSt.mapStatus != 'willAttach'">
       <img
         src="../../../assets/images/assist/cursor_00.png"
-        :style="{top: positionRow(mapSt.currentPoint), left: positionColumn(mapSt.currentPoint)}"
+        :style="{top: $appHelper.getPosition(mapSt.currentPoint.row), left: $appHelper.getPosition(mapSt.currentPoint.column)}"
         v-if="singo"
       />
       <img
         src="../../../assets/images/assist/cursor_01.png"
-        :style="{top: positionRow(mapSt.currentPoint), left: positionColumn(mapSt.currentPoint)}"
+        :style="{top: $appHelper.getPosition(mapSt.currentPoint.row), left: $appHelper.getPosition(mapSt.currentPoint.column)}"
         v-else
       />
     </div>
@@ -22,7 +22,7 @@
     >
       <img
         src="../../../assets/images/assist/cursor_target.png"
-        :style="{top: position(1, mapSt.currentPoint.row), left: position(1, mapSt.currentPoint.column)}"
+        :style="{top: $appHelper.getPosition(mapSt.currentPoint.row), left: $appHelper.getPosition(mapSt.currentPoint.column)}"
       />
     </div>
   </div>
@@ -35,23 +35,6 @@ export default {
     return {
       movePointIndex: 0 // 单位移动的辅助值 用于表示当前移动到第几个点了
     };
-  },
-  computed: {
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
-      };
-    },
-    positionRow() {
-      return function(currentPoint) {
-        return (currentPoint.row - 1) * 24 + "px";
-      };
-    },
-    positionColumn() {
-      return function(currentPoint) {
-        return (currentPoint.column - 1) * 24 + "px";
-      };
-    }
   },
   methods: {
     // 单位的移动

@@ -86,7 +86,7 @@ export default {
       const resp = await AdminLogin(this.loginForm);
       if (resp.res_code == 0) {
         this.loading = false;
-        this.$store.commit("SET_ADMIN_TOKEN", resp.res_val);
+        this.$store.commit("setAdminToken", resp.res_val);
         this.$router.push("/admin/index");
       }else {
         this.loading = false;

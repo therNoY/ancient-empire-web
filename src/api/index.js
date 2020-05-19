@@ -3,6 +3,7 @@ import {request} from './request'
 export const GetTest = (url) => request(url, "", "GET");
 export const PostTest = (url, args) => request(url, args, "POST");
 
+// 用户登录
 export const Login = (args) => request('/user/login', args, "POST");
 export const Register = (args) => request('/user/register', args, "POST");
 

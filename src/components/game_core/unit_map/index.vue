@@ -10,18 +10,18 @@
           <img
             v-if="unit.done"
             :src="isDoneImg(unit.type)"
-            :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
+            :style="{top: $appHelper.getPosition(unit.row), left: $appHelper.getPosition(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
           />
           <div v-else @click="makeAction(army.camp, unit)">
             <img
               v-if="singo"
-              :src="unitImg(army.color, unit.type)"
-              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
+              :src="$appHelper.getUnitImg(unit.type, army.color)"
+              :style="{top: $appHelper.getPosition(unit.row), left: $appHelper.getPosition(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />
             <img
               v-else
-              :src="unitImg(army.color, unit.type, '2')"
-              :style="{top: position(1, unit.row), left: position(1, unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
+              :src="$appHelper.getUnitImg(unit.type, army.color, '2')"
+              :style="{top: $appHelper.getPosition(unit.row), left: $appHelper.getPosition(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />
           </div>
         </div>
@@ -61,7 +61,7 @@
         v-for="tomb in tombs"
         src="../../../assets/images/unit/tomb.png"
         @click="operationTomb(tomb)"
-        :style="{top: position(1, tomb.row), left: position(1, tomb.column)}"
+        :style="{top: $appHelper.getPosition(tomb.row), left: $appHelper.getPosition(tomb.column)}"
       />
     </div>
   </div>
@@ -206,17 +206,6 @@ export default {
     }
   },
   computed: {
-    // 通过 单位所属的颜色 找到相应的图片
-    unitImg() {
-      return function(color, type, num = "") {
-        return require("../../../assets/images/unit/" +
-          color +
-          "/" +
-          type +
-          num +
-          ".png");
-      };
-    },
     isDoneImg() {
       return function(type) {
         if (type == "lord") {
@@ -228,11 +217,6 @@ export default {
             ".png");
         }
         return require("../../../assets/images/unit/done/" + type + ".png");
-      };
-    },
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
       };
     },
     //血量位置的计算

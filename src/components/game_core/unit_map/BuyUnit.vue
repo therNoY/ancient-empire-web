@@ -65,7 +65,7 @@
             v-for="(unitInfo,index) in buyUnitsInfo"
             @click="changeBuyUnit(index)"
           >
-            <img class="unit_img" :src="unitImg(unitInfo.unit.type)" />
+            <img class="unit_img" :src="$appHelper.getUnitImg(unitInfo.unit.type, $store.getters.record.curr_color)" />
             <img src="../../../assets/images/assist/show_unit.png" v-if="index != selectIndex" />
             <img src="../../../assets/images/assist/select_unit.png" v-else />
           </div>
@@ -87,19 +87,6 @@ export default {
     return {
       selectIndex: 0
     };
-  },
-  computed: {
-    // 通过 单位所属的颜色 找到相应的图片
-    unitImg() {
-      return function(type) {
-        const color = this.$store.getters.record.curr_color;
-        return require("../../../assets/images/unit/" +
-          color +
-          "/" +
-          type +
-          ".png");
-      };
-    }
   },
   methods: {
     // 关闭购买军队框

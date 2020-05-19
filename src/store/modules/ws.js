@@ -62,7 +62,12 @@ const ws = {
             }else if(resp.method == 'ai_occupied') {
               // 单位移动
               store.commit("changePathPoints", resp.value.path_positions);
-              store.dispatch("aiMove");
+              store.dispatch("aiMove", ()=>{
+                if (resp.value.second_move != null) {
+                  console.warn("处理二次移动")
+                }
+                store.commit("updateRegion", resp.value);
+              });
             }
           } else {
             // 玩家操作
@@ -84,8 +89,10 @@ const ws = {
                 this.commit("moveAction");
               }, 50);
             } else if (resp.method == "attachArea") {
+              // 获取攻击区域
               store.commit("changeAttachArea", resp.value);
             } else if (resp.method == "attachResult") {
+              // 获取攻击结果
               console.log(resp.value);
               if (resp.value.second_move != null) {
                 store.commit("changeSecendMove", resp.value.second_move);
@@ -98,6 +105,7 @@ const ws = {
                 store.commit("changeLordBuy", false);
               }
             } else if (resp.method == "summonResult") {
+              // 获取召唤结果
               if (resp.value.second_move != null) {
                 store.commit("changePathPoints", []);
                 store.commit("changeSecendMove", resp.value.second_move.second_move);
@@ -108,6 +116,7 @@ const ws = {
                 store.commit("changeLordBuy", false);
               }
             } else if (resp.method == "endResult") {
+              // 获取end  结果
               if (resp.value != null && resp.value.life_changes != null) {
                 let lifeChanges = resp.value.life_changes;
                 store.commit("setEndResult", lifeChanges);
@@ -119,6 +128,7 @@ const ws = {
               }
               store.commit("changePathPoints", []);
             } else if (resp.method == "unitAction") {
+              // 获取单位行动
               store.commit("setMapStatus", "showAction");
               store.commit("changeUnitAction", resp.value.cAction);
               store.commit("changeUnitMoveActions", resp.value.mAction);
@@ -126,6 +136,7 @@ const ws = {
                 store.commit("moveAction");
               }, 50);
             } else if (resp.method == "repairResult") {
+              // 获取修理结果
               console.log("修理结果");
               if (resp.value.second_move != null) {
               }

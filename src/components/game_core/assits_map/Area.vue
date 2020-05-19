@@ -10,7 +10,7 @@
       <img
         src="../../../assets/images/assist/alpha.png"
         @click="showAimArea(moveArea.row, moveArea.column)"
-        :style="{top: position(1, moveArea.row), left: position(2, moveArea.column)}"
+        :style="{top: $appHelper.getPosition(moveArea.row), left: $appHelper.getPosition(moveArea.column, 2)}"
       />
     </div>
     <!--移动路线-->
@@ -32,7 +32,7 @@
     >
       <img
         src="../../../assets/images/assist/alpha.png"
-        :style="{top: position(1, attachArea.row), left: position(1, attachArea.column)}"
+        :style="{top: $appHelper.getPosition(attachArea.row), left: $appHelper.getPosition(attachArea.column)}"
       />
     </div>
   </div>
@@ -42,11 +42,6 @@
 export default {
   props: ["mapSt", "mapDt"],
   computed: {
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
-      };
-    },
     // 根据 得到最短距离需要拐弯的几个点 画出一条红线
     movePathTop() {
       return function(point, point2) {

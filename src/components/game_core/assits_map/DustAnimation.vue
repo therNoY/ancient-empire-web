@@ -7,13 +7,13 @@
       <img
         v-if="mapAs.beAttachDustNum > 0 && mapAs.beAttachDustNum < 5"
         :src="dustImg(mapAs.beAttachDustNum)"
-        :style="{top: position(1, mapSt.beAttachUnit.row), left: position(1, mapSt.beAttachUnit.column)}"
+        :style="{top: $appHelper.getPosition( mapSt.beAttachUnit.row), left: $appHelper.getPosition( mapSt.beAttachUnit.column)}"
       />
       <!--攻击者冒烟-->
       <img
         v-if="mapAs.attachDustNum > 0 && mapAs.attachDustNum < 5"
         :src="dustImg(mapAs.attachDustNum)"
-        :style="{top: position(1, mapSt.currentPoint.row), left: position(1, mapSt.currentPoint.column)}"
+        :style="{top: $appHelper.getPosition( mapSt.currentPoint.row), left: $appHelper.getPosition( mapSt.currentPoint.column)}"
       />
     </div>
   </div>
@@ -27,12 +27,6 @@ export default {
     dustImg() {
       return function(dustNum) {
         return require("../../../assets/images/assist/dust_" + dustNum + ".png");
-      };
-    },
-    // 根据后端传过来的和row 和column 返回图片相对于父布局的 top和left
-    position() {
-      return function(num, row) {
-        return (row - num) * 24 + "px";
       };
     },
   },

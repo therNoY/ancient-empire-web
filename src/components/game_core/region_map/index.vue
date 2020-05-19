@@ -1,9 +1,9 @@
 <!--地形显示-->
 <template>
-  <div :style="{width: mapSize(record.init_map.column), height: mapSize(record.init_map.row)}">
+  <div :style="{width: $appHelper.getMapSize(record.init_map.column), height: $appHelper.getMapSize(record.init_map.row)}">
     <img
       v-for="(region,index) in record.init_map.regions"
-      :src="regionImg(region.type, region.color)"
+      :src="$appHelper.getRegionImg(region.type, region.color)"
       @click="getRegionMes(index)"
     />
     <img
@@ -11,7 +11,7 @@
       v-for="(title,index) in castleTitles"
       src="../../../assets/images/Region/castle_title.png"
       @click="getCastleTitle(title.row, title.column)"
-      :style="{top: position(title.row), left: position(title.column)}"
+      :style="{top: $appHelper.getPosition(title.row), left: $appHelper.getPosition(title.column)}"
     />
     {{record.init_map.regions}}
   </div>
@@ -22,37 +22,6 @@ export default {
   props: ["record", "castleTitles", "mapSt"],
   data() {
     return {
-    }
-  },
-  computed: {
-    // 返回地形的位置
-    regionImg() {
-      return function(type, color = this.regionColor) {
-        if (color == "") {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
-
-        if (type == "castle" || type == "town") {
-          return require("@/assets/images/Region/" +
-            color +
-            "/" +
-            type +
-            ".png");
-        } else {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
-      };
-    },
-    position() {
-      return function(num) {
-        return (num - 1) * 24 + "px";
-      };
-    },
-    // mapsize
-    mapSize() {
-      return function(num) {
-        return num * 24 + "px";
-      };
     }
   },
   methods: {
