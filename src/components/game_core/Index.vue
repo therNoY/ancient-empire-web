@@ -318,9 +318,8 @@ export default {
           this.mapSt.mapStatus == "willAttach" ||
           this.mapSt.mapStatus == "willSummon"
         ) {
-          console.log("move back");
+          console.log("回退");
           this.$store.commit("setMapStatus", "showMoveArea");
-          this.$store.commit("changeMoveLength", 0);
           this.$store.commit("moveBack");
         }
         return;

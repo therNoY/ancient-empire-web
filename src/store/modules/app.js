@@ -21,6 +21,7 @@ const app = {
       currentUnit: null, // 记录当前单位
       currentColor: null, // 记录当前军队颜色
       beAttachUnit: {}, // 记录被攻击的单位
+      
       moveLength: -1, // 将要移动的距离
       lastPositon: {}, // 用于记录单位移动以前 的位置 便于回退
       secendMove: false,
@@ -155,6 +156,7 @@ const app = {
     },
     // 回退
     moveBack(state) {
+      state.mapSt.moveLength = 0;
       if (state.mapSt.lastPositon.row) {
         state.mapSt.currentUnit.row = state.mapSt.lastPositon.row;
         state.mapSt.currentUnit.column = state.mapSt.lastPositon.column;

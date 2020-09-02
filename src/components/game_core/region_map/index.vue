@@ -25,7 +25,9 @@ export default {
     }
   },
   methods: {
+    // 用户点击地图
     getRegionMes(index) {
+      // 如果单位此时的状态是二次移动直接放返回
       if (this.mapSt.mapStatus == "secendMove") {
         return;
       }
@@ -54,8 +56,7 @@ export default {
       }
       this.$store.commit("changeCurrentPoint", currentPoint);
       if (this.mapSt.mapStatus == "showAction" || this.mapSt.mapStatus == "willAttach" || this.mapSt.mapStatus == 'willSummon') {
-        console.log("move back");
-        this.$store.commit("changeMoveLength", 0);
+        console.log("回退");
         this.$store.commit("moveBack");
       }
 
