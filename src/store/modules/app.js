@@ -491,8 +491,8 @@ const app = {
     },
     // 修改地形
     updateRegion(state, result) {
-      state.record.init_map.regions[result.region_index] = result.square;
-      console.log(state.record.init_map.regions[result.region_index]);
+      state.record.game_map.regions[result.region_index] = result.square;
+      console.log(state.record.game_map.regions[result.region_index]);
     },
     // 新回合
     newRound(state, record) {

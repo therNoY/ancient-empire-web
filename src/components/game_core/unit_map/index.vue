@@ -75,7 +75,7 @@ export default {
     "singo",
     "mapSt",
     "tombs",
-    "init_map"
+    "game_map"
   ],
   data() {
     return {
@@ -93,8 +93,8 @@ export default {
       currentPoint.column = currentUnit.column;
 
       // 改变当前点的Region 信息 为单位脚下的地图
-      const regions = this.init_map.regions;
-      const column = this.init_map.column;
+      const regions = this.game_map.regions;
+      const column = this.game_map.column;
       const regionIndex =
         (currentPoint.row - 1) * column + currentPoint.column - 1;
       const region = regions[regionIndex];
@@ -167,8 +167,8 @@ export default {
       currentPoint.row = tomb.row;
       currentPoint.column = tomb.column;
       // 改变当前点的Region 信息 为单位脚下的地图
-      const regions = this.init_map.regions;
-      const mapColumn = this.init_map.column;
+      const regions = this.game_map.regions;
+      const mapColumn = this.game_map.column;
       const regionIndex = (tomb.row - 1) * mapColumn + tomb.column - 1;
       const region = regions[regionIndex];
       let regionInfo = this.$store.getters.regionInfo[region.type];

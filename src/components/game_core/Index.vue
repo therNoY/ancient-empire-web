@@ -9,16 +9,16 @@
         <el-main>
           <div
             class="map_div"
-            v-if="record.init_map"
-            :style="{width: $appHelper.getMapSize(record.init_map.column), height: $appHelper.getMapSize(record.init_map.row)}"
+            v-if="record.game_map"
+            :style="{width: $appHelper.getMapSize(record.game_map.column), height: $appHelper.getMapSize(record.game_map.row)}"
           >
             <div class="map">
               <!--地形-->
               <div
-                :style="{width: $appHelper.getMapSize(record.init_map.column), height: $appHelper.getMapSize(record.init_map.row)}"
+                :style="{width: $appHelper.getMapSize(record.game_map.column), height: $appHelper.getMapSize(record.game_map.row)}"
               >
                 <img
-                  v-for="(region,index) in record.init_map.regions"
+                  v-for="(region,index) in record.game_map.regions"
                   :src="mapRegionImg(region.type, region.color)"
                   @click="getRegionMes(index)"
                 />
@@ -44,7 +44,7 @@
                 :tombs="record.tomb"
                 :singo="singo"
                 :mapSt="mapSt"
-                :init_map="record.init_map"
+                :game_map="record.game_map"
               ></unit>
               <!--升级特效-->
               <levelupanimation :mapStatus="mapSt.mapStatus" :leveupImg="mapAs.leveupImg"></levelupanimation>
@@ -65,7 +65,7 @@
           </div>
         </el-main>
         <el-footer class="bars" >
-          <div v-if="record.init_map" :style="{width: $appHelper.getMapSize(record.init_map.column)}">
+          <div v-if="record.game_map" :style="{width: $appHelper.getMapSize(record.game_map.column)}">
             <!--当前回合信息-->
             <div class="bar_mes" v-for="currentArmy in currenyArmyInfo()">
               <el-tooltip content="金币" placement="top" effect="light">
@@ -207,7 +207,7 @@ export default {
       if (resp.res_code == 0) {
         this.record = resp.res_val;
         this.$store.commit("setRecord", this.record);
-        const map = this.record.init_map;
+        const map = this.record.game_map;
         // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
         for (let index = 0; index < map.regions.length; index++) {
           const region = map.regions[index];
@@ -263,13 +263,13 @@ export default {
 
       // 显示地形颜色信息 并判断是否需要展示 购买军队弹出框
       if (
-        this.record.init_map.regions[index].color != null &&
-        this.record.init_map.regions[index].color != ""
+        this.record.game_map.regions[index].color != null &&
+        this.record.game_map.regions[index].color != ""
       ) {
         // 这个地形是有颜色的 并且是城堡 就展示购买军队框
-        if (this.record.init_map.regions[index].type == "castle") {
+        if (this.record.game_map.regions[index].type == "castle") {
           if (
-            this.record.init_map.regions[index].color == this.record.curr_color
+            this.record.game_map.regions[index].color == this.record.curr_color
           ) {
             this.$store.dispatch("getCanByUnit");
           }
@@ -277,7 +277,7 @@ export default {
         // 设置当前地形的颜色 便于地形展示
         this.$store.commit(
           "setCurrentRegionColor",
-          this.record.init_map.regions[index].color
+          this.record.game_map.regions[index].color
         );
       } else {
         this.$store.commit("setCurrentRegionColor", "");
@@ -285,15 +285,15 @@ export default {
 
       // 计算出现在的site
       let currentPoint = {};
-      if ((index + 1) % this.record.init_map.row == 0) {
+      if ((index + 1) % this.record.game_map.row == 0) {
         currentPoint.row = Math.floor(
-          (index + 1) / this.record.init_map.column
+          (index + 1) / this.record.game_map.column
         );
-        currentPoint.column = this.record.init_map.column;
+        currentPoint.column = this.record.game_map.column;
       } else {
         currentPoint.row =
-          Math.floor((index + 1) / this.record.init_map.column) + 1;
-        currentPoint.column = (index + 1) % this.record.init_map.column;
+          Math.floor((index + 1) / this.record.game_map.column) + 1;
+        currentPoint.column = (index + 1) % this.record.game_map.column;
       }
       // 改变位置
       this.changePoint(currentPoint);
@@ -336,8 +336,8 @@ export default {
       }
 
       // 改变当前点的Region 信息
-      const regions = this.record.init_map.regions;
-      const column = this.record.init_map.column;
+      const regions = this.record.game_map.regions;
+      const column = this.record.game_map.column;
       const index = (currentPoint.row - 1) * column + currentPoint.column - 1;
       const region = regions[index];
       let regionInfo = this.$store.getters.regionInfo[region.type];
