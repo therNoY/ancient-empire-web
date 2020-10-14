@@ -1,6 +1,7 @@
 <!--地形显示-->
 <template>
   <div :style="{width: $appHelper.getMapSize(record.game_map.column), height: $appHelper.getMapSize(record.game_map.row)}">
+    <!-- 计算位置改成子组件的计算属性来搞-->
     <img
       v-for="(region,index) in record.game_map.regions"
       :src="$appHelper.getRegionImg(region.type, region.color)"

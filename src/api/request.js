@@ -1,6 +1,8 @@
 import axios from 'axios'
 import store from '../store'
 import { baseUrl } from './env'
+import { Message } from 'element-ui'
+import router from "../router"
 
 // 创建axios实例
 const service = axios.create({
@@ -10,22 +12,19 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-  
+
   if (config.url.indexOf("/root/") >= 0) {
-    console.log("request 拦截 加adminToken");
     if (store.getters.admin_token) {
       config.headers['Authorization'] = "Bearer " + store.getters.admin_token; // 让每个请求携带自定义token 请根据实际情况自行修改
     }
-  }else if (config.url.indexOf("/api/") >= 0) {
-    console.log("request 拦截 加apiToken");
+  } else if (config.url.indexOf("/api/") >= 0) {
     if (store.getters.token) {
-      console.log(store.getters.token);
       config.headers['Authorization'] = "Bearer " + store.getters.token; // 让每个请求携带自定义token 请根据实际情况自行修改
-    }else {
+    } else {
       console.log("没有token");
     }
   }
-  
+
   return config;
 }, error => {
   // Do something with request error
@@ -36,7 +35,12 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
   response => {
-    // console.log("response拦截");
+    if (response.data && (response.data.resCode == '40003' || response.data.resCode == '40001')) {
+      Message.error({
+        message: response.data.resMes
+      });
+      router.push("/")
+    }
     return response.data
   },
   error => {
@@ -52,10 +56,9 @@ service.interceptors.response.use(
  * data jsons数据
  * type 请求类型 目前有 POST 和 GET
  */
-export function request (url = '', data = {}, type = 'POST')  {
+export function request(url = '', data = {}, type = 'POST') {
   type = type.toUpperCase();
   if (type == 'GET') {
-    console.log("get 类型请求");
     let dataStr = ''; //数据拼接字符串
     Object.keys(data).forEach(key => {
       dataStr += key + '=' + data[key] + '&';
@@ -72,10 +75,10 @@ export function request (url = '', data = {}, type = 'POST')  {
         })
         .catch(function (error) {
           console.log(error);
+          reject(error);
         });
     })
   } else if (type == 'DELETE') {
-    console.log("delete 类型请求");
     let dataStr = ''; //数据拼接字符串
     Object.keys(data).forEach(key => {
       dataStr += key + '=' + data[key] + '&';
@@ -92,10 +95,10 @@ export function request (url = '', data = {}, type = 'POST')  {
         })
         .catch(function (error) {
           console.log(error);
+          reject(error);
         });
     })
   } else if (type == 'POST') {
-    console.log("post");
     return new Promise((resolve, reject) => {
       service.post(url, data, {})
         .then(function (response) {
@@ -104,10 +107,10 @@ export function request (url = '', data = {}, type = 'POST')  {
         })
         .catch(function (error) {
           console.log(error);
+          reject(error);
         });
     })
   } else if (type == 'PUT') {
-    console.log("put");
     return new Promise((resolve, reject) => {
       service.put(url, data, {})
         .then(function (response) {
@@ -116,6 +119,7 @@ export function request (url = '', data = {}, type = 'POST')  {
         })
         .catch(function (error) {
           console.log(error);
+          reject(error);
         });
     })
   }

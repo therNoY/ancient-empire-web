@@ -1,108 +1,103 @@
 <template>
   <!--单位信息-->
-  <div class="map_int" :style="{backgroundColor:bkColor()}">
-    <div v-if="$store.getters.currentUnitInfo.unit && $store.getters.mapSt.currentUnit != null">
+  <div class="unit-mes" :style="bkColor">
+    <div v-if="unitInfo.unitMes">
       <!--单位名称-->
       <div class="int_title">
-        <el-tag
-          size="small"
-          v-if="mapSt.currentColor == 'blue'"
-        >{{$store.getters.currentUnitInfo.unit.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="success"
-          v-if="mapSt.currentColor == 'green'"
-        >{{$store.getters.currentUnitInfo.unit.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="info"
-          v-if="mapSt.currentColor == 'black'"
-        >{{$store.getters.currentUnitInfo.unit.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="danger"
-          v-if="mapSt.currentColor == 'red'"
-        >{{$store.getters.currentUnitInfo.unit.name}}</el-tag>
+        <el-tag size="small" :type="tagType">{{ unitInfo.unitMes.name }}</el-tag>
       </div>
       <!--单位图片-->
       <div class="unit_p">
         <div class="unit_border">
-          <img class="region" v-for="item in 9" src="../../../assets/images/Region/grove.png" />
-          <img class="unit" :src="$appHelper.getUnitImg($store.getters.currentUnitInfo.unit.type, $store.getters.mapSt.currentColor)" />
+          <img
+            class="region"
+            v-for="item in 9"
+            src="../../../assets/images/Region/grove.png"
+          />
+          <img class="unit" :src="unitImg" />
           <div>
             <!--等级-->
-            <div v-if="mapSt.currentUnit.level > 0" class="unit_level">
-              <img :src="levelImg(unit.level)" />
+            <div v-if="unitInfo.level > 0" class="unit_level">
+              <img :src="levelImg" />
             </div>
             <!--状态-->
-            <div v-if="mapSt.currentUnit.status != null" class="unit_status">
-              <img :src="statusImg(mapSt.currentUnit.status)" />
+            <div v-if="unitInfo.status != null" class="unit_status">
+              <img :src="statusImg" />
             </div>
           </div>
         </div>
       </div>
-      <!--详细数据-->
-      <div class="unit_ci">
-        <!--生命值-->
-        <div>
-          <img src="../../../assets/images/assist/info_life.png" />
-          <span>
-            <i :style="{width:lifeRatio(), backgroundColor:lifeColor()}">{{UnitLift()}}</i>
-          </span>
-        </div>
-        <!--经验值-->
-        <div>
-          <img src="../../../assets/images/assist/info_experience.png" />
-          <span>
-            <i
-              style="background-color: rgb(229, 255, 0);"
-              :style="{width:experienceRatio()}"
-            >{{mapSt.currentUnit.experience}}</i>
-          </span>
-        </div>
-        <!--攻击-->
-        <div>
-          <img src="../../../assets/images/assist/info_attach.png" />
-          <span
-            class="noBac"
-            v-if="$store.getters.currentUnitInfo.unit.attack_type == '1'"
-            style="color: #0008ff"
-          >{{$store.getters.currentUnitInfo.level.min_attack}} - {{$store.getters.currentUnitInfo.level.max_attack}}</span>
-          <span
-            class="noBac"
-            v-else
-            style="color: #ff004f"
-          >{{$store.getters.currentUnitInfo.level.min_attack}} - {{$store.getters.currentUnitInfo.level.max_attack}}</span>
-        </div>
-        <div>
-          <img src="../../../assets/images/assist/info_move.png" />
-          <span class="noBac">{{$store.getters.currentUnitInfo.level.speed}}</span>
-        </div>
-        <div>
-          <img src="../../../assets/images/assist/info_physical_defense.png" />
-          <span class="noBac">{{$store.getters.currentUnitInfo.level.physical_defense}}</span>
-        </div>
-        <div>
-          <img src="../../../assets/images/assist/info_magic_defense.png" />
-          <span class="noBac">{{$store.getters.currentUnitInfo.level.magic_defense}}</span>
-        </div>
+    </div>
+
+    <!--详细数据-->
+    <div class="unit_ci">
+      <!--生命值-->
+      <div>
+        <img src="../../../assets/images/assist/info_life.png" />
+        <span>
+          <i :style="leftStyle">{{ unitLift }}</i>
+        </span>
       </div>
-
-      <div class="unit_description">描述：{{$store.getters.currentUnitInfo.unit.description}}</div>
-
-      <div class="unit_ability">
-        <span>能力列表</span>
-        <div
-          @click="unitInfoDialog = true"
-          v-for="abilitie in $store.getters.currentUnitInfo.abilities"
-        >{{abilitie.name}}</div>
+      <!--经验值-->
+      <div>
+        <img src="../../../assets/images/assist/info_experience.png" />
+        <span>
+          <i
+            style="background-color: rgb(229, 255, 0)"
+            :style="experienceRatio"
+            >{{ unitInfo.experience }}</i
+          >
+        </span>
+      </div>
+      <!--攻击-->
+      <div>
+        <img src="../../../assets/images/assist/info_attach.png" />
+        <span
+          class="noBac"
+          :style="
+            unitInfo.unitMes.attackType == '1'
+              ? { color: '#0008ff' }
+              : { color: '#ff004f' }
+          "
+        >
+          {{ unitInfo.levelMes.minAttack }} - {{ unitInfo.levelMes.maxAttack }}
+        </span>
+      </div>
+      <div>
+        <img src="../../../assets/images/assist/info_move.png" />
+        <span class="noBac">{{ unitInfo.levelMes.speed }}</span>
+      </div>
+      <div>
+        <img src="../../../assets/images/assist/info_physical_defense.png" />
+        <span class="noBac">{{ unitInfo.levelMes.physicalDefense }}</span>
+      </div>
+      <div>
+        <img src="../../../assets/images/assist/info_magic_defense.png" />
+        <span class="noBac">{{ unitInfo.levelMes.magicDefense }}</span>
       </div>
     </div>
+
+    <div class="unit_description">描述：{{ unitInfo.unitMes.description }}</div>
+
+    <div class="unit_ability">
+      <span>能力列表</span>
+      <div
+        @click="unitInfoDialog = true"
+        v-for="abilitie in unitInfo.abilities"
+      >
+        {{ abilitie.name }}
+      </div>
+    </div>
+
     <el-dialog title="提示" :visible.sync="unitInfoDialog" width="50%">
-      <div style="font-size:12px; float:left; width:100%;color:red">{{mapSt.currentRegionColor}}</div>
+      <div style="font-size: 12px; float: left; width: 100%; color: red">
+        {{ unitInfo }}
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="unitInfoDialog = false">取 消</el-button>
-        <el-button type="primary" @click="unitInfoDialog = false">确 定</el-button>
+        <el-button type="primary" @click="unitInfoDialog = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -110,198 +105,124 @@
 
 <script>
 export default {
-  props: ["mapSt"],
+  props: ["bg_color", "curr_color", "unitInfo"],
   data() {
     return {
-      unitInfoDialog: false
+      unitInfoDialog: false,
     };
   },
   computed: {
-    // 返回生命值的长度
-    lifeRatio() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
+    // 标签颜色
+    tagType() {
+      let color = this.bg_color;
+      if (!color) {
+        color = this.curr_color;
+      }
+      let type = "";
+      switch (color) {
+        case "blue":
+          type = "";
+          break;
+        case "red":
+          type = "danger";
+          break;
+        case "green":
+          type = "success";
+          break;
+        case "black":
+          type = "info";
+          break;
+      }
+      return type;
+    },
 
-        if (life > 100) {
-          return life - 100 + "%";
+    // 背景
+    bkColor() {
+      let color = this.bg_color;
+      if (!color) {
+        color = this.curr_color;
+      }
+      let bkColor = "#96d9f4";
+      if (color) {
+        if (color == "blue") {
+          bkColor = "#96d9f4";
+        } else if (color == "red") {
+          bkColor = "#f49e9c";
+        } else if (color == "green") {
+          bkColor = "#abed5a";
+        } else if (color == "black") {
+          bkColor = "#007696";
         }
-        return life + "%";
-      };
+      }
+      return { backgroundColor: bkColor };
     },
-    UnitLift() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
-        return life;
-      };
+
+    unitImg() {
+      return this.$appHelper.getUnitImg(this.unitInfo.typeId, this.bg_color);
     },
-    lifeColor() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
-        if (life <= 10) {
-          return "#ff0000";
-        } else if (life <= 40) {
-          return "#ff7b00";
-        } else if (life <= 80) {
-          return "#edff51";
-        } else if (life < 100) {
-          return "#fbff00";
-        } else if (life == 100) {
-          return "#1eff00";
-        } else if (life > 100) {
-          return "#7c7c7c";
-        }
-      };
-    },
-    // 计算等级的位置
-    levelTop() {
-      return function(row) {
-        let top = (row - 1.1) * 24 + "px";
-        return top;
-      };
-    },
-    levelLeft() {
-      return function(column) {
-        let left = (column - 0.35) * 24 + "px";
-        return left;
-      };
-    },
+
     statusImg() {
-      return function(liftImg) {
-        return require("../../../assets/images/assist/status_" +
-          liftImg +
-          ".png");
-      };
+      return require("../../../assets/images/assist/status_" +
+        this.unitInfo.status +
+        ".png");
     },
-    // 计算状态的位置
-    statusTop() {
-      return function(row) {
-        let top = (row - 1.05) * 24 + "px";
-        return top;
-      };
-    },
-    statusLeft() {
-      return function(column) {
-        let left = (column - 0.95) * 24 + "px";
-        return left;
-      };
-    },
+
     // 计算等级的图片
     levelImg() {
-      return function(dustNum) {
-        return require("../../../assets/images/assist/level_" +
-          dustNum +
-          ".png");
-      };
+      return require("../../../assets/images/assist/level_" +
+        unitInfo.level +
+        ".png");
     },
-    bkColor() {
-      return function() {
-        const color = this.$store.getters.record.curr_color;
-        if (color != null) {
-          if (color == "blue") {
-            return "#96d9f4";
-          } else if (color == "red") {
-            return "#f49e9c";
-          } else if (color == "green") {
-            return "#abed5a";
-          } else if (color == "black") {
-            return "#007696";
-          }
-        } else {
-          return "#96d9f4";
-        }
-      };
-    },
-    UnitLift() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
-        return life;
-      };
-    },
-    lifeColor() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
-        if (life <= 10) {
-          return "#ff0000";
-        } else if (life <= 40) {
-          return "#ff7b00";
-        } else if (life <= 80) {
-          return "#edff51";
-        } else if (life < 100) {
-          return "#fbff00";
-        } else if (life == 100) {
-          return "#1eff00";
-        } else if (life > 100) {
-          return "#7c7c7c";
-        }
-      };
-    },
-    // 返回生命值的长度
-    lifeRatio() {
-      return function() {
-        let life = 0;
-        const lifes = this.mapSt.currentUnit.life;
-        for (let index = 0; index < lifes.length; index++) {
-          const num = lifes[index];
-          life =
-            life + num * Math.round(Math.pow(10, lifes.length - index - 1));
-        }
 
-        if (life > 100) {
-          return life - 100 + "%";
-        }
-        return life + "%";
-      };
+    // 计算生命条的展示风格
+    leftStyle() {
+      let life = this.unitLift,
+        lifeColor = "#ff0000",
+        lifeRatio;
+      lifeRatio = life > 100 ? life - 100 + "%" : life + "%";
+
+      if (life <= 10) {
+        lifeColor = "#ff0000";
+      } else if (life <= 40) {
+        lifeColor = "#ff7b00";
+      } else if (life <= 80) {
+        lifeColor = "#edff51";
+      } else if (life < 100) {
+        lifeColor = "#fbff00";
+      } else if (life == 100) {
+        lifeColor = "#1eff00";
+      } else if (life > 100) {
+        lifeColor = "#7c7c7c";
+      }
+
+      return { width: lifeRatio, backgroundColor: lifeColor };
+    },
+
+    unitLift() {
+      let life = 0;
+      const lifes = this.unitInfo.life;
+      for (let index = 0; index < lifes.length; index++) {
+        const num = lifes[index];
+        life = life + num * Math.round(Math.pow(10, lifes.length - index - 1));
+      }
+      return life;
     },
     // 返回经验的长的
     experienceRatio() {
-      return function() {
-        if (this.mapSt.currentUnit.level == 0) {
-          return this.mapSt.currentUnit.experience + "%";
-        } else if (this.mapSt.currentUnit.level == 1) {
-          return this.mapSt.currentUnit.experience / 2 + "%";
-        } else if (this.mapSt.currentUnit.level == 3) {
-          return this.mapSt.currentUnit.experience / 3 + "%";
-        } else if (this.mapSt.currentUnit.level == 4) {
-          return this.mapSt.currentUnit.experience / 6 + "%";
-        }
+      return {
+        width:
+          this.unitInfo.experience / this.$appHelper.dp[this.unitInfo.level] +
+          "%",
       };
-    }
-  }
+    },
+  },
+  created() {
+  },
 };
 </script>
 
-<style lang="css" scoped>
-.map_int {
+<style lang="scss" scoped>
+.unit-mes {
   float: left;
   width: 16%;
   height: 100%;

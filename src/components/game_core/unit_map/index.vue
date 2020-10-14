@@ -14,12 +14,12 @@
           />
           <div v-else @click="makeAction(army.camp, unit)">
             <img
-              v-if="singo"
+              v-show="singo"
               :src="$appHelper.getUnitImg(unit.type, army.color)"
               :style="{top: $appHelper.getPosition(unit.row), left: $appHelper.getPosition(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />
             <img
-              v-else
+              v-show="!singo"
               :src="$appHelper.getUnitImg(unit.type, army.color, '2')"
               :style="{top: $appHelper.getPosition(unit.row), left: $appHelper.getPosition(unit.column), transitionDuration: (mapSt.moveLength*0.25) + 's'}"
             />

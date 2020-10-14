@@ -1,231 +1,101 @@
 <template>
-  <div class="body">
-    <!-- <div style="font-size:12px; float:left; width:16%;color:red">{{currentUnitInfo}}</div> -->
-    <!--单位信息-->
-    <unitmes :mapSt="mapSt" />
-    <!--地图-->
-    <div class="map_body">
-      <el-container style="width: 100%;height:100%; border: 1px solid #eee;padding-right: 20px;">
-        <el-main>
-          <div
-            class="map_div"
-            v-if="record.game_map"
-            :style="{width: $appHelper.getMapSize(record.game_map.column), height: $appHelper.getMapSize(record.game_map.row)}"
-          >
-            <div class="map">
-              <!--地形-->
-              <div
-                :style="{width: $appHelper.getMapSize(record.game_map.column), height: $appHelper.getMapSize(record.game_map.row)}"
-              >
-                <img
-                  v-for="(region,index) in record.game_map.regions"
-                  :src="mapRegionImg(region.type, region.color)"
-                  @click="getRegionMes(index)"
-                />
-                <img
-                  style="position: absolute"
-                  v-for="(title,index) in castleTitles"
-                  src="../../assets/images/Region/castle_title.png"
-                  @click="getCastleTitle(title.row, title.column)"
-                  :style="{top: $appHelper.getPosition(title.row), left: $appHelper.getPosition(title.column)}"
-                />
-              </div>
-              <!-- <region :record="record" :mapSt="mapSt" :castleTitles="castleTitles"></region> -->
-              <!--攻击移动区域图-->
-              <maparea :mapSt="mapSt" :mapDt="mapDt"></maparea>
-              <!--指针框-->
-              <point :singo="singo" :mapSt="mapSt" :mapDt="mapDt"></point>
-              <!--死亡特效-->
-              <dustanimation :mapAs="mapAs" :mapSt="mapSt"></dustanimation>
-              <!--单位-->
-              <unit
-                :armyList="record.army_list"
-                :currCamp="record.curr_camp"
-                :tombs="record.tomb"
-                :singo="singo"
-                :mapSt="mapSt"
-                :game_map="record.game_map"
-              ></unit>
-              <!--升级特效-->
-              <levelupanimation :mapStatus="mapSt.mapStatus" :leveupImg="mapAs.leveupImg"></levelupanimation>
-              <!--攻击指针-->
-              <attachpoint :singo="singo" :mapSt="mapSt" :mapDt="mapDt"></attachpoint>
-              <!--展示行动图标-->
-              <actions :mapStatus="mapSt.mapStatus" :unitActions="mapDt.unitActions"></actions>
-              <!--展示召唤特效-->
-              <summonanimation :summonSpark="mapAs.summonSpark" :beSummonTomb="mapSt.beSummonTomb" />
-              <!--展示攻击火花动画-->
-              <attachanimation
-                :mapStatus="mapSt.mapStatus"
-                :mapAs="mapAs"
-                :attachResult="mapDt.attachResult"
-                :lifeChangeUnit="mapDt.lifeChangeUnit"
-              ></attachanimation>
-            </div>
-          </div>
-        </el-main>
-        <el-footer class="bars" >
-          <div v-if="record.game_map" :style="{width: $appHelper.getMapSize(record.game_map.column)}">
-            <!--当前回合信息-->
-            <div class="bar_mes" v-for="currentArmy in currenyArmyInfo()">
-              <el-tooltip content="金币" placement="top" effect="light">
-                <div>
-                  <img src="../../assets/images/assist/bar_money.png" />
-                  <span>{{currentArmy.money}}</span>
-                </div>
-              </el-tooltip>
-
-              <el-tooltip content="人口" placement="top" effect="light">
-                <div>
-                  <img src="../../assets/images/assist/bar_pop.png" />
-                  <span>{{currentArmy.pop}} / {{currentArmy.max_pop}}</span>
-                </div>
-              </el-tooltip>
-
-              <el-tooltip content="回合数" placement="top" effect="light">
-                <div>
-                  <img src="../../assets/images/assist/bar_round.png" />
-                  <span>{{currentArmy.round}}</span>
-                </div>
-              </el-tooltip>
-
-              <el-tooltip content="阵营" placement="top" effect="light">
-                <div>
-                  <img src="../../assets/images/assist/bar_camp.png" />
-                  <span>{{currentArmy.camp}}</span>
-                </div>
-              </el-tooltip>
-            </div>
-            <div class="bar_button">
-              <el-button size="mini" type="primary" @click="testSendWS">test</el-button>
-              <el-button size="mini" type="primary">主菜单</el-button>
-              <el-button size="mini" type="primary">小地图</el-button>
-              <el-button size="mini" type="primary" @click="saveUserRecord">保存游戏</el-button>
-              <el-button size="mini" type="primary" @click="getNewRound">结束回合</el-button>
-            </div>
-          </div>
-        </el-footer>
-      </el-container>
-    </div>
-    <!--地形信息-->
-    <regionmes :mapSt="mapSt" />
-
-    <!--购买单位的弹出框-->
-    <byunit v-if="mapSt.buyUnitDialog" :buyUnitDialog="mapSt.buyUnitDialog" :buyUnitsInfo="mapDt.buyUnitsInfo" />
+  <div id="gameCore">
+    <unit-mes
+      :bg_color="game.bg_color"
+      :curr_color="game.curr_color"
+      :unitInfo="game.curr_unit"
+      :region="game.curr_region"
+    />
+    <el-container>
+      <el-main>
+        <div class="base_map" :style="mapStyle">
+          <region-view-list
+            ref="regionViewList"
+            :regions="game.game_map.regions"
+            :row="game.game_map.row"
+            :column="game.game_map.column"
+            :castleTitles="game.castle_titles"
+          />
+          <move-area :point="game.curr_point"/>
+          <attach-view/>
+          <army-view :armys="game.army_list" :singo="singo" />
+          <point-view :point="game.curr_point" :singo="singo"/>
+          <action-view/>
+          <left-change/>
+          <animate-view/>
+        </div>
+      </el-main>
+      <el-footer class="bars">%%%%%%%%%%%%%%%%%%%%%%%%%%%%</el-footer>
+    </el-container>
+    <region-mes
+      :bg_color="game.bg_color"
+      :curr_color="game.curr_color"
+      :region="game.curr_region"
+    />
   </div>
 </template>
 
 <script>
 // import region from "./region_map";
-import unit from "./unit_map";
-import byunit from "./unit_map/BuyUnit";
-import point from "./assits_map/Point";
-import attachpoint from "./assits_map/AttachPoint";
-import maparea from "./assits_map/Area";
-import actions from "./assits_map/Action";
-import attachanimation from "./assits_map/AttachAnimation";
-import dustanimation from "./assits_map/DustAnimation";
-import levelupanimation from "./assits_map/LevelUpAnimation";
-import summonanimation from "./assits_map/SummonAnimation";
-import regionmes from "./map_mes/RegionMes";
-import unitmes from "./map_mes/UnitMes";
+
 import { GetRecordById, SaveUserRecord } from "@/api";
+import RegionViewList from "../map_base/RegionViewList";
+import ArmyView from "../map_base/ArmyView.vue";
+import UnitMes from "./map_mes/UnitMes.vue";
+import RegionMes from "./map_mes/RegionMes.vue";
+import PointView from "../map_base/PointView.vue";
+import MoveArea from "../map_base/MoveArea.vue"
+import ActionView from "../map_base/ActionView.vue"
+import AttachView from "../map_base/AttachArea.vue"
+import LeftChange from "../map_base/LeftChangeView.vue"
+import AnimateView from "../map_base/AnimateView.vue"
 export default {
   components: {
-    // region,
-    unit,
-    byunit,
-    point,
-    maparea,
-    actions,
-    attachpoint,
-    attachanimation,
-    dustanimation,
-    levelupanimation,
-    summonanimation,
-    regionmes,
-    unitmes
+    RegionViewList,
+    ArmyView,
+    UnitMes,
+    RegionMes,
+    PointView,
+    MoveArea,
+    ActionView,
+    AttachView,
+    LeftChange,
+    AnimateView,
   },
   data() {
     return {
-      singo: true, // 控制单位一闪一闪
-      recordId: null,
-      record: {},
-      mapSt: null,
-      mapDt: null,
-      mapAs: null,
-      currentUnitInfo: null,
-      castleTitles: []
+      // 当前地图
+      game: {},
+      // 当前变化信号
+      singo: 1,
     };
   },
   computed: {
-    // 返回地形的位置
-    mapRegionImg() {
-      return function(type, color = this.regionColor) {
-        if (color == "" || color == null) {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
-
-        if (type == "castle" || type == "town") {
-          return require("@/assets/images/Region/" +
-            color +
-            "/" +
-            type +
-            ".png");
-        } else {
-          return require("@/assets/images/Region/" + type + ".png");
-        }
+    mapStyle() {
+      return {
+        width: this.$appHelper.getMapSize(this.game.game_map.column),
+        height: this.$appHelper.getMapSize(this.game.game_map.row),
       };
     },
-    currenyArmyInfo() {
-      return function() {
-        let armyInfos = [];
-        let armyInfo = {};
-        let currArmy;
-        for (let index = 0; index < this.record.army_list.length; index++) {
-          const army = this.record.army_list[index];
-          if (army.color == this.record.curr_color) {
-            currArmy = army;
-            break;
-          }
-        }
-        armyInfo.money = currArmy.money;
-        armyInfo.max_pop = this.record.max_pop;
-        armyInfo.pop = currArmy.pop;
-        armyInfo.camp = currArmy.camp;
-        armyInfo.round = this.record.current_round;
-        armyInfos.push(armyInfo);
-        return armyInfos;
-      };
-    }
   },
   methods: {
     // 获取记录
-    async getRecord() {
-      let url = "/record/" + this.recordId;
-      const resp = await GetRecordById(url);
-      if (resp.res_code == 0) {
-        this.record = resp.res_val;
-        this.$store.commit("setRecord", this.record);
-        const map = this.record.game_map;
-        // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
-        for (let index = 0; index < map.regions.length; index++) {
-          const region = map.regions[index];
-          if (region.type == "castle") {
-            let castleTitle = {};
-            if ((index + 1) % map.row == 0) {
-              castleTitle.row = Math.floor((index + 1) / map.column) - 1;
-              castleTitle.column = map.column;
-            } else {
-              castleTitle.row = Math.floor((index + 1) / map.column);
-              castleTitle.column = (index + 1) % map.column;
-            }
-            this.castleTitles.push(castleTitle);
+    getRecord() {
+      const map = this.$state.getters.game;
+      // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
+      for (let index = 0; index < map.regions.length; index++) {
+        const region = map.regions[index];
+        if (region.type == "castle") {
+          let castleTitle = {};
+          if ((index + 1) % map.row == 0) {
+            castleTitle.row = Math.floor((index + 1) / map.column) - 1;
+            castleTitle.column = map.column;
+          } else {
+            castleTitle.row = Math.floor((index + 1) / map.column);
+            castleTitle.column = (index + 1) % map.column;
           }
+          this.castleTitles.push(castleTitle);
         }
-      } else {
-        this.$message.error(resp.res_mes);
-        this.$router.push("/");
       }
     },
     // 与后台创建一个 ws 连接
@@ -243,16 +113,13 @@ export default {
     },
     // 开启一个后台进程 计时器
     startWorker() {
-      if (typeof Worker !== "undefined") {
-        if (this.worker == null) {
-          // this.worker = new Worker(setInterval(this.timer, 500));
+      setInterval(() => {
+        if (this.singo < 1000) {
+          this.singo++;
+        } else {
+          this.singo = 0;
         }
-      } else {
-        alert("抱歉 您的电脑不支持");
-      }
-    },
-    timer() {
-      this.singo = !this.singo;
+      }, 500);
     },
     // 鼠标点击地形
     getRegionMes(index) {
@@ -355,76 +222,64 @@ export default {
     // 保存用户地图
     saveUserRecord() {
       //
-    }
+    },
+    // 检测游戏是否可以开始
+    checkGame() {
+      let isOk = false;
+      // gameWS正常连接
+      isOk = this.$store.dispatch("testConnect");
+      if (!isOk) {
+        return isOk;
+      }
+      // store.game 存在
+
+      return isOk;
+    },
   },
   created() {
-    if ((this.recordId = this.$store.getters.recordId) == null) {
+    // 检测webscoket连接
+    let status = this.checkGame();
+    if (!status) {
       this.$router.push("/");
       return;
     }
-    this.getRecord();
-    this.mapSt = this.$store.getters.mapSt;
-    this.mapDt = this.$store.getters.mapDt;
-    this.mapAs = this.$store.getters.mapAs;
-    this.currentUnitInfo = this.$store.getters.currentUnitInfo;
-    this.connectWs();
+    this.game = this.$store.getters.game;
+    this.$appHelper.setWidthBack();
     this.startWorker();
-  }
+    window.cVue = this;
+    window.store = cVue.$store;
+  },
 };
 </script>
 
-<style lang="css" scoped>
-.body {
+<style lang="scss">
+#gameCore {
   width: 100%;
   height: 100%;
   position: relative;
-  color: rgb(124, 124, 124);
-}
-.map_body {
-  float: left;
-  width: 70%;
-  height: 100%;
-}
-.map_div {
-  margin: 0 auto;
-  position: relative;
-}
-.map {
-  position: absolute;
-}
-.map img {
-  float: left;
-}
-.map img:hover {
-  cursor: pointer;
-}
-.bars {
-  margin: auto;
-  height: 10px;
-}
-.bar_mes {
-  margin-top: 4px;
-  float: left;
-  width: 140px;
-}
-.el-tooltip {
-  float: left;
-  width: 60px;
-  font-size: 13px;
-  margin-right: 10px;
-}
-.el-tooltip img {
-  margin-top: 3px;
-  float: left;
-}
-.el-tooltip span {
-  display: block;
-  float: left;
-}
-.bar_button {
-  float: left;
-}
-.bar_button .el-button {
-  margin-top: 3px;
+  color: rgb(129, 0, 0);
+  .el-container {
+    width: 65%;
+    height: 100%;
+    float: left;
+    border: 1px solid #eee;
+    padding-right: 20px;
+  }
+  .el-main {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    &:hover {
+      cursor: pointer;
+    }
+    .base_map {
+      cursor: hand;
+      position: absolute;
+      img {
+        float: left;
+      }
+    }
+  }
 }
 </style>

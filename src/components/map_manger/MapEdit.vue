@@ -223,7 +223,7 @@ import {
   GetInitUserMap,
   SaveTempMap,
   SimpleDrawing,
-  GetUserMap,
+  GetUserMapList,
   DelUserMap,
   SaveMap,
   ChangeUserSetting
@@ -458,8 +458,7 @@ export default {
         .catch();
     },
     async delUserMap(uuid) {
-      let url = "/api/userMap/" + uuid;
-      const resp = await DelUserMap(url);
+      const resp = await DelUserMap(uuid);
       if (resp.res_code == 0) {
         this.$message.success("删除成功");
         this.myMaps.splice(this.selectMapIndex, 1);

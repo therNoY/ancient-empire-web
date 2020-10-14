@@ -3,7 +3,7 @@ import {request} from './request'
 export const GetTest = (url) => request(url, "", "GET");
 export const PostTest = (url, args) => request(url, args, "POST");
 
-// 用户登录
+// 用户操作
 export const Login = (args) => request('/user/login', args, "POST");
 export const Register = (args) => request('/user/register', args, "POST");
 
@@ -21,21 +21,25 @@ export const CheckPwd = (args) => request('/api/user/checkPwd', args, "POST");
 export const changeUserInfo = (args) => request('/api/user', args, "PUT");
 export const ChangeUserSetting = (args) => request('/api/user/useSetting', args, "PUT");
 
+// 用户地图有关
 export const GetInitUserMap = () => request('/api/userMap/init', '', "GET");
 export const SaveTempMap = (args) => request('/api/userMap/saveTemp', args, "POST");
 export const SaveMap = (args) => request('/api/userMap', args, "POST");
 export const SimpleDrawing = (args) => request('/api/userMap/simpleDrawing', args, "POST");
-export const GetUserMap = () => request('/api/userMap', '', "GET");
-export const DelUserMap = (url) => request(url, '', "DELETE");
+export const GetUserMapList = () => request('/api/userMap/list', '', "GET");
+export const GetUserMapById = (id) => request('/api/userMap/' + id, '', "GET");
+export const DelUserMap = (id) => request('/api/userMap/' + id, '', "DELETE");
 
 // 获取遭遇地图
 export const GetEncounterMap = () => request("/encounterMap", '', "GET");
+export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
+
 // 初始化map 信息
 export const InitEncounterMap = (args) => request("/encounter/initSetting", args, "GET");
 // 生成record
-export const RecordInit = (args) => request("/record/init", args, "POST");
-// 获取记录
-export const GetRecordById =(url) => request(url, '', "GET");
+export const RecordInit = (args) => request("/api/record/init", args, "POST");
+// 根据Id获取存档
+export const GetRecordById =(id) => request("/record/" + id, '', "GET");
 
 // 获取一个单位的详细信息
 export const GetUnitInfo =(args) => request('/unitInfo', args, "GET");

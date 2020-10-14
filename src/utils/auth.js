@@ -7,6 +7,8 @@ const userNameKey = 'AEUserName' // cookie中保存name的Key
 const userPwdKey = 'AEPwd' // cookie 中保存pwd的key
 
 const TokenKey = 'AEToken' // cookie 中保存token的key
+// 挂载cookie到window下面
+window.cookies = Cookies;
 
 export function getCookieToken() {
   return Cookies.get(TokenKey)
@@ -25,10 +27,7 @@ export function setToken(token) {
  * 从Cookie中获取用户
  */
 export function getUser() {
-  if (typeof Cookies.get(userNameKey) != "undefined"
-    && typeof Cookies.get(userPwdKey) != "undefined"
-    && Cookies.get(userNameKey) != null
-    && Cookies.get(userPwdKey) != null) {
+  if (Cookies.get(userNameKey) && Cookies.get(userPwdKey)) {
     let user = {};
     user.user_name = Cookies.get(userNameKey);
     user.password = Cookies.get(userPwdKey);

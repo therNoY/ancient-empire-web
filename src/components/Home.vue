@@ -10,7 +10,7 @@
       <button class="home_button">地图中心</button>
       <button class="home_button">读取游戏</button>
       <button class="home_button" @click="router('mapEdit')">地图编辑器</button>
-      <button class="home_button">帮助</button>
+      <button class="home_button" @click="router('demo')">帮助</button>
     </div>
 
     <register v-show="registerVisible" @close="registerVisible = false"></register>
@@ -121,7 +121,7 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .home {
   text-align: center;
 }

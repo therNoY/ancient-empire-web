@@ -3,7 +3,8 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import MapEdit from '@/components/map_manger/MapEdit'
 import EncounterMap from '@/components/encounter'
-import Index from '@/components/game_core/Index'
+import GameIndex from '../components/game_core/Index.vue'
+import Demo from '@/components/Demo'
 
 import AdminLogin from '@/components/admin_mange/AdminLogin'
 import AdminHome from '@/components/admin_mange/AdminHome'
@@ -29,14 +30,19 @@ export default new Router({
       component: MapEdit
     },
     {
+      path: '/demo',
+      name: 'Demo',
+      component: Demo
+    },
+    {
       path: '/encounter',
       name: 'EncounterMap',
       component: EncounterMap
     },
     {
-      path: '/play',
-      name: 'Index',
-      component: Index
+      path: '/gameIndex',
+      name: 'GameIndex',
+      component: GameIndex
     },
     {
       path: '/admin/login',

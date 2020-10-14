@@ -8,13 +8,6 @@ import { setToken, getCookieToken, getUser, } from '@/utils/auth' // 验权
 var isFrist = true;
 // 路由的拦截 根据路径对两个token 进行封装
 router.beforeEach((to, from, next) => {
-
-  console.log("cookie token");
-  console.log(getCookieToken());
-  console.log("cookie user");
-  console.log(getUser());
-
-
   if (to.path.indexOf("/admin/") == 0) {
     console.log("访问管理员界面");
     if (to.path.indexOf("/admin/login") == 0) {

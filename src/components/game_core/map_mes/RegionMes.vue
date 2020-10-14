@@ -1,29 +1,15 @@
 <template>
   <!--地形信息-->
-  <div class="region_int" :style="{backgroundColor:bkColor()}">
+  <div class="region-mes" :style="bkColor">
     <!--地形名称-->
-    <div v-if="$store.getters.currentRegion.name">
+    <div v-if="region">
       <!--地形名称-->
       <div class="int_title">
         <el-tag
           size="small"
-          v-if="$store.getters.record.curr_color == 'blue'"
-        >{{$store.getters.currentRegion.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="success"
-          v-if="$store.getters.record.curr_color == 'green'"
-        >{{$store.getters.currentRegion.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="info"
-          v-if="$store.getters.record.curr_color == 'black'"
-        >{{$store.getters.currentRegion.name}}</el-tag>
-        <el-tag
-          size="small"
-          type="danger"
-          v-if="$store.getters.record.curr_color == 'red'"
-        >{{$store.getters.currentRegion.name}}</el-tag>
+          :type="tagType"
+          >{{ region.name }}</el-tag
+        >
       </div>
       <!--地形图片-->
       <div class="unit_p">
@@ -31,16 +17,33 @@
           <img class="region" src="../../../assets/images/Region/flat.png" />
           <img
             class="region"
-            v-if="$store.getters.currentRegion.type != 'castle'"
+            v-if="region.type != 'castle'"
             src="../../../assets/images/Region/flat.png"
           />
-          <img class="region" v-else src="../../../assets/images/Region/castle_title.png" />
-          <img class="region" v-for="item in 2" src="../../../assets/images/Region/flat.png" />
           <img
             class="region"
-            :src=" $appHelper.getRegionImg($store.getters.currentRegion.type, mapSt.currentRegionColor)"
+            v-else
+            src="../../../assets/images/Region/castle_title.png"
           />
-          <img class="region" v-for="item in 4" src="../../../assets/images/Region/flat.png" />
+          <img
+            class="region"
+            v-for="item in 2"
+            src="../../../assets/images/Region/flat.png"
+          />
+          <img
+            class="region"
+            :src="
+              $appHelper.getRegionImg(
+                region.type,
+                region.color
+              )
+            "
+          />
+          <img
+            class="region"
+            v-for="item in 4"
+            src="../../../assets/images/Region/flat.png"
+          />
         </div>
       </div>
       <!--地形数据-->
@@ -48,62 +51,94 @@
         <el-tooltip content="增加防御" placement="bottom" effect="light">
           <div>
             <img src="../../../assets/images/assist/action_defense.png" />
-            <span class="noBac">{{$store.getters.currentRegion.buff}}</span>
+            <span class="noBac">{{ region.buff }}</span>
           </div>
         </el-tooltip>
         <el-tooltip content="回合恢复" placement="bottom" effect="light">
           <div>
             <img src="../../../assets/images/assist/action_restore.png" />
-            <span class="noBac">{{$store.getters.currentRegion.restore}}</span>
+            <span class="noBac">{{ region.restore }}</span>
           </div>
         </el-tooltip>
         <el-tooltip content="增加金币" placement="bottom" effect="light">
           <div>
             <img src="../../../assets/images/assist/action_buy.png" />
-            <span class="noBac">{{$store.getters.currentRegion.tax}}</span>
+            <span class="noBac">{{ region.tax }}</span>
           </div>
         </el-tooltip>
         <el-tooltip content="消耗移动" placement="bottom" effect="light">
           <div>
             <img src="../../../assets/images/assist/action_move.png" />
-            <span class="noBac">{{$store.getters.currentRegion.deplete}}</span>
+            <span class="noBac">{{ region.deplete }}</span>
           </div>
         </el-tooltip>
       </div>
 
-      <div class="region_description">描述：{{$store.getters.currentRegion.description}}</div>
+      <div class="region_description">
+        描述：{{ region.description }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["mapSt"],
+  props: ["bg_color", "curr_color", "region"],
   computed: {
+    // 背景
     bkColor() {
-      return function() {
-        const color = this.$store.getters.record.curr_color;
-        if (color != null) {
-          if (color == "blue") {
-            return "#96d9f4";
-          } else if (color == "red") {
-            return "#f49e9c";
-          } else if (color == "green") {
-            return "#abed5a";
-          } else if (color == "black") {
-            return "#007696";
-          }
-        } else {
-          return "#96d9f4";
-        }
-      };
-    }
+      let color = this.bg_color;
+      if (!color) {
+        color = this.curr_color;
+      }
+      let bkColor = "#96d9f4";
+      switch (color) {
+        case "blue":
+          bkColor = "#96d9f4";
+          break;
+        case "red":
+          bkColor = "#f49e9c";
+          break;
+        case "green":
+          bkColor = "#abed5a";
+          break;
+        case "black":
+          bkColor = "#007696";
+          break;
+      }
+      return { backgroundColor: bkColor };
+    },
+    tagType() {
+      let color = this.bg_color;
+      if (!color) {
+        color = this.curr_color;
+      }
+      let type = "";
+      switch (color) {
+        case "blue":
+          type = "";
+          break;
+        case "red":
+          type = "danger";
+          break;
+        case "green":
+          type = "success";
+          break;
+        case "black":
+          type = "info";
+          break;
+      }
+      return type;
+    },
+  },
+  created(){
+    window.RegionMesVue = this;
   }
 };
 </script>
 
-<style lang="css" scoped>
-.region_int {
+<style lang="scss" scoped>
+.region-mes {
   float: right;
   width: 14%;
   height: 100%;

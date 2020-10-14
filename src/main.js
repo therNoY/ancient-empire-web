@@ -21,6 +21,7 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 Vue.prototype.$appHelper = appHelper;
+appHelper.store = store;
 
 
 
