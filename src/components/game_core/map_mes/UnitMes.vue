@@ -1,31 +1,30 @@
 <template>
   <!--单位信息-->
   <div class="unit-mes" :style="bkColor">
-    <div v-if="unitInfo.unitMes">
+    <div>
       <!--单位名称-->
       <div class="int_title">
-        <el-tag size="small" :type="tagType">{{ unitInfo.unitMes.name }}</el-tag>
+        <el-tag
+          v-if="unitInfo && unitInfo.unit_mes"
+          size="small"
+          :type="tagType"
+          >{{ unitInfo.unit_mes.name }}</el-tag
+        >
       </div>
       <!--单位图片-->
       <div class="unit_p">
-        <div class="unit_border">
-          <img
-            class="region"
-            v-for="item in 9"
-            src="../../../assets/images/Region/grove.png"
-          />
-          <img class="unit" :src="unitImg" />
-          <div>
-            <!--等级-->
-            <div v-if="unitInfo.level > 0" class="unit_level">
-              <img :src="levelImg" />
-            </div>
-            <!--状态-->
-            <div v-if="unitInfo.status != null" class="unit_status">
-              <img :src="statusImg" />
-            </div>
-          </div>
-        </div>
+        <img
+          class="region"
+          v-for="item in 9"
+          src="../../../assets/images/Region/grove.png"
+        />
+        <unit-view
+          v-if="unitInfo"
+          class="unit_view"
+          :unit="unitInfo"
+          :color="bg_color"
+          singo="1"
+        ></unit-view>
       </div>
     </div>
 
@@ -34,17 +33,19 @@
       <!--生命值-->
       <div>
         <img src="../../../assets/images/assist/info_life.png" />
-        <span>
-          <i :style="leftStyle">{{ unitLift }}</i>
+        <span v-if="unitInfo">
+          <i :style="leftStyle" style="background-color: rgb(229, 255, 0)">{{
+            unitLift
+          }}</i>
         </span>
       </div>
       <!--经验值-->
       <div>
         <img src="../../../assets/images/assist/info_experience.png" />
-        <span>
+        <span v-if="unitInfo">
           <i
-            style="background-color: rgb(229, 255, 0)"
             :style="experienceRatio"
+            style="background-color: rgb(229, 255, 0)"
             >{{ unitInfo.experience }}</i
           >
         </span>
@@ -53,33 +54,43 @@
       <div>
         <img src="../../../assets/images/assist/info_attach.png" />
         <span
+          v-if="unitInfo"
           class="noBac"
           :style="
-            unitInfo.unitMes.attackType == '1'
+            unitInfo.unit_mes.attack_type == '1'
               ? { color: '#0008ff' }
               : { color: '#ff004f' }
           "
         >
-          {{ unitInfo.levelMes.minAttack }} - {{ unitInfo.levelMes.maxAttack }}
+          {{ unitInfo.level_mes.min_attack }} -
+          {{ unitInfo.level_mes.max_attack }}
         </span>
       </div>
       <div>
         <img src="../../../assets/images/assist/info_move.png" />
-        <span class="noBac">{{ unitInfo.levelMes.speed }}</span>
+        <span class="noBac" v-if="unitInfo">{{
+          unitInfo.level_mes.speed
+        }}</span>
       </div>
       <div>
         <img src="../../../assets/images/assist/info_physical_defense.png" />
-        <span class="noBac">{{ unitInfo.levelMes.physicalDefense }}</span>
+        <span class="noBac" v-if="unitInfo">{{
+          unitInfo.level_mes.physical_defense
+        }}</span>
       </div>
       <div>
         <img src="../../../assets/images/assist/info_magic_defense.png" />
-        <span class="noBac">{{ unitInfo.levelMes.magicDefense }}</span>
+        <span class="noBac" v-if="unitInfo">{{
+          unitInfo.level_mes.magic_defense
+        }}</span>
       </div>
     </div>
 
-    <div class="unit_description">描述：{{ unitInfo.unitMes.description }}</div>
+    <div class="unit_description" v-if="unitInfo">
+      描述：{{ unitInfo.unit_mes.description }}
+    </div>
 
-    <div class="unit_ability">
+    <div class="unit_ability" v-if="unitInfo">
       <span>能力列表</span>
       <div
         @click="unitInfoDialog = true"
@@ -104,8 +115,12 @@
 </template>
 
 <script>
+import UnitView from "../../map_base/UnitView";
 export default {
   props: ["bg_color", "curr_color", "unitInfo"],
+  components: {
+    UnitView,
+  },
   data() {
     return {
       unitInfoDialog: false,
@@ -135,7 +150,6 @@ export default {
       }
       return type;
     },
-
     // 背景
     bkColor() {
       let color = this.bg_color;
@@ -156,24 +170,6 @@ export default {
       }
       return { backgroundColor: bkColor };
     },
-
-    unitImg() {
-      return this.$appHelper.getUnitImg(this.unitInfo.typeId, this.bg_color);
-    },
-
-    statusImg() {
-      return require("../../../assets/images/assist/status_" +
-        this.unitInfo.status +
-        ".png");
-    },
-
-    // 计算等级的图片
-    levelImg() {
-      return require("../../../assets/images/assist/level_" +
-        unitInfo.level +
-        ".png");
-    },
-
     // 计算生命条的展示风格
     leftStyle() {
       let life = this.unitLift,
@@ -194,7 +190,6 @@ export default {
       } else if (life > 100) {
         lifeColor = "#7c7c7c";
       }
-
       return { width: lifeRatio, backgroundColor: lifeColor };
     },
 
@@ -217,6 +212,7 @@ export default {
     },
   },
   created() {
+    window.cUnitVue = this;
   },
 };
 </script>
@@ -235,9 +231,21 @@ export default {
   color: rgba(0, 0, 0, 0.658);
 }
 .unit_p {
-  position: realtive;
-  width: 72px;
+  position: relative;
+  font-size: 0;
+  width: 74px;
+  height: 72px;
   margin: auto;
+}
+.region {
+  width: 24px;
+  height: 24px;
+}
+.unit_view {
+  top: 24px !important;
+  left: 24px !important;
+  width: 24px;
+  height: 24px;
 }
 .unit_border {
   width: 72px;

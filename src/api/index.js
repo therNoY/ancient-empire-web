@@ -11,6 +11,7 @@ export const AdminLogin = (args) => request('/admin/login', args, "POST");
 export const GetUnitData = (args) => request('/root/unit', args, "GET");
 export const SaveUnit = (args) => request('/root/unit', args, "PUT");
 
+export const GetUnitLevelByTemp = (args) => request('/api/unitLevel/' + args, '', "GET");
 export const GetUnitLevel = (args) => request('/root/unitLevel', args, "GET");
 export const SaveUnitLevel = (args) => request('/root/unitLevel', args, "PUT");
 

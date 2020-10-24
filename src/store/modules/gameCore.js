@@ -11,6 +11,8 @@ const gameCore = {
     game: {},
     // 当前游戏的模板
     template: {},
+    // 单位等级信息
+    levelInfo: {},
     // 地图状态是1的时候不能点击其他的
     mapState: "0"
   },
@@ -27,6 +29,26 @@ const gameCore = {
     },
     setMapState(state, mapState) {
       state.mapState = mapState;
+    },
+    setUnitLevelInfo(state, levelInfo) {
+      state.levelInfo = levelInfo;
+    },
+    removeTomb(state, removeTomb) {
+      for (let i = 0; i < state.game.tomb.length; i++) {
+        const tomb = state.game.tomb[i];
+        if (tomb.row == removeTomb.row && tomb.column == removeTomb.column) {
+          state.game.tomb.splice(i, 1);
+          break;
+        }
+      }
+    },
+    addUnit(state, addUnit){
+      console.log("准备添加单位", addUnit);
+      state.game.army_list[addUnit.army_index].units.push(addUnit.unit);
+    },
+    changeRegion(state, changeRegion) {
+      console.log("准备改变地形", changeRegion);
+      state.game.game_map.regions.splice(changeRegion.region_index, 1, changeRegion.region)
     }
   },
 
@@ -44,6 +66,11 @@ const gameCore = {
         store.commit("setSocket", socket);
         socket.onopen = () => {
           console.log("ws 连接成功", socket);
+          this.commit("setAttachArea", []);
+          this.commit("setAttachPoint", {});
+          this.commit("setMoveArea", []);
+          this.commit("setMoveLine", []);
+          this.commit("setAction", []);
           resolve();
         };
         socket.onmessage = (e) => {

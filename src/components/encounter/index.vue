@@ -217,6 +217,7 @@ import {
   GetUserMapList,
   InitEncounterMap,
   GetUserTemp,
+  GetUnitLevelByTemp,
   RecordInit,
 } from "@/api";
 import MapPreview from "../map_manger/MapPreview";
@@ -281,12 +282,13 @@ export default {
         .then((resp) => {
           if (resp.res_code == 0) {
             this.$store.commit("setGame", resp.res_val);
+            // 获取单位最大生命值
+            this.getUnitLevelByTemp(resp.res_val.template_id);
             // 获取模板
             GetUserTemp(resp.res_val.template_id).then((tempResp) => {
               if (tempResp && tempResp.res_val) {
                 this.$store.commit("setTemplate", tempResp.res_val);
-                this.$store
-                  .dispatch("connectGameSocket", resp.res_val.uuid)
+                this.$store.dispatch("connectGameSocket", resp.res_val.uuid)
                   .then((r) => {
                     this.loading = false;
                     this.$router.push("/gameIndex");
@@ -331,6 +333,18 @@ export default {
         }
       });
     },
+
+    async getUnitLevelByTemp(tempId){
+      const resp = await GetUnitLevelByTemp(tempId);
+      if (resp.res_code == 0) {
+        this.$store.commit("setUnitLevelInfo", resp.res_val);
+        return resp.res_val;
+      } else {
+        this.$message.error(resp.res_mes);
+        return null;
+      }
+    },
+
     async getEncounterMap() {
       const resp = await GetEncounterMap();
       if (resp.res_code == 0) {

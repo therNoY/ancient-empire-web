@@ -16,8 +16,9 @@
             :column="game.game_map.column"
             :castleTitles="game.castle_titles"
           />
-          <move-area :point="game.curr_point"/>
           <attach-view/>
+          <tomb-view/>
+          <move-area :point="game.curr_point"/>
           <army-view :armys="game.army_list" :singo="singo" />
           <point-view :point="game.curr_point" :singo="singo"/>
           <action-view/>
@@ -49,6 +50,7 @@ import ActionView from "../map_base/ActionView.vue"
 import AttachView from "../map_base/AttachArea.vue"
 import LeftChange from "../map_base/LeftChangeView.vue"
 import AnimateView from "../map_base/AnimateView.vue"
+import TombView from "../map_base/TombView.vue"
 export default {
   components: {
     RegionViewList,
@@ -61,6 +63,7 @@ export default {
     AttachView,
     LeftChange,
     AnimateView,
+    TombView,
   },
   data() {
     return {

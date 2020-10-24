@@ -3,11 +3,6 @@ import store from "../store";
 import commendType from "./commendType"
 import { imgUrl } from "../api/env"
 
-
-
-
-
-
 var moveHelper = {
 
   /**
@@ -88,7 +83,7 @@ var actionHelper = {
       } else if (actions.length == 4) {
         // 4个显示
         action1 = actionShow1[0];
-        action1.row - 1;
+        action1.row -= 1;
         action1.column + 0.16;
 
         action2 = actionShow1[1];
@@ -109,84 +104,117 @@ var actionHelper = {
 }
 
 var animateHelper = {
-  // 展示攻击动画
-  showAttachAnim(anim, { armyIndex, unitIndex }, callback) {
 
-    const shake = 0.05;
-
-    let animates = {};
-    let animList = [];
-    for (const animImg of anim.animList) {
-      animList.push(imgUrl + "temp/" + animImg);
+  // 空的function
+  emptyFunction: function (f) {
+    if (f instanceof Function) {
+      f();
     }
-    animates.animList = animList;
+  },
+
+  // 展示攻击动画
+  showAttachAnim(anim, { army_index, unit_index }, callback) {
+    // 设置每个帧动画结束的回调 让单位移动
+    const shake = 0.02;
+    let functions = [];
+    let game = store.getters.game;
+    let currUnit = game.army_list[army_index].units[unit_index];
+    for (let i = 0; i < anim.anim_list.length / 2; i++) {
+      let rowOper = Math.round(Math.random());
+      let columnOper = Math.round(Math.random());
+      functions.push(() => {
+        if (rowOper == 0) {
+          currUnit.row = currUnit.row - shake;
+        } else {
+          currUnit.row = currUnit.row + shake;
+        }
+        if (columnOper == 0) {
+          currUnit.column = currUnit.column - shake;
+        } else {
+          currUnit.column = currUnit.column + shake;
+        }
+      });
+      functions.push(() => {
+        if (rowOper == 1) {
+          currUnit.row = currUnit.row - shake;
+        } else {
+          currUnit.row = currUnit.row + shake;
+        }
+        if (columnOper == 1) {
+          currUnit.column = currUnit.column - shake;
+        } else {
+          currUnit.column = currUnit.column + shake;
+        }
+      });
+    }
+    this.showAnim(anim, functions, callback, 200);
+  },
+
+  /**
+   * 基础展示动画
+   * @param {*} anim 动画信息
+   * @param {*} frameCallBack 给个帧动画完成的回调类
+   * @param {*} callback 整个动画完成的回调
+   * @param {*} timer 结果是否需要定时回调
+   */
+  showAnim(anim, frameCallBack, callback, timer) {
+    let animates = {};
+    let anim_list = [];
+    for (const animImg of anim.anim_list) {
+      anim_list.push(imgUrl + "temp/" + animImg);
+    }
+    // 设置回调函数
+    let callBackFunction = [];
+    for (let i = 0; i < anim_list.length; i++) {
+      if (i < anim_list.length - 1) {
+        // 前面的回调不调用最终回调函数
+        if (frameCallBack instanceof Array && frameCallBack[i] instanceof Function) {
+          callBackFunction.push(() => {
+            frameCallBack[i]();
+          });
+        } else {
+          callBackFunction.push(null);
+        }
+      } else {
+        // 最后一帧播放完毕需要设置播放完毕回调
+        if (frameCallBack instanceof Array && frameCallBack[i] instanceof Function) {
+          callBackFunction.push(() => {
+            frameCallBack[i]();
+            // 设置结果回调
+            if (callback) {
+              if (typeof timer == 'number') {
+                setTimeout(() => {
+                  commendDispatcher.dispatch(callback.call(), callback);
+                }, timer);
+              } else {
+                commendDispatcher.dispatch(callback.call(), callback);
+              }
+            }
+          });
+        } else {
+          callBackFunction.push(() => {
+            console.log(callback);
+            if (callback) {
+              if (typeof timer == 'number') {
+                setTimeout(() => {
+                  commendDispatcher.dispatch(callback.call(), callback);
+                }, timer);
+              } else {
+                commendDispatcher.dispatch(callback.call(), callback);
+              }
+            }
+          });
+        }
+      }
+    }
+    animates.anim_list = anim_list;
     animates.row = anim.row;
     animates.column = anim.column;
-
-    let functions = [];
-
-    let game = store.getters.game;
-    let currUnit = game.army_list[armyIndex].units[unitIndex];
-
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column + shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column + shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column + shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column + shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column + shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row - shake;
-      currUnit.column = currUnit.column - shake;
-    });
-    functions.push(() => {
-      currUnit.row = currUnit.row + shake;
-      currUnit.column = currUnit.column + shake;
-      // 到这里执行完成
-      if (callback) {
-        setTimeout(() => {
-          commendDispatcher.dispatch(callback.call(), callback);
-        }, 200);
-      }
-    });
-
-    animates.callback = functions;
-
+    animates.frame = anim.frame;
+    animates.callback = callBackFunction;
+    // 执行动画
+    console.log(animates);
     store.dispatch("showAnimates", [animates]);
-
   }
 }
 
@@ -221,32 +249,33 @@ var commendDispatcher = {
       return;
     }
 
-    let gameCommendEnum = gameCommend.gameCommendEnum;
-    let aimSite = gameCommend.aimSite;
-    let unitIndex = gameCommend.unitIndex;
-    let extMes = gameCommend.extMes;
+    let game_commend_enum = gameCommend.game_commend_enum;
+    let aim_site = gameCommend.aim_site;
+    let unit_index = gameCommend.unit_index;
+    let ext_mes = gameCommend.ext_mes;
 
-    switch (gameCommendEnum) {
+    switch (game_commend_enum) {
       case commendType.CHANGE_CURR_UNIT:
         console.log("执行改变当前单位");
-        store.getters.game.curr_unit = extMes.unitInfo;
+        store.getters.game.curr_unit = ext_mes.unit_info;
         break;
       case commendType.CHANGE_CURR_REGION:
         console.log("执行改变当前地形");
-        store.getters.game.curr_region = extMes.regionInfo;
+        store.getters.game.curr_region = ext_mes.region_info;
         break;
       case commendType.CHANGE_CURR_POINT:
         console.log("执行改变当前指针");
-        store.getters.game.curr_point = aimSite;
+        store.getters.game.curr_point = aim_site;
         break;
       case commendType.CHANGE_CURR_BG_COLOR:
         console.log("执行改变当前背景颜色");
-        store.getters.game.bg_color = extMes.bgColor;
+        store.getters.game.bg_color = ext_mes.bg_color;
         break;
       case commendType.SHOW_MOVE_AREA:
         console.log("展示移动区域");
-        store.commit("setMoveArea", extMes.moveArea);
+        store.commit("setMoveArea", ext_mes.move_area);
         store.commit("setMoveLine", []);
+        store.commit("setAction", []);
         break;
       case commendType.DIS_SHOW_MOVE_AREA:
         console.log("不展示移动区域");
@@ -255,16 +284,16 @@ var commendDispatcher = {
         break;
       case commendType.SHOW_MOVE_LINE:
         console.log("展示移动路线");
-        store.commit("setMoveLine", extMes.moveLine);
+        store.commit("setMoveLine", ext_mes.move_line);
         break;
       case commendType.MOVE_ATTACH_POINT:
         console.log("移动攻击指针");
         break;
       case commendType.MOVE_UNIT:
-        console.log("单位移动", unitIndex);
-        moveHelper.move(unitIndex, extMes.moveLine, () => {
-          console.log("移动完毕 展示行动", extMes.actions);
-          actionHelper.setActionShow(extMes.actions);
+        console.log("单位移动", unit_index);
+        moveHelper.move(unit_index, ext_mes.move_line, () => {
+          console.log("移动完毕 展示行动", ext_mes.actions);
+          actionHelper.setActionShow(ext_mes.actions);
         });
         break;
       case commendType.ROLLBACK_MOVE:
@@ -272,57 +301,75 @@ var commendDispatcher = {
         store.commit("setMoveLength", 0);
         store.commit("setAction", []);
         let game = store.getters.game;
-        let currUnit = game.army_list[game.curr_army_index].units[unitIndex];
-        currUnit.row = aimSite.row;
-        currUnit.column = aimSite.column;
+        let currUnit = game.army_list[game.curr_army_index].units[unit_index];
+        currUnit.row = aim_site.row;
+        currUnit.column = aim_site.column;
         break;
       case commendType.SHOW_ATTACH_AREA:
-        console.log("展示攻击区域", extMes.attachArea);
+        console.log("展示攻击区域", ext_mes.attach_area);
         store.commit("setAction", []);
-        store.commit("setAttachArea", extMes.attachArea);
+        store.commit("setAttachArea", ext_mes.attach_area);
         break;
       case commendType.SHOW_ACTION:
         // 展示行动
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
-        actionHelper.setActionShow(extMes.actions);
+        actionHelper.setActionShow(ext_mes.actions);
         break;
       case commendType.SHOW_ATTACH_POINT:
         console.log("展示攻击的点");
-        store.commit("setAttachPoint", aimSite);
+        store.commit("setAttachPoint", aim_site);
         break;
       case commendType.DIS_SHOW_ATTACH_AREA:
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
         break;
+      case commendType.CHANG_REGION:
+        store.commit("changeRegion", ext_mes);
+        store.commit("setAction", []);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
       case commendType.CHANGE_UNIT_STATUS:
         game = store.getters.game;
-        currUnit = game.army_list[extMes.unitStatus.armyIndex].units[extMes.unitStatus.unitIndex];;
-        let cShowUnit = store.getters.cUnit;
-        let upCurr = currUnit.id == cShowUnit.id;
-        for (let key in extMes.unitStatus) {
-          if (currUnit.hasOwnProperty(key)) {
-            currUnit[key] = extMes.unitStatus[key];
-            if (upCurr) {
-              cShowUnit[key] = extMes.unitStatus[key];
+        // 按照数组处理
+        if (!(ext_mes.unit_status instanceof Array)) {
+          ext_mes.unit_status = [ext_mes.unit_status];
+        }
+        for (let i = 0; i < ext_mes.unit_status.length; i++) {
+          const unit_statue = ext_mes.unit_status[i];
+          currUnit = game.army_list[unit_statue.army_index].units[unit_statue.unit_index];;
+          let cShowUnit = store.getters.cUnit;
+          let upCurr = currUnit.id == cShowUnit.id;
+          for (let key in unit_statue) {
+            if (currUnit.hasOwnProperty(key)) {
+              currUnit[key] = unit_statue[key];
+              if (upCurr) {
+                cShowUnit[key] = unit_statue[key];
+              }
             }
           }
         }
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
         break;
-      // --------------------单位攻击事件----------------------
+
+      // --------------------单位攻击系列事件----------------------
       case commendType.RUSH_UNIT:
         // 展示单位突袭
         game = store.getters.game;
-        currUnit = game.army_list[extMes.armyUnitIndex.armyIndex].units[extMes.armyUnitIndex.unitIndex];;
+        currUnit = game.army_list[ext_mes.army_unit_index.army_index].units[ext_mes.army_unit_index.unit_index];
         let row = currUnit.row;
         let column = currUnit.column;
-        store.commit("setMoveLength", 0.1);
-        currUnit.row = extMes.site.row;
-        currUnit.column = extMes.site.column;
+        store.commit("setMoveLength", 0.4);
+        currUnit.row = ext_mes.site.row;
+        currUnit.column = ext_mes.site.column;
         setTimeout(() => {
           currUnit.row = row;
           currUnit.column = column;
-          store.commit("setMoveLength", 1);
+          store.commit("setMoveLength", 0);
           if (callback) {
             this.dispatch(callback.call(), callback);
           }
@@ -330,21 +377,62 @@ var commendDispatcher = {
         break;
       case commendType.LEFT_CHANGE:
         // 掉血
-        store.commit("setLeftChange", extMes.leftChange);
+        store.commit("setLeftChange", ext_mes.left_change);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }
         break;
       case commendType.SHOW_ATTACH_ANIM:
         // 展示攻击动画
-        animateHelper.showAttachAnim(extMes.anim, extMes.armyUnitIndex, callback);
+        animateHelper.showAttachAnim(ext_mes.anim, ext_mes.army_unit_index, callback);
+        break;
+      case commendType.REMOVE_UNIT:
+        store.commit("setMoveLength", 0);
+        game = store.getters.game;
+        let army = game.army_list[ext_mes.army_unit_index.army_index];
+        army.units.splice(ext_mes.army_unit_index.unit_index, 1);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.SHOW_UNIT_DEAD:
+        animateHelper.showAnim(ext_mes.anim, null, callback, 200);
+        break;
+      case commendType.ADD_TOMB:
+        game = store.getters.game;
+        game.tomb.push(aim_site);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      // ---------------------召唤单位系列事件-------------------------
+      case commendType.SHOW_SUMMON_ANIM:
+        animateHelper.showAnim(ext_mes.anim, null, callback, 200);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.REMOVE_TOMB:
+        let remvoeTomb = aim_site;
+        store.commit("removeTomb", remvoeTomb);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.ADD_UNIT:
+        store.commit("addUnit", ext_mes);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
         break;
     }
   },
 
   // 对后端发送命令的分发
   dispatchOrder(commandList) {
-    this.dispatch(null, new Callback(commandList));
+    let callBackCommand = new Callback(commandList);
+    console.log("准备执行顺序命令", callBackCommand);
+    this.dispatch(null, callBackCommand);
   },
 }
 
