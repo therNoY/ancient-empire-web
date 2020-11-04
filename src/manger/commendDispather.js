@@ -294,6 +294,9 @@ var commendDispatcher = {
         moveHelper.move(unit_index, ext_mes.move_line, () => {
           console.log("移动完毕 展示行动", ext_mes.actions);
           actionHelper.setActionShow(ext_mes.actions);
+          if (callback) {
+            this.dispatch(callback.call(), callback);
+          }
         });
         break;
       case commendType.ROLLBACK_MOVE:
@@ -421,6 +424,12 @@ var commendDispatcher = {
         break;
       case commendType.ADD_UNIT:
         store.commit("addUnit", ext_mes);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.SHOW_BUY_UNIT:
+        store.commit("setBuyUnitDialog", true);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }

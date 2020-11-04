@@ -70,9 +70,9 @@ var appHelper = {
   },
 
 
-  sendEvent: function (event, initiateSite = null, aimSite = null, regionIndex) {
+  sendEvent: function (event, initiateSite = null, aimSite = null, regionIndex, unitId) {
     this.store.dispatch("sendEvent", {
-      event: event, initiateSite, aimSite, regionIndex
+      event: event, initiateSite, aimSite, regionIndex, unitId
     });
   }
 

@@ -16,41 +16,45 @@
             :column="game.game_map.column"
             :castleTitles="game.castle_titles"
           />
-          <attach-view/>
-          <tomb-view/>
-          <move-area :point="game.curr_point"/>
+          <attach-view />
+          <tomb-view />
+          <move-area :point="game.curr_point" />
           <army-view :armys="game.army_list" :singo="singo" />
-          <point-view :point="game.curr_point" :singo="singo"/>
-          <action-view/>
-          <left-change/>
-          <animate-view/>
+          <point-view :point="game.curr_point" :singo="singo" />
+          <action-view />
+          <left-change />
+          <animate-view />
         </div>
       </el-main>
-      <el-footer class="bars">%%%%%%%%%%%%%%%%%%%%%%%%%%%%</el-footer>
+      <el-footer class="bars">
+        <army-mes />
+      </el-footer>
     </el-container>
     <region-mes
       :bg_color="game.bg_color"
       :curr_color="game.curr_color"
       :region="game.curr_region"
     />
+
+    <buy-unit></buy-unit>
   </div>
 </template>
 
 <script>
-// import region from "./region_map";
-
 import { GetRecordById, SaveUserRecord } from "@/api";
 import RegionViewList from "../map_base/RegionViewList";
 import ArmyView from "../map_base/ArmyView.vue";
 import UnitMes from "./map_mes/UnitMes.vue";
 import RegionMes from "./map_mes/RegionMes.vue";
 import PointView from "../map_base/PointView.vue";
-import MoveArea from "../map_base/MoveArea.vue"
-import ActionView from "../map_base/ActionView.vue"
-import AttachView from "../map_base/AttachArea.vue"
-import LeftChange from "../map_base/LeftChangeView.vue"
-import AnimateView from "../map_base/AnimateView.vue"
-import TombView from "../map_base/TombView.vue"
+import MoveArea from "../map_base/MoveArea.vue";
+import ActionView from "../map_base/ActionView.vue";
+import AttachView from "../map_base/AttachArea.vue";
+import LeftChange from "../map_base/LeftChangeView.vue";
+import AnimateView from "../map_base/AnimateView.vue";
+import TombView from "../map_base/TombView.vue";
+import BuyUnit from "./unit_map/BuyUnit.vue";
+import ArmyMes from "./map_mes/ArmyMes.vue";
 export default {
   components: {
     RegionViewList,
@@ -64,6 +68,8 @@ export default {
     LeftChange,
     AnimateView,
     TombView,
+    BuyUnit,
+    ArmyMes,
   },
   data() {
     return {
@@ -101,19 +107,6 @@ export default {
         }
       }
     },
-    // 与后台创建一个 ws 连接
-    connectWs() {
-      // 开始连接
-      if (this.$store.state.ws.stompClient == null) {
-        this.$store.dispatch("wsConnection", this.recordId);
-      }
-    },
-    testSendWS() {
-      let args = {};
-      args.url = "/ws/test";
-      args.mes = "获取移动范围";
-      this.$store.dispatch("wsSendMes", args);
-    },
     // 开启一个后台进程 计时器
     startWorker() {
       setInterval(() => {
@@ -123,100 +116,6 @@ export default {
           this.singo = 0;
         }
       }, 500);
-    },
-    // 鼠标点击地形
-    getRegionMes(index) {
-      // 如果是二次移动阶段 则必须移动
-      if (this.mapSt.mapStatus == "secendMove") {
-        return;
-      }
-
-      // 显示地形颜色信息 并判断是否需要展示 购买军队弹出框
-      if (
-        this.record.game_map.regions[index].color != null &&
-        this.record.game_map.regions[index].color != ""
-      ) {
-        // 这个地形是有颜色的 并且是城堡 就展示购买军队框
-        if (this.record.game_map.regions[index].type == "castle") {
-          if (
-            this.record.game_map.regions[index].color == this.record.curr_color
-          ) {
-            this.$store.dispatch("getCanByUnit");
-          }
-        }
-        // 设置当前地形的颜色 便于地形展示
-        this.$store.commit(
-          "setCurrentRegionColor",
-          this.record.game_map.regions[index].color
-        );
-      } else {
-        this.$store.commit("setCurrentRegionColor", "");
-      }
-
-      // 计算出现在的site
-      let currentPoint = {};
-      if ((index + 1) % this.record.game_map.row == 0) {
-        currentPoint.row = Math.floor(
-          (index + 1) / this.record.game_map.column
-        );
-        currentPoint.column = this.record.game_map.column;
-      } else {
-        currentPoint.row =
-          Math.floor((index + 1) / this.record.game_map.column) + 1;
-        currentPoint.column = (index + 1) % this.record.game_map.column;
-      }
-      // 改变位置
-      this.changePoint(currentPoint);
-    },
-    getCastleTitle(row, cloumn) {
-      let currentPoint = {};
-      currentPoint.row = row;
-      currentPoint.column = cloumn;
-      this.changePoint(currentPoint);
-    },
-    // 改变当前点
-    changePoint(currentPoint) {
-      if (this.mapSt.unitStatus == "moveIng") {
-        console.log("等待移动完毕");
-        return;
-      }
-      // 判断现在是不是在领主在的城堡招募
-      if (this.mapAs.lordBuy) {
-        console.log("领主招募必须走");
-        if (
-          this.mapSt.mapStatus == "showAction" ||
-          this.mapSt.mapStatus == "willAttach" ||
-          this.mapSt.mapStatus == "willSummon"
-        ) {
-          console.log("回退");
-          this.$store.commit("setMapStatus", "showMoveArea");
-          this.$store.commit("moveBack");
-        }
-        return;
-      }
-      this.$store.commit("changeCurrentPoint", currentPoint);
-      if (
-        this.mapSt.mapStatus == "showAction" ||
-        this.mapSt.mapStatus == "willAttach" ||
-        this.mapSt.mapStatus == "willSummon"
-      ) {
-        console.log("move back");
-        this.$store.commit("changeMoveLength", 0);
-        this.$store.commit("moveBack");
-      }
-
-      // 改变当前点的Region 信息
-      const regions = this.record.game_map.regions;
-      const column = this.record.game_map.column;
-      const index = (currentPoint.row - 1) * column + currentPoint.column - 1;
-      const region = regions[index];
-      let regionInfo = this.$store.getters.regionInfo[region.type];
-      if (regionInfo == null) {
-        this.$store.dispatch("getRegionInfo", region.type);
-      } else {
-        this.$store.commit("currentRegionInfo", regionInfo);
-      }
-      this.$store.commit("setMapStatus", "noAction");
     },
     // 结束回合开始新的回合
     getNewRound() {
@@ -237,6 +136,10 @@ export default {
       // store.game 存在
 
       return isOk;
+    },
+    // 点击购买单位
+    buyUnit() {
+      console.log("购买单位");
     },
   },
   created() {
@@ -283,6 +186,12 @@ export default {
         float: left;
       }
     }
+  }
+  .el-floor {
+    margin: auto;
+    width: 100%;
+    height: 10px;
+    background: blanchedalmond;
   }
 }
 </style>

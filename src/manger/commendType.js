@@ -146,7 +146,12 @@ var commendType = {
   /**
    * 坟墓消失
    */
-  REMOVE_TOMB: "REMOVE_TOMB"
+  REMOVE_TOMB: "REMOVE_TOMB",
+
+  /**
+   * 展示购买单位
+   */
+  SHOW_BUY_UNIT:"SHOW_BUY_UNIT",
 }
 
 

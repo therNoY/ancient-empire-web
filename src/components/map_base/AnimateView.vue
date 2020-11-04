@@ -1,7 +1,6 @@
 <template>
   <!--展示特效-->
   <div>
-    {{animates}}
     <div v-for="animate in animates">
       <img
         v-if="animate"

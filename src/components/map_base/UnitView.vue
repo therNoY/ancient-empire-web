@@ -14,7 +14,10 @@
     <!--单位的状态 血量 等级 buff-->
     <div class="status">
       <!--状态-->
-      <div v-if="unit.status != null && unit.status != 'normal'" class="unit_status">
+      <div
+        v-if="unit.status != null && unit.status != 'normal'"
+        class="unit_status"
+      >
         <img :src="statusImg" />
       </div>
       <!--等级-->
@@ -51,19 +54,9 @@ export default {
         let res =
           lifeString ==
           this.$store.getters.levelInfo[
-            this.unit.typeId + "," + this.unit.level
+            this.unit.type_id + "," + this.unit.level
           ];
-        console.log(
-          "这个单位不是最大学",
-          lifeString,
-          this.$store.getters.levelInfo[
-            this.unit.typeId + "," + this.unit.level
-          ]
-        );
-        if (res) {
-          console.log("这个单位不是最大学", this.unit);
-        }
-        return res;
+        return !res;
       }
     },
     liftImg() {

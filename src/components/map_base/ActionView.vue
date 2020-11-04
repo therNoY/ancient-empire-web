@@ -1,11 +1,14 @@
 <template>
-  <div  v-if="unitActions.length > 0">
+  <div v-if="unitActions.length > 0">
     <!--展示单位可以进行行动 攻击 召唤 购买 修复-->
     <div class="actionLogo" v-for="action in unitActions">
       <img
         :src="$appHelper.getActionImg(action.action)"
         @click="doAction(action.action)"
-        :style="{top: $appHelper.getUnitPosition(action.row), left: $appHelper.getUnitPosition(action.column)}"
+        :style="{
+          top: $appHelper.getUnitPosition(action.row),
+          left: $appHelper.getUnitPosition(action.column),
+        }"
       />
     </div>
   </div>
@@ -17,6 +20,9 @@ export default {
   methods: {
     // 展示单位将要进行的行动
     doAction(name) {
+      if (!this.$appHelper.isPlayer(this)) {
+        return;
+      }
       if (name == "attack") {
         // 攻击
         this.$appHelper.sendEvent(eventype.CLICK_ATTACH_ACTION);
@@ -25,29 +31,26 @@ export default {
         this.$store.commit("setAction", []);
       } else if (name == "buy") {
         // 购买
-        this.$store.commit("changeLordWillBuy", true);
-        this.$store.dispatch("getCanByUnit");
+        this.$store.commit("setBuyUnitDialog", true);
       } else if (name == "move") {
         this.$appHelper.sendEvent(eventype.CLICK_MOVE_ACTION);
       } else if (name == "occupied") {
         // 占领
         this.$appHelper.sendEvent(eventype.CLICK_OCCUPIED_ACTION);
-      }else if (name == "repair") {
+      } else if (name == "repair") {
         // 修复
         this.$appHelper.sendEvent(eventype.CLICK_REPAIR_ACTION);
       } else if (name == "summon") {
         // 召唤
         this.$appHelper.sendEvent(eventype.CLICK_SUMMON_ACTION);
-      } else {
-        alert(1);
       }
-    }
+    },
   },
-  computed:{
-    unitActions(){
+  computed: {
+    unitActions() {
       return this.$store.getters.action;
-    }
-  }
+    },
+  },
 };
 </script>
 

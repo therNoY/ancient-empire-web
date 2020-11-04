@@ -12,6 +12,7 @@ const getters = {
   template: state => state.gameCore.template,
   mapState: state => state.gameCore.mapState,
   levelInfo: state => state.gameCore.levelInfo,
+  buyUnitDialog: state => state.gameCore.buyUnitDialog,
   cUnit: state => state.gameCore.game.curr_unit,
   cRegion: state => state.gameCore.game.curr_region,
 

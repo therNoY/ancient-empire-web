@@ -220,7 +220,7 @@ import {
   GetUnitLevelByTemp,
   RecordInit,
 } from "@/api";
-import MapPreview from "../map_manger/MapPreview";
+import MapPreview from "../map_manger/MapPreview.vue";
 export default {
   components: {
     MapPreview,
