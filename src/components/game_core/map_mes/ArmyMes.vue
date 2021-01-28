@@ -1,32 +1,32 @@
 <template>
-  <div class="army_mes">
+  <div class="army_mes" :style="$appHelper.getBkColor(curr_color)">
     <!--当前回合信息-->
     <div class="bar_mes">
       <el-tooltip content="金币1" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_money.png" />
-          <span>{{ currentArmy.money }}</span>
+          <span>&nbsp;{{ currentArmy.money }}</span>
         </div>
       </el-tooltip>
 
       <el-tooltip content="人口" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_pop.png" />
-          <span>{{ currentArmy.pop }} / {{ currentArmy.max_pop }}</span>
+          <span>&nbsp;{{ currentArmy.pop }} / {{ currentArmy.max_pop }}</span>
         </div>
       </el-tooltip>
 
       <el-tooltip content="回合数" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_round.png" />
-          <span>{{ currentArmy.current_round }}</span>
+          <span>&nbsp;&nbsp;{{ currentArmy.current_round }}</span>
         </div>
       </el-tooltip>
 
       <el-tooltip content="阵营" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_camp.png" />
-          <span>{{ currentArmy.camp }}</span>
+          <span>&nbsp;&nbsp;{{ currentArmy.camp }}</span>
         </div>
       </el-tooltip>
     </div>
@@ -34,13 +34,22 @@
       <el-button size="mini" type="primary">主菜单</el-button>
       <el-button size="mini" type="primary">小地图</el-button>
       <el-button size="mini" type="primary">保存游戏</el-button>
-      <el-button size="mini" type="primary">结束回合</el-button>
+      <el-button size="mini" type="primary" @click="roundEnd"
+        >结束回合</el-button
+      >
     </div>
   </div>
 </template>
 
 <script>
+import eventype from "../../../manger/eventType";
 export default {
+  props: ["curr_color"],
+  methods: {
+    roundEnd() {
+      this.$appHelper.sendEvent(eventype.ROUND_END);
+    },
+  },
   computed: {
     currentArmy() {
       let game = this.$store.getters.game;
@@ -55,24 +64,31 @@ export default {
 
 <style lang="scss" scoped>
 .army_mes {
-  margin-top: 10px;
+  height: 100%;
+  width: 100%;
   .bar_mes {
-    margin-top: 4px;
+    margin-top: 15px;
+    width: 40%;
     float: left;
+    .el-tooltip {
+      float: left;
+      width: 60px;
+      font-size: 13px;
+      margin-right: 10px;
+      img {
+        margin-top: 3px;
+        float: left;
+      }
+      span {
+        display: block;
+        float: left;
+      }
+    }
   }
-  .el-tooltip {
-    float: left;
-    width: 60px;
-    font-size: 13px;
-    margin-right: 10px;
-    img {
-      margin-top: 3px;
-      float: left;
-    }
-    span {
-      display: block;
-      float: left;
-    }
+  .bar_button {
+    float: right;
+    width: 60%;
+    margin-top: 10px;
   }
 }
 </style>

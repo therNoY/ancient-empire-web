@@ -1,10 +1,11 @@
 <template>
   <div>
     <unit-view-list
-      v-for="(army,index) in armys"
+      v-for="(army, index) in armys"
       :key="'ARMY_' + index"
       :units="army.units"
       :armyColor="army.color"
+      @unitOnClick="clickUnit"
       :singo="singo"
     ></unit-view-list>
   </div>
@@ -16,7 +17,11 @@ export default {
   components: {
     UnitViewList,
   },
-  computed: {
+  computed: {},
+  methods: {
+    clickUnit(unit) {
+      this.$emit("unitOnClick", unit);
+    },
   },
   props: ["armys", "singo"],
 };

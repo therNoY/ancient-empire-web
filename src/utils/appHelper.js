@@ -28,14 +28,44 @@ var appHelper = {
     }
   },
 
+  getBkColor: function (bg_color) {
+    let color = bg_color;
+    let bkColor = "#96d9f4";
+    if (color) {
+      if (color == "blue") {
+        bkColor = "#96d9f4";
+      } else if (color == "red") {
+        bkColor = "#f49e9c";
+      } else if (color == "green") {
+        bkColor = "#abed5a";
+      } else if (color == "black") {
+        bkColor = "#007696";
+      }
+    }
+    return { backgroundColor: bkColor };
+  },
+
   // 获取地图的size
   getMapSize: function (num) {
     return num * 24 + "px";
   },
 
-  // 返回单位的图片位置
-  getUnitImg: function (typeId, color, num = "") {
+  /**
+   * 返回单位的图片位置
+   * @param {} typeId 单位Id
+   * @param {*} color  单位颜色
+   * @param {*} num 单位动作控制
+   */
+  getUnitImg: function (typeId, color = "blue", num = "") {
     return imgUrl + "unit/" + color + "/" + typeId + num + ".png";
+  },
+
+  /**
+   * 获取模板图片
+   * @param {*} img 
+   */
+  getTemplateImg: function(img){
+    return imgUrl + "temp/" + img;
   },
 
   // 返回单位的图片位置

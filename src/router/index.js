@@ -6,12 +6,11 @@ import EncounterMap from '@/components/encounter'
 import GameIndex from '../components/game_core/Index.vue'
 import Demo from '@/components/Demo'
 
-import AdminLogin from '@/components/admin_mange/AdminLogin'
-import AdminHome from '@/components/admin_mange/AdminHome'
-import AdminIndex from '@/components/admin_mange/AdminIndex'
-import AdminUnitBase from '@/components/admin_mange/AdminUnitBase'
-import AdminUnitLevel from '@/components/admin_mange/AdminUnitLevel'
-import AdminRegion from '@/components/admin_mange/AdminRegion'
+import AdminLogin from '@/components/template_mange/AdminLogin'
+import Setting from '@/components/template_mange/MySetting'
+import TemplateManger from '@/components/template_mange/TemplateManger'
+import UnitMesManger from '@/components/template_mange/UnitMesManger'
+import AdminRegion from '@/components/template_mange/AdminRegion'
 
 import WebSocket from '@/components/WebSocket'
 
@@ -50,21 +49,21 @@ export default new Router({
       component: AdminLogin
     },
     {
-      path: '/admin/home',
-      name: 'AdminHome',
-      component: AdminHome,
+      path: '/setting',
+      name: 'Setting',
+      component: Setting,
       children: [{
-        path: '/admin/index',
-        name: 'AdminIndex',
-        component: AdminIndex,
+        path: '/templateManger/:model',
+        name: 'TemplateManger',
+        component: TemplateManger,
       }, {
-        path: '/admin/unit/base',
-        name: 'AdminUnitBase',
-        component: AdminUnitBase,
+        path: '/unitMesManger',
+        name: 'UnitMesManger',
+        component: UnitMesManger,
       }, {
-        path: '/admin/unit/level',
-        name: 'AdminUnitLevel',
-        component: AdminUnitLevel,
+        path: '/userMapManger',
+        name: 'UserMapManger',
+        component: MapEdit,
       }, {
         path: '/admin/region',
         name: 'AdminRegion',

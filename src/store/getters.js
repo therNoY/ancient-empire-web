@@ -13,6 +13,7 @@ const getters = {
   mapState: state => state.gameCore.mapState,
   levelInfo: state => state.gameCore.levelInfo,
   buyUnitDialog: state => state.gameCore.buyUnitDialog,
+  gameMessage:state => state.gameCore.gameMessage,
   cUnit: state => state.gameCore.game.curr_unit,
   cRegion: state => state.gameCore.game.curr_region,
 

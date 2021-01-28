@@ -152,6 +152,16 @@ var commendType = {
    * 展示购买单位
    */
   SHOW_BUY_UNIT:"SHOW_BUY_UNIT",
+
+  /**
+   * 修改军队信息
+   */
+  CHANGE_ARMY_INFO:"CHANGE_ARMY_INFO",
+
+  /**
+   * 修改游戏信息
+   */
+  CHANGE_RECORD_INFO:"CHANGE_RECORD_INFO",
 }
 
 

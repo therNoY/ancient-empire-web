@@ -1,8 +1,8 @@
 <!--地形集合-->
 <template>
-  <div>
-    <img 
-      style="float: left;"
+  <div v-if="regions">
+    <img
+      style="float: left"
       v-for="(region, index) in regions"
       :key="'REGION_' + index"
       :src="$appHelper.getRegionImg(region.type, region.color)"
@@ -10,8 +10,9 @@
     />
 
     <!-- 城堡的地图 -->
-    <img class="castleTitle"
-      v-for="(title, index) in castleTitles"
+    <img
+      class="castleTitle"
+      v-for="(title, index) in mapCastleTitle"
       :key="'CAST' + index"
       src="../../assets/images/Region/castle_title.png"
       @click="getCastleTitle(title.row, title.column)"
@@ -24,23 +25,35 @@
 </template>
 
 <script>
-import eventype from "../../manger/eventType";
 export default {
   props: ["regions", "castleTitles", "row", "column"],
   methods: {
     clickRegion(index) {
-      if (this.$appHelper.isPlayer(this)) {
-        // 点击了其他的单位 或者已经行动过了
-        this.$appHelper.sendEvent(eventype.CLICK_REGION, null, null, index);
-      }
+      this.$emit("clickRegion", index);
     },
   },
   computed: {
-    castleTitleStyle() {
-      return {
-        top: this.$appHelper.getPosition(this.title.row),
-        left: this.$appHelper.getPosition(this.title.column),
-      };
+    mapCastleTitle() {
+      let sites = [];
+      let region;
+      let row = this.row;
+      let column = this.column;
+      // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
+      for (let index = 0; index < this.regions.length; index++) {
+        region = this.regions[index];
+        if ('castle' == region.type) {
+          let castleTitle = {};
+          if ((index + 1) % row == 0) {
+            castleTitle.row = Number.parseInt((index + 1) / column - 1);
+            castleTitle.column = column;
+          } else {
+            castleTitle.row = Number.parseInt((index + 1) / column);
+            castleTitle.column = (index + 1) % column;
+          }
+          sites.push(castleTitle);
+        }
+      }
+      return sites;
     },
   },
 };

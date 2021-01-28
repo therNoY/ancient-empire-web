@@ -15,17 +15,17 @@
     <div class="status">
       <!--状态-->
       <div
-        v-if="unit.status != null && unit.status != 'normal'"
+        v-if="unit.status && unit.status != 'normal'"
         class="unit_status"
       >
         <img :src="statusImg" />
       </div>
       <!--等级-->
-      <div v-if="unit.level > 0" class="unit_level">
+      <div v-if="unit.level && unit.level > 0" class="unit_level">
         <img :src="levelImg" />
       </div>
       <!--血量-->
-      <div v-if="isNotMaxLife" class="lifeNum">
+      <div v-if="unit.life && isNotMaxLife" class="lifeNum">
         <img v-for="lifeNum in unit.life" :src="liftImg(lifeNum)" />
       </div>
     </div>

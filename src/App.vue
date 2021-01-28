@@ -31,4 +31,27 @@ button.active.focus {
   box-shadow: none;
   color: #fff;
 }
+.el-dialog{
+  margin-top: 5vh !important;
+}
+.el-dialog__header{
+  padding:  1% 3%;
+}
+.el-dialog__title{
+  font-size: 13px;
+}
+.el-dialog__body {
+    padding:  3% 3%;
+    background: white;
+    width: 94%;
+    float: left;
+}
+.el-rate__icon {
+  font-size: 14px;
+  margin-right: 0px;
+  width: 50%;
+}
+.el-table th{
+  padding: 8px, 0 !important;
+}
 </style>

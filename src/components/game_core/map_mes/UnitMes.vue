@@ -129,10 +129,7 @@ export default {
   computed: {
     // 标签颜色
     tagType() {
-      let color = this.bg_color;
-      if (!color) {
-        color = this.curr_color;
-      }
+      let color = this.curr_color;
       let type = "";
       switch (color) {
         case "blue":
@@ -152,23 +149,7 @@ export default {
     },
     // 背景
     bkColor() {
-      let color = this.bg_color;
-      if (!color) {
-        color = this.curr_color;
-      }
-      let bkColor = "#96d9f4";
-      if (color) {
-        if (color == "blue") {
-          bkColor = "#96d9f4";
-        } else if (color == "red") {
-          bkColor = "#f49e9c";
-        } else if (color == "green") {
-          bkColor = "#abed5a";
-        } else if (color == "black") {
-          bkColor = "#007696";
-        }
-      }
-      return { backgroundColor: bkColor };
+      return this.$appHelper.getBkColor(this.curr_color);
     },
     // 计算生命条的展示风格
     leftStyle() {
@@ -220,7 +201,7 @@ export default {
 <style lang="scss" scoped>
 .unit-mes {
   float: left;
-  width: 16%;
+  width: 100%;
   height: 100%;
   text-align: center;
 }
@@ -262,7 +243,7 @@ export default {
   float: left;
 }
 .unit_ci {
-  margin-top: 80px;
+  margin-top: 10px;
   float: left;
   width: 100%;
 }

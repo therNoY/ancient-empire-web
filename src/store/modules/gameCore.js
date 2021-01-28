@@ -17,6 +17,8 @@ const gameCore = {
     mapState: "0",
     // 是否展示购买单位弹框
     buyUnitDialog:false,
+    // 游戏信息
+    gameMessage:null,
   },
 
   mutations: {
@@ -54,6 +56,9 @@ const gameCore = {
     changeRegion(state, changeRegion) {
       console.log("准备改变地形", changeRegion);
       state.game.game_map.regions.splice(changeRegion.region_index, 1, changeRegion.region)
+    },
+    addGameMessage(state, message) {
+      state.gameMessage = message;
     }
   },
 

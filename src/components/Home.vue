@@ -7,9 +7,8 @@
       <button class="home_button" @click="get">战役</button>
       <button class="home_button" @click="router('encounter')">遭遇战</button>
       <button class="home_button">多人游戏</button>
-      <button class="home_button">地图中心</button>
+      <button class="home_button" @click="router('setting')">我的设置</button>
       <button class="home_button">读取游戏</button>
-      <button class="home_button" @click="router('mapEdit')">地图编辑器</button>
       <button class="home_button" @click="router('demo')">帮助</button>
     </div>
 

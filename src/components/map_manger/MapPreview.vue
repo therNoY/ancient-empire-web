@@ -4,16 +4,16 @@
     <!--预览地图-->
     <el-dialog
       :title="currentMap.map_name"
-      :visible.sync="previewMap"
+      :visible.sync="value"
       :width="$appHelper.getMapSize(currentMap.column)"
-      @close="$emit('dialogClose')"
+      @close="$emit('input', false)"
     >
       <div class="preview_map" :style="mapStyle">
         <region-view-list
+          ref="regionViewList"
           :regions="currentMap.regions"
           :row="currentMap.row"
           :column="currentMap.column"
-          :castleTitles="currentMap.castle_titles"
         ></region-view-list>
         <unit-view-list :units="currentMap.units"></unit-view-list>
       </div>
@@ -46,7 +46,7 @@ export default {
       // 是否是存档 默认不是
       default: false,
     },
-    previewVisible: {
+    value: {
       default: false,
     },
   },
@@ -56,16 +56,10 @@ export default {
     };
   },
   created() {
-    console.log("created");
+    window.MapPreviewVue = this;
     this.initMap();
   },
   computed: {
-    previewMap: {
-      get: function () {
-        return this.previewVisible;
-      },
-      set: function () {},
-    },
     mapStyle() {
       return {
         width: this.$appHelper.getMapSize(this.currentMap.column),

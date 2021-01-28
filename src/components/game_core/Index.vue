@@ -6,36 +6,36 @@
       :unitInfo="game.curr_unit"
       :region="game.curr_region"
     />
-    <el-container>
-      <el-main>
-        <div class="base_map" :style="mapStyle">
-          <region-view-list
-            ref="regionViewList"
-            :regions="game.game_map.regions"
-            :row="game.game_map.row"
-            :column="game.game_map.column"
-            :castleTitles="game.castle_titles"
-          />
-          <attach-view />
-          <tomb-view />
-          <move-area :point="game.curr_point" />
-          <army-view :armys="game.army_list" :singo="singo" />
-          <point-view :point="game.curr_point" :singo="singo" />
-          <action-view />
-          <left-change />
-          <animate-view />
-        </div>
-      </el-main>
-      <el-footer class="bars">
-        <army-mes />
-      </el-footer>
-    </el-container>
+    <div class="game_core_container">
+      <el-container>
+        <el-main>
+          <div class="base_map" :style="mapStyle">
+            <region-view-list
+              ref="regionViewList"
+              :regions="game.game_map.regions"
+              :row="game.game_map.row"
+              :column="game.game_map.column"
+              @clickRegion="clickRegion"
+            />
+            <attach-view />
+            <tomb-view />
+            <move-area :point="game.curr_point" />
+            <army-view @unitOnClick="clickUnit" :armys="game.army_list" :singo="singo" />
+            <point-view :point="game.curr_point" :singo="singo" />
+            <action-view />
+            <left-change />
+            <animate-view  />
+          </div>
+        </el-main>
+      </el-container>
+      <army-mes class="army_mes" :curr_color="game.curr_color" />
+    </div>
+
     <region-mes
       :bg_color="game.bg_color"
       :curr_color="game.curr_color"
       :region="game.curr_region"
     />
-
     <buy-unit></buy-unit>
   </div>
 </template>
@@ -55,6 +55,7 @@ import AnimateView from "../map_base/AnimateView.vue";
 import TombView from "../map_base/TombView.vue";
 import BuyUnit from "./unit_map/BuyUnit.vue";
 import ArmyMes from "./map_mes/ArmyMes.vue";
+import eventype from "../../manger/eventType";
 export default {
   components: {
     RegionViewList,
@@ -81,32 +82,24 @@ export default {
   },
   computed: {
     mapStyle() {
-      return {
-        width: this.$appHelper.getMapSize(this.game.game_map.column),
-        height: this.$appHelper.getMapSize(this.game.game_map.row),
-      };
+      let mapCount = document.body.clientWidth * 0.65;
+      let w = this.game.game_map.column * 24;
+      if (mapCount > w) {
+        return {
+          float: "left",
+          marginLeft: (mapCount - w) / 2 + "px",
+          width: w + "px",
+          height: this.$appHelper.getMapSize(this.game.game_map.row),
+        };
+      } else {
+        return {
+          width: w + "px",
+          height: this.$appHelper.getMapSize(this.game.game_map.row),
+        };
+      }
     },
   },
   methods: {
-    // 获取记录
-    getRecord() {
-      const map = this.$state.getters.game;
-      // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
-      for (let index = 0; index < map.regions.length; index++) {
-        const region = map.regions[index];
-        if (region.type == "castle") {
-          let castleTitle = {};
-          if ((index + 1) % map.row == 0) {
-            castleTitle.row = Math.floor((index + 1) / map.column) - 1;
-            castleTitle.column = map.column;
-          } else {
-            castleTitle.row = Math.floor((index + 1) / map.column);
-            castleTitle.column = (index + 1) % map.column;
-          }
-          this.castleTitles.push(castleTitle);
-        }
-      }
-    },
     // 开启一个后台进程 计时器
     startWorker() {
       setInterval(() => {
@@ -141,6 +134,32 @@ export default {
     buyUnit() {
       console.log("购买单位");
     },
+    clickRegion(index) {
+      // 点击了其他的单位 或者已经行动过了
+      if (this.$appHelper.isPlayer(this)) {
+        this.$appHelper.sendEvent(eventype.CLICK_REGION, null, null, index);
+      }
+    },
+    clickUnit(unit) {
+      if (this.$appHelper.isPlayer(this)) {
+        if (
+          this.$store.getters.game.curr_color == unit.color &&
+          !unit.done
+        ) {
+          // 点击了自己的可以行动的单位
+          this.$appHelper.sendEvent(eventype.CLICK_ACTIVE_UNIT, {
+            row: Math.round(unit.row),
+            column: Math.round(unit.column),
+          });
+        } else {
+          // 点击了其他的单位 或者已经行动过了
+          this.$appHelper.sendEvent(eventype.CLICK_UN_ACTIVE_UNIT, {
+            row: Math.round(unit.row),
+            column: Math.round(unit.column),
+          });
+        }
+      }
+    },
   },
   created() {
     // 检测webscoket连接
@@ -163,35 +182,44 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  color: rgb(129, 0, 0);
-  .el-container {
-    width: 65%;
+  .unit-mes {
+    float: left;
+    width: 16%;
+  }
+  .game_core_container {
     height: 100%;
     float: left;
-    border: 1px solid #eee;
-    padding-right: 20px;
-  }
-  .el-main {
-    width: 100%;
-    height: 100%;
-    margin: 0 auto;
-    position: relative;
-    &:hover {
-      cursor: pointer;
-    }
-    .base_map {
-      cursor: hand;
-      position: absolute;
-      img {
-        float: left;
+    width: 68%;
+    .el-container {
+      width: 100%;
+      height: 90%;
+      float: left;
+      .el-main {
+        width: 100%;
+        height: 94%;
+        margin-top: 2%;
+        position: relative;
+        &:hover {
+          cursor: pointer;
+        }
+        .base_map {
+          cursor: hand;
+          position: absolute;
+          img {
+            float: left;
+          }
+        }
       }
     }
+    .army_mes {
+      float: left;
+      height: 10%;
+    }
   }
-  .el-floor {
-    margin: auto;
-    width: 100%;
-    height: 10px;
-    background: blanchedalmond;
+
+  .region-mes {
+    width: 16%;
+    height: 100%;
   }
 }
 </style>

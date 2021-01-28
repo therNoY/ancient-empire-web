@@ -125,8 +125,7 @@
     <!--预览地图-->
     <map-preview
       :mapId="currentMap.map_id"
-      :previewVisible="previewVisible"
-      @dialogClose="previewVisible = false"
+      v-model="previewVisible"
     ></map-preview>
 
     <!--初始化设置地图-->

@@ -67,7 +67,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scope>
 .container {
   position: fixed;
   top: 0;

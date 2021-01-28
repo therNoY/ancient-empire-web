@@ -2,6 +2,7 @@
 import store from "../store";
 import commendType from "./commendType"
 import { imgUrl } from "../api/env"
+import { Message } from 'element-ui'
 
 var moveHelper = {
 
@@ -31,8 +32,6 @@ var moveHelper = {
       sumTime += moveLine[i].length * 250;
     }
   },
-
-
 
 }
 
@@ -344,7 +343,7 @@ var commendDispatcher = {
           const unit_statue = ext_mes.unit_status[i];
           currUnit = game.army_list[unit_statue.army_index].units[unit_statue.unit_index];;
           let cShowUnit = store.getters.cUnit;
-          let upCurr = currUnit.id == cShowUnit.id;
+          let upCurr = cShowUnit ? currUnit.id == cShowUnit.id : false;
           for (let key in unit_statue) {
             if (currUnit.hasOwnProperty(key)) {
               currUnit[key] = unit_statue[key];
@@ -430,6 +429,38 @@ var commendDispatcher = {
         break;
       case commendType.SHOW_BUY_UNIT:
         store.commit("setBuyUnitDialog", true);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      //---------------------------回合结束-------------------
+      case commendType.CHANGE_ARMY_INFO:
+        game = store.getters.game;
+        const army_statue = ext_mes.army_info;
+        let currArmy = game.army_list[game.curr_army_index];
+        for (let key in army_statue) {
+          if (currArmy.hasOwnProperty(key)) {
+            currArmy[key] = army_statue[key];
+          }
+        }
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.SHOW_GAME_NEWS:
+        store.commit("addGameMessage", ext_mes.message);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.CHANGE_RECORD_INFO:
+        game = store.getters.game;
+        const record_info = ext_mes.record_info;
+        for (let key in record_info) {
+          if (game.hasOwnProperty(key)) {
+            game[key] = record_info[key];
+          }
+        }
         if (callback) {
           this.dispatch(callback.call(), callback);
         }

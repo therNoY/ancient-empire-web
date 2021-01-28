@@ -32,7 +32,7 @@ const info = {
     // 获取单位信息
     getUnitInfo(store, key) {
       return new Promise((resolve, reject) => {
-        let args = { typeLevel: key };
+        let args = { idLevelInfo: key };
         GetUnitInfo(args).then(resp => {
           let unitInfo = {};
           unitInfo.key = key;
