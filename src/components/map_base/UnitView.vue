@@ -25,8 +25,8 @@
         <img :src="levelImg" />
       </div>
       <!--血量-->
-      <div v-if="unit.life && isNotMaxLife" class="lifeNum">
-        <img v-for="lifeNum in unit.life" :src="liftImg(lifeNum)" />
+      <div v-if="unit.life_num && isNotMaxLife" class="lifeNum">
+        <img v-for="lifeNum in unit.life_num" :src="liftImg(lifeNum)" />
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@ export default {
       );
     },
     isNotMaxLife() {
-      let life = this.unit.life;
+      let life = this.unit.life_num;
       if (life.length != 3) {
         return true;
       } else {
@@ -55,7 +55,7 @@ export default {
           lifeString ==
           this.$store.getters.levelInfo[
             this.unit.type_id + "," + this.unit.level
-          ];
+          ].max_life;
         return !res;
       }
     },
@@ -76,10 +76,7 @@ export default {
         ".png");
     },
     doneImg() {
-      if (this.unit.type == "lord" || this.unit.distDoneImg) {
-        return this.$appHelper.getUnitDoneImg(this.unit.type_id, this.color);
-      }
-      return this.$appHelper.getUnitDoneImg(this.unit.type_id);
+      return this.$appHelper.getUnitDoneImg(this.unit.type_id, this.color ? this.color : this.unit.color);
     },
 
     unitImg2() {

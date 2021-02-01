@@ -38,10 +38,10 @@ const gameCore = {
       state.levelInfo = levelInfo;
     },
     removeTomb(state, removeTomb) {
-      for (let i = 0; i < state.game.tomb.length; i++) {
-        const tomb = state.game.tomb[i];
+      for (let i = 0; i < state.game.tomb_list.length; i++) {
+        const tomb = state.game.tomb_list[i];
         if (tomb.row == removeTomb.row && tomb.column == removeTomb.column) {
-          state.game.tomb.splice(i, 1);
+          state.game.tomb_list.splice(i, 1);
           break;
         }
       }

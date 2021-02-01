@@ -3,7 +3,9 @@ import store from "../store";
 import commendType from "./commendType"
 import { imgUrl } from "../api/env"
 import { Message } from 'element-ui'
-
+/**
+ * 移动
+ */
 var moveHelper = {
 
   /**
@@ -34,7 +36,9 @@ var moveHelper = {
   },
 
 }
-
+/**
+ * 行动
+ */
 var actionHelper = {
   /**
    * 设置图标展示
@@ -101,7 +105,9 @@ var actionHelper = {
     }, 50);
   }
 }
-
+/**
+ * 动画
+ */
 var animateHelper = {
 
   // 空的function
@@ -254,6 +260,7 @@ var commendDispatcher = {
     let ext_mes = gameCommend.ext_mes;
 
     switch (game_commend_enum) {
+      // ---------------------基础信息改变事件------------------------
       case commendType.CHANGE_CURR_UNIT:
         console.log("执行改变当前单位");
         store.getters.game.curr_unit = ext_mes.unit_info;
@@ -270,6 +277,66 @@ var commendDispatcher = {
         console.log("执行改变当前背景颜色");
         store.getters.game.bg_color = ext_mes.bg_color;
         break;
+      case commendType.CHANG_REGION:
+        store.commit("changeRegion", ext_mes);
+        store.commit("setAction", []);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.CHANGE_UNIT_STATUS:
+        game = store.getters.game;
+        // 按照数组处理
+        if (!(ext_mes.unit_status instanceof Array)) {
+          ext_mes.unit_status = [ext_mes.unit_status];
+        }
+        for (let i = 0; i < ext_mes.unit_status.length; i++) {
+          const unit_statue = ext_mes.unit_status[i];
+          if (unit_statue['life']) {
+            unit_statue['life'] = unit_statue['life_num']
+          }
+          currUnit = game.army_list[unit_statue.army_index].units[unit_statue.unit_index];;
+          let cShowUnit = store.getters.cUnit;
+          let upCurr = cShowUnit ? currUnit.id == cShowUnit.id : false;
+          for (let key in unit_statue) {
+            if (currUnit.hasOwnProperty(key)) {
+              currUnit[key] = unit_statue[key];
+              if (upCurr) {
+                cShowUnit[key] = unit_statue[key];
+              }
+            }
+          }
+        }
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.CHANGE_ARMY_INFO:
+        game = store.getters.game;
+        const army_statue = ext_mes.army_info;
+        let currArmy = game.army_list[game.curr_army_index];
+        for (let key in army_statue) {
+          if (currArmy.hasOwnProperty(key)) {
+            currArmy[key] = army_statue[key];
+          }
+        }
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      case commendType.CHANGE_RECORD_INFO:
+        game = store.getters.game;
+        const record_info = ext_mes.record_info;
+        for (let key in record_info) {
+          if (game.hasOwnProperty(key)) {
+            game[key] = record_info[key];
+          }
+        }
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
+      // -------------------单位移动系统--------------------------
       case commendType.SHOW_MOVE_AREA:
         console.log("展示移动区域");
         store.commit("setMoveArea", ext_mes.move_area);
@@ -307,6 +374,7 @@ var commendDispatcher = {
         currUnit.row = aim_site.row;
         currUnit.column = aim_site.column;
         break;
+      // ---------------------单位行动--------------------------------
       case commendType.SHOW_ATTACH_AREA:
         console.log("展示攻击区域", ext_mes.attach_area);
         store.commit("setAction", []);
@@ -325,39 +393,10 @@ var commendDispatcher = {
       case commendType.DIS_SHOW_ATTACH_AREA:
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
-        break;
-      case commendType.CHANG_REGION:
-        store.commit("changeRegion", ext_mes);
-        store.commit("setAction", []);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }
         break;
-      case commendType.CHANGE_UNIT_STATUS:
-        game = store.getters.game;
-        // 按照数组处理
-        if (!(ext_mes.unit_status instanceof Array)) {
-          ext_mes.unit_status = [ext_mes.unit_status];
-        }
-        for (let i = 0; i < ext_mes.unit_status.length; i++) {
-          const unit_statue = ext_mes.unit_status[i];
-          currUnit = game.army_list[unit_statue.army_index].units[unit_statue.unit_index];;
-          let cShowUnit = store.getters.cUnit;
-          let upCurr = cShowUnit ? currUnit.id == cShowUnit.id : false;
-          for (let key in unit_statue) {
-            if (currUnit.hasOwnProperty(key)) {
-              currUnit[key] = unit_statue[key];
-              if (upCurr) {
-                cShowUnit[key] = unit_statue[key];
-              }
-            }
-          }
-        }
-        if (callback) {
-          this.dispatch(callback.call(), callback);
-        }
-        break;
-
       // --------------------单位攻击系列事件----------------------
       case commendType.RUSH_UNIT:
         // 展示单位突袭
@@ -433,38 +472,14 @@ var commendDispatcher = {
           this.dispatch(callback.call(), callback);
         }
         break;
-      //---------------------------回合结束-------------------
-      case commendType.CHANGE_ARMY_INFO:
-        game = store.getters.game;
-        const army_statue = ext_mes.army_info;
-        let currArmy = game.army_list[game.curr_army_index];
-        for (let key in army_statue) {
-          if (currArmy.hasOwnProperty(key)) {
-            currArmy[key] = army_statue[key];
-          }
-        }
-        if (callback) {
-          this.dispatch(callback.call(), callback);
-        }
-        break;
+      //---------------------其他-------------------------
       case commendType.SHOW_GAME_NEWS:
         store.commit("addGameMessage", ext_mes.message);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }
         break;
-      case commendType.CHANGE_RECORD_INFO:
-        game = store.getters.game;
-        const record_info = ext_mes.record_info;
-        for (let key in record_info) {
-          if (game.hasOwnProperty(key)) {
-            game[key] = record_info[key];
-          }
-        }
-        if (callback) {
-          this.dispatch(callback.call(), callback);
-        }
-        break;
+
     }
   },
 

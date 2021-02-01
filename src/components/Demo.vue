@@ -104,11 +104,11 @@
           <div class="unit_status">
             <!--血量-->
             <div
-              v-if="isNot100(unit.life)"
+              v-if="isNot100(unit.life_num)"
               class="lifeNum"
               :style="{top: lifeNumTop(unit), left: lifeNumLeft(unit), transitionDuration: (moveLength*0.25) + 's'}"
             >
-              <img v-for="lifeNum in unit.life" :src="liftImg(lifeNum)" />
+              <img v-for="lifeNum in unit.life_num" :src="liftImg(lifeNum)" />
             </div>
             <!--等级-->
             <div

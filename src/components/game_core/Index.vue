@@ -18,7 +18,7 @@
               @clickRegion="clickRegion"
             />
             <attach-view />
-            <tomb-view />
+            <tomb-view :tombs="tombs"/>
             <move-area :point="game.curr_point" />
             <army-view @unitOnClick="clickUnit" :armys="game.army_list" :singo="singo" />
             <point-view :point="game.curr_point" :singo="singo" />
@@ -98,6 +98,9 @@ export default {
         };
       }
     },
+    tombs(){
+      return this.$store.getters.game.tomb_list; 
+    }
   },
   methods: {
     // 开启一个后台进程 计时器

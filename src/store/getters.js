@@ -29,15 +29,9 @@ const getters = {
   attachArea: state => state.attach.attachArea,
   attachPoint: state => state.attach.attachPoint,
 
-  recordId: state => state.app.recordId,
-  record: state => state.app.record,
-  mapSt: state => state.app.mapSt,
-  mapDt: state => state.app.mapDt,
-  mapAs: state => state.app.mapAs,
   unitInfo: state => state.info.unitInfo,
   currentUnitInfo: state => state.info.currentUnitInfo,
   regionInfo: state => state.info.regionInfo,
   currentRegion: state => state.info.currentRegionInfo,
-  aiProperty: state => state.ai.aiProperty,
 }
 export default getters

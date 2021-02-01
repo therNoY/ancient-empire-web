@@ -3,8 +3,6 @@
 const store = {
   state:{
     moveLength: 0, // 将要移动的距离
-    lastPositon: {}, // 用于记录单位移动以前 的位置 便于回退
-    secendMove: false,
     moveAreas: [], // 移动区域
     moveLine: [], // 移动的点
   },

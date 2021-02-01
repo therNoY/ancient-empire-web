@@ -8,13 +8,14 @@
       :width="$appHelper.getMapSize(currentMap.column)"
       @close="$emit('input', false)"
     >
-      <div class="preview_map" :style="mapStyle">
+      <div class="preview_map" :style="mapStyle" v-if="value">
         <region-view-list
           ref="regionViewList"
           :regions="currentMap.regions"
           :row="currentMap.row"
           :column="currentMap.column"
         ></region-view-list>
+        <tomb-view v-if="currentMap.tombs" :tombs="currentMap.tombs"/>
         <unit-view-list :units="currentMap.units"></unit-view-list>
       </div>
     </el-dialog>
@@ -24,11 +25,13 @@
 <script>
 import { GetUserMapById, GetRecordById } from "../../api";
 import RegionViewList from "../map_base/RegionViewList.vue";
+import TombView from '../map_base/TombView.vue';
 import UnitViewList from "../map_base/UnitViewList.vue";
 export default {
   components: {
     RegionViewList,
     UnitViewList,
+    TombView,
   },
   /**
    * props设置默认值 指定类型

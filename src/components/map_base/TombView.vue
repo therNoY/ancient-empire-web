@@ -16,9 +16,9 @@
 <script>
 import eventype from "../../manger/eventType";
 export default {
-  computed:{
-    tombs(){
-      return this.$store.getters.game.tomb; 
+  props:{
+    tombs:{
+      type:Array
     }
   },
   methods:{

@@ -10,6 +10,7 @@
       <button class="home_button" @click="router('setting')">我的设置</button>
       <button class="home_button">读取游戏</button>
       <button class="home_button" @click="router('demo')">帮助</button>
+      <button class="home_button" @click="router('monitor')">监控</button>
     </div>
 
     <register v-show="registerVisible" @close="registerVisible = false"></register>

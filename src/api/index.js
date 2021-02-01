@@ -19,7 +19,11 @@ export const SaveUnitInfo = (args) => request('/api/unitMes', args, "PUT");
  * @param {} args 
  */
 export const GetUnitLevelInfoById = (id) => request('/api/unitLevel/' + id, '', "GET");
-export const GetUnitLevelByTemp = (args) => request('/api/unitLevel/' + args, '', "GET");
+/**
+ * 获取模板的所有单位信息 用于缓存
+ * @param {*} args 
+ */
+export const GetUnitLevelByTemp = (args) => request('/api/unitLevel/list/' + args, '', "GET");
 /**
  * 获取单位分页数据
  * @param {} args 
