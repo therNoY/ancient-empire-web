@@ -175,7 +175,16 @@ export default {
     },
 
     unitLift() {
-      return this.unitInfo.life;
+      if (typeof this.unitInfo.life == 'number') {
+        return this.unitInfo.life;
+      }
+      let life = 0;
+      const lifes = this.unitInfo.life;
+      for (let index = 0; index < lifes.length; index++) {
+        const num = lifes[index];
+        life = life + num * Math.round(Math.pow(10, lifes.length - index - 1));
+      }
+      return life;
     },
     // 返回经验的长的
     experienceRatio() {

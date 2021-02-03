@@ -43,9 +43,9 @@ var actionHelper = {
   /**
    * 设置图标展示
    */
-  setActionShow(actions) {
+  setActionShow(site, actions) {
     let actionShow1 = [];
-    let currPoint = store.getters.game.curr_point;
+    let currPoint = site;
     for (const action of actions) {
       actionShow1.push({
         row: currPoint.row,
@@ -359,7 +359,7 @@ var commendDispatcher = {
         console.log("单位移动", unit_index);
         moveHelper.move(unit_index, ext_mes.move_line, () => {
           console.log("移动完毕 展示行动", ext_mes.actions);
-          actionHelper.setActionShow(ext_mes.actions);
+          actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
           if (callback) {
             this.dispatch(callback.call(), callback);
           }
@@ -384,7 +384,7 @@ var commendDispatcher = {
         // 展示行动
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
-        actionHelper.setActionShow(ext_mes.actions);
+        actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
         break;
       case commendType.SHOW_ATTACH_POINT:
         console.log("展示攻击的点");
@@ -441,7 +441,7 @@ var commendDispatcher = {
         break;
       case commendType.ADD_TOMB:
         game = store.getters.game;
-        game.tomb.push(aim_site);
+        game.tomb_list.push(aim_site);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }
