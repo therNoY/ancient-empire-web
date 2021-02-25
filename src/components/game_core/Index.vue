@@ -25,6 +25,9 @@
             <action-view />
             <left-change />
             <animate-view  />
+            <up-show-animate v-model="$store.getters.actionState.levelUpInfo"
+            :site="$store.getters.actionState.levelUpSite"
+            ></up-show-animate>
           </div>
         </el-main>
       </el-container>
@@ -56,6 +59,7 @@ import TombView from "../map_base/TombView.vue";
 import BuyUnit from "./unit_map/BuyUnit.vue";
 import ArmyMes from "./map_mes/ArmyMes.vue";
 import eventype from "../../manger/eventType";
+import UpShowAnimate from '../map_base/UpShowAnimate.vue';
 export default {
   components: {
     RegionViewList,
@@ -71,6 +75,7 @@ export default {
     TombView,
     BuyUnit,
     ArmyMes,
+    UpShowAnimate,
   },
   data() {
     return {

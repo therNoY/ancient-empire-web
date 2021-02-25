@@ -4,7 +4,9 @@ const store = {
   state: {
     action: [], // 单位可以有的action
     leftChanges: [], // 单位血量变化
-    animates: [], // 展示的动画
+    animates: [], // 展示的动画,
+    levelUpInfo: null,
+    levelUpSite: null,
   },
   mutations: {
     setAction(state, action) {
@@ -34,6 +36,12 @@ const store = {
     },
     setAnimatesInit(state) {
       state.animates = [];
+    },
+    setLevelUpInfo(state, levelUpInfo){
+      state.levelUpInfo = levelUpInfo;
+    },
+    setLevelUpSite(state, levelUpSite){
+      state.levelUpSite = levelUpSite;
     }
   },
   actions: {

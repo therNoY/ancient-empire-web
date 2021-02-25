@@ -25,6 +25,10 @@ var commendType = {
      */
   SHOW_ACTION: "SHOW_ACTION",
   /**
+   * 不展示展示行动
+   */
+  DIS_SHOW_ACTION: "DIS_SHOW_ACTION",
+  /**
        * 展示移动区域
        */
   SHOW_MOVE_AREA: "SHOW_MOVE_AREA",
@@ -151,17 +155,22 @@ var commendType = {
   /**
    * 展示购买单位
    */
-  SHOW_BUY_UNIT:"SHOW_BUY_UNIT",
+  SHOW_BUY_UNIT: "SHOW_BUY_UNIT",
+
+  /**
+   * 展示升级
+   */
+  SHOW_LEVEL_UP:"SHOW_LEVEL_UP",
 
   /**
    * 修改军队信息
    */
-  CHANGE_ARMY_INFO:"CHANGE_ARMY_INFO",
+  CHANGE_ARMY_INFO: "CHANGE_ARMY_INFO",
 
   /**
    * 修改游戏信息
    */
-  CHANGE_RECORD_INFO:"CHANGE_RECORD_INFO",
+  CHANGE_RECORD_INFO: "CHANGE_RECORD_INFO",
 }
 
 

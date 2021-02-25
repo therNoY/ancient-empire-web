@@ -386,6 +386,12 @@ var commendDispatcher = {
         store.commit("setAttachPoint", {});
         actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
         break;
+        case commendType.DIS_SHOW_ACTION:
+          store.commit("setAction", []);
+          if (callback) {
+            this.dispatch(callback.call(), callback);
+          }
+          break;
       case commendType.SHOW_ATTACH_POINT:
         console.log("展示攻击的点");
         store.commit("setAttachPoint", aim_site);
@@ -479,7 +485,22 @@ var commendDispatcher = {
           this.dispatch(callback.call(), callback);
         }
         break;
-
+      case commendType.SHOW_LEVEL_UP:
+        debugger
+        store.commit("setLevelUpInfo", ext_mes.level_up_info);
+        store.commit("setLevelUpSite", ext_mes.site);
+        setTimeout(()=>{
+          ext_mes.site.row = ext_mes.site.row - 0.5;
+          store.commit("setLevelUpSite", ext_mes.site);
+          setTimeout(()=>{
+            store.commit("setLevelUpInfo", null);
+            store.commit("setLevelUpSite", null);
+          }, 500);
+        }, 200);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
     }
   },
 

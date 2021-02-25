@@ -22,6 +22,7 @@ const getters = {
   moveLine: state => state.move.moveLine,
   moveLength: state => state.move.moveLength,
   // 行为有关
+  actionState: state => state.action,
   action: state => state.action.action,
   leftChanges: state => state.action.leftChanges,
   animates: state => state.action.animates,
