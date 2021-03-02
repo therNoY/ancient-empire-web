@@ -9,6 +9,7 @@ import Demo from '@/components/Demo'
 
 import AdminLogin from '@/components/template_mange/AdminLogin'
 import Setting from '@/components/template_mange/MySetting'
+import UserRecord from '@/components/map_manger/UserRecord'
 import TemplateManger from '@/components/template_mange/TemplateManger'
 import UnitMesManger from '@/components/template_mange/UnitMesManger'
 import AdminRegion from '@/components/template_mange/AdminRegion'
@@ -43,6 +44,11 @@ export default new Router({
       path: '/monitor',
       name: 'GameMonitor',
       component: GameMonitor
+    },
+    {
+      path: '/userRecord',
+      name:"userRecord",
+      component: UserRecord,
     },
     {
       path: '/gameIndex',

@@ -8,7 +8,7 @@
       <button class="home_button" @click="router('encounter')">遭遇战</button>
       <button class="home_button">多人游戏</button>
       <button class="home_button" @click="router('setting')">我的设置</button>
-      <button class="home_button">读取游戏</button>
+      <button class="home_button" @click="router('userRecord')">读取游戏</button>
       <button class="home_button" @click="router('demo')">帮助</button>
       <button class="home_button" @click="router('monitor')">监控</button>
     </div>
@@ -25,13 +25,13 @@
       @register="register"
       @close="loginVisible = false"
     ></login>
-    <user_info
+    <user-info
       v-show="userInfoDialog"
       :user="loginUser"
       @logout="logout"
       :isDisable="true"
       @close="userInfoDialog = false"
-    ></user_info>
+    ></user-info>
   </div>
 </template>
 
@@ -39,13 +39,13 @@
 import my_dialog from "./MyDialog";
 import login from "./Login";
 import register from "./Register";
-import user_info from "./UserInfo";
+import UserInfo from "./UserInfo";
 export default {
   components: {
     my_dialog,
     login,
     register,
-    user_info
+    UserInfo
   },
   data() {
     return {

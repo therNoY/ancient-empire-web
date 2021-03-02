@@ -134,6 +134,11 @@ export const GetUnitInfoList = (args) => request('/unitInfo/list', args, "GET");
 
 // 保存游戏
 export const SaveUserRecord = (args) => request('/unitInfo/list', args, "GET");
+/**
+ * 获取用户记录使用分页
+ * @param {*} args 
+ */
+export const getUserRecordList = (args) => request('/api/userRecord/list', args, "POST")
 
 export const SendMessage = (args) => request("/api/message/send", args, "POST");
 

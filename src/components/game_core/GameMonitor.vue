@@ -22,6 +22,12 @@
               placeholder="currUnitType"
               clearable
             ></el-input>
+            <el-input
+              style="width: 30%"
+              v-model="point"
+              placeholder="point"
+              clearable
+            ></el-input>
           </div>
 
           <el-button type="primary" @click="getData('all')">全部</el-button>
@@ -63,6 +69,7 @@ export default {
       currUnitType: "",
       expandDepth: 2,
       previewMap: {},
+      point:"",
       previewVisible: false,
       data: {},
     };
@@ -81,6 +88,12 @@ export default {
           this.previewMap.map_name = "预览";
           let army_list = resp.res_val.user_record.army_list;
           this.previewMap.units = [];
+          if (this.point && this.point.split(",") && this.point.split(",").length == 2) {
+            let currPoint = {};
+            currPoint.row = this.point.split(",")[0];
+            currPoint.column = this.point.split(",")[1];
+             this.previewMap.currPoint = currPoint;
+          }
           for (let army of army_list) {
             army.units.forEach((unit) => {
               unit["color"] = army["color"];

@@ -16,6 +16,7 @@
           :column="currentMap.column"
         ></region-view-list>
         <tomb-view v-if="currentMap.tombs" :tombs="currentMap.tombs"/>
+        <point-view v-if="currentMap.currPoint" :point="currentMap.currPoint"></point-view>
         <unit-view-list :units="currentMap.units"></unit-view-list>
       </div>
     </el-dialog>
@@ -24,6 +25,7 @@
 
 <script>
 import { GetUserMapById, GetRecordById } from "../../api";
+import PointView from '../map_base/PointView.vue';
 import RegionViewList from "../map_base/RegionViewList.vue";
 import TombView from '../map_base/TombView.vue';
 import UnitViewList from "../map_base/UnitViewList.vue";
@@ -32,6 +34,7 @@ export default {
     RegionViewList,
     UnitViewList,
     TombView,
+    PointView,
   },
   /**
    * props设置默认值 指定类型

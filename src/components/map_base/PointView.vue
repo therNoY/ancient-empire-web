@@ -32,7 +32,12 @@
 <script>
 import eventype from "../../manger/eventType";
 export default {
-  props: ["singo", "point"],
+  props: {
+    singo:{
+      default:0,
+    },
+    point:{}
+  },
   data() {
     return {
       movePointIndex: 0, // 单位移动的辅助值 用于表示当前移动到第几个点了
