@@ -15,8 +15,11 @@
           :row="currentMap.row"
           :column="currentMap.column"
         ></region-view-list>
-        <tomb-view v-if="currentMap.tombs" :tombs="currentMap.tombs"/>
-        <point-view v-if="currentMap.currPoint" :point="currentMap.currPoint"></point-view>
+        <tomb-view v-if="currentMap.tombs" :tombs="currentMap.tombs" />
+        <point-view
+          v-if="currentMap.currPoint"
+          :point="currentMap.currPoint"
+        ></point-view>
         <unit-view-list :units="currentMap.units"></unit-view-list>
       </div>
     </el-dialog>
@@ -25,9 +28,9 @@
 
 <script>
 import { GetUserMapById, GetRecordById } from "../../api";
-import PointView from '../map_base/PointView.vue';
+import PointView from "../map_base/PointView.vue";
 import RegionViewList from "../map_base/RegionViewList.vue";
-import TombView from '../map_base/TombView.vue';
+import TombView from "../map_base/TombView.vue";
 import UnitViewList from "../map_base/UnitViewList.vue";
 export default {
   components: {
@@ -74,6 +77,9 @@ export default {
     },
   },
   methods: {
+    close() {
+      this.$emit("input", false);
+    },
     initMap() {
       if (this.map) {
         this.currentMap = this.map;

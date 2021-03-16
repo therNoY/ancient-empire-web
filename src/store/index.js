@@ -7,11 +7,13 @@ import action from './modules/actionState'
 import attach from './modules/attachState'
 import getters from './getters'
 import move from './modules/moveState'
+import frame from './modules/frame'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
+    frame,
     user,
     info,
     action,

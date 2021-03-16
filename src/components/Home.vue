@@ -6,46 +6,49 @@
       <button class="home_button" @click="getUserInfo">玩家</button>
       <button class="home_button" @click="get">战役</button>
       <button class="home_button" @click="router('encounter')">遭遇战</button>
-      <button class="home_button">多人游戏</button>
+      <button class="home_button" @click="clickNetGame">多人游戏</button>
       <button class="home_button" @click="router('setting')">我的设置</button>
       <button class="home_button" @click="router('userRecord')">读取游戏</button>
       <button class="home_button" @click="router('demo')">帮助</button>
       <button class="home_button" @click="router('monitor')">监控</button>
     </div>
 
-    <register v-show="registerVisible" @close="registerVisible = false"></register>
-    <my_dialog
-      v-show="dialogVisible"
+    <register v-if="registerVisible" @close="registerVisible = false"></register>
+    <my-dialog
+      v-if="dialogVisible"
       @login="goLogin"
       @close="dialogVisible = false"
-    >由于该功能需要联网，请先登录使用此功能</my_dialog>
+    >由于该功能需要联网，请先登录使用此功能</my-dialog>
     <login
-      v-show="loginVisible"
+      v-if="loginVisible"
       :user="loginUser"
       @register="register"
       @close="loginVisible = false"
     ></login>
     <user-info
-      v-show="userInfoDialog"
+      v-if="userInfoDialog"
       :user="loginUser"
       @logout="logout"
       :isDisable="true"
       @close="userInfoDialog = false"
     ></user-info>
+    <room-index v-model="showNetGameDialog"></room-index>
   </div>
 </template>
 
 <script>
-import my_dialog from "./MyDialog";
+import myDialog from "./MyDialog";
 import login from "./Login";
 import register from "./Register";
-import UserInfo from "./UserInfo";
+import UserInfo from "./UserInfo.vue";
+import RoomIndex from './net/room/RoomIndex.vue';
 export default {
   components: {
-    my_dialog,
+    myDialog,
     login,
     register,
-    UserInfo
+    UserInfo,
+    RoomIndex
   },
   data() {
     return {
@@ -53,7 +56,8 @@ export default {
       dialogVisible: false,
       loginVisible: false,
       registerVisible: false,
-      userInfoDialog: false
+      userInfoDialog: false,
+      showNetGameDialog:false,
     };
   },
   methods: {
@@ -66,6 +70,9 @@ export default {
       } else {
         this.loginVisible = true;
       }
+    },
+    clickNetGame(){
+      this.showNetGameDialog = true;
     },
     register() {
       this.dialogVisible = false;

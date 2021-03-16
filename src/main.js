@@ -12,6 +12,9 @@ import animated from 'animate.css'
 import appHelper from '../src/utils/appHelper'
 import JsonViewer from 'vue-json-viewer'
 
+import AeDialog from "./components/frame/AeDialog"
+import AeButton from "./components/frame/AeButton";
+
 
 
 
@@ -25,6 +28,10 @@ Vue.config.productionTip = false
 
 Vue.prototype.$appHelper = appHelper;
 appHelper.store = store;
+
+
+Vue.component("AeDialog", AeDialog);
+Vue.component("AeButton", AeButton);
 
 
 

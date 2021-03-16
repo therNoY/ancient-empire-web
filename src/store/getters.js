@@ -13,7 +13,7 @@ const getters = {
   mapState: state => state.gameCore.mapState,
   levelInfo: state => state.gameCore.levelInfo,
   buyUnitDialog: state => state.gameCore.buyUnitDialog,
-  gameMessage:state => state.gameCore.gameMessage,
+  gameMessage: state => state.gameCore.gameMessage,
   cUnit: state => state.gameCore.game.curr_unit,
   cRegion: state => state.gameCore.game.curr_region,
 
@@ -34,5 +34,8 @@ const getters = {
   currentUnitInfo: state => state.info.currentUnitInfo,
   regionInfo: state => state.info.regionInfo,
   currentRegion: state => state.info.currentRegionInfo,
+
+  // 框架层
+  gloadLoading: state => state.frame.globleLoading,
 }
 export default getters

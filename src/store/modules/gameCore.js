@@ -64,7 +64,7 @@ const gameCore = {
 
   actions: {
     // 连接一局游戏的socket 使用websocket
-    connectGameSocket(store, recordId, type = "stand") {
+    connectGameSocket(store, recordId, type = "stand_game") {
       return new Promise((resolve, reject) => {
         let token = store.getters.token;
         if (!token) {

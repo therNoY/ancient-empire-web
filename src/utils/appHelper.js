@@ -12,6 +12,23 @@ var appHelper = {
       .setAttribute("style", "background-color:#f7f7f7");
   },
 
+  setLoading: function(){
+    this.store.commit("setLoading");
+    return this.store.getters.gloadLoading;
+  },
+
+  successMsg: function(){
+
+  },
+
+  warningMsg: function(){
+
+  },
+
+  errorMsg: function(){
+
+  },
+
   // 获取地形的图片
   getRegionImg: function (type, color) {
     if (!color) {

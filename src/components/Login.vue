@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="popup">
-      <header class="popup-header">
+      <header class="login-popup-header">
         <slot name="header">
           <span class="title">登录</span>
           <button type="button" class="btn-close" @click="close">x</button>
         </slot>
       </header>
-      <section class="popup-body">
+      <section class="login-popup-body">
           <input type="text"  v-model="user.user_name" placeholder="用户名/邮箱">
           <input type="password"  v-model="user.password" placeholder="密码">
           <a>找回密码</a>
@@ -86,33 +86,33 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.popup-header {
+.login-popup-header {
   color: #b0b8ac;
   justify-content: space-between;
 }
-.popup-body {
+.login-popup-body {
   color: rgb(255, 255, 255);
   font-size: 17px;
   font-weight: 530;
   -webkit-text-stroke: 0.4px #000000;
   position: relative;
 }
-.popup-body input {
+.login-popup-body input {
   float: left;
   width: 100%;
   height: 20px;
   margin-top: 10px;
 }
-.popup-body span{
+.login-popup-body span{
   float: left;
   font-size: 14px;
   color: red;
 }
-.popup-body a{
+.login-popup-body a{
   font-size: 14px;
   float: right;
 }
-.popup-body a:hover{
+.login-popup-body a:hover{
   cursor: pointer;
   color: #b0b8ac;
   text-decoration: underline;

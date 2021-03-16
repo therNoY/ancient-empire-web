@@ -60,10 +60,23 @@ export const SaveTempMap = (args) => request('/api/userMap/saveTemp', args, "POS
 export const SaveMap = (args) => request('/api/userMap', args, "POST");
 export const SimpleDrawing = (args) => request('/api/userMap/simpleDrawing', args, "POST");
 export const GetUserMapList = () => request('/api/userMap/list', '', "GET");
+/**
+ * 获取用户下载的地图
+ * @returns 
+ */
+export const GetUserDownloadMap = () => request('/api/userMap/download/list', '', "GET");
+/**
+ * 获取世界地图
+ * @returns 
+ */
+export const GetWorldMapList = () => request('/api/worldMap/list', '', "GET");
+
 export const GetUserMapById = (id) => request('/api/userMap/' + id, '', "GET");
 export const DelUserMap = (id) => request('/api/userMap/' + id, '', "DELETE");
 
-// 获取遭遇地图
+/**
+ * 获取遭遇地图
+ */
 export const GetEncounterMap = () => request("/encounterMap", '', "GET");
 export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
 
@@ -143,4 +156,21 @@ export const getUserRecordList = (args) => request('/api/userRecord/list', args,
 export const SendMessage = (args) => request("/api/message/send", args, "POST");
 
 
+/**
+ * 获取房间号
+ * @param {*} args 
+ */
+export const GetRoomListByPage = (args) =>request("/api/room/list", args, "POST");
+/**
+ * 创建房间
+ * @param {*} args 
+ * @returns 
+ */
+export const CreateRoom = (args) =>request("/api/room/save", args, "PUT");
+/**
+ * 玩家加入
+ * @param {*} args 
+ * @returns 
+ */
+export const PlayerJoinRoom = (args) =>request("/api/room/playerJoin", args, "PUT");
 

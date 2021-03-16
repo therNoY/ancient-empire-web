@@ -7,7 +7,7 @@
           <button type="button" class="btn-close" @click="close">x</button>
         </slot>
       </header>
-      <section class="popup-body">
+      <section class="userInfo-popup-body">
         <div style="width:100%" v-show="willChange">请输入原密码</div>
         <input type="password" v-show="willChange" placeholder="原密码" v-model="user.old_password" />
         <input type="text" v-show="!willChange" :disabled="isDisable" v-model="user.user_name" />
@@ -110,7 +110,7 @@ export default {
   color: #b0b8ac;
   justify-content: space-between;
 }
-.popup-body {
+.userInfo-popup-body {
   color: rgb(255, 255, 255);
   font-size: 17px;
   font-weight: 530;
@@ -118,16 +118,16 @@ export default {
   position: relative;
 }
 
-.popup-body span {
+.userInfo-popup-body span {
   float: left;
   font-size: 14px;
   color: red;
 }
-.popup-body a {
+.userInfo-popup-body a {
   font-size: 14px;
   float: right;
 }
-.popup-body a:hover {
+.userInfo-popup-body a:hover {
   cursor: pointer;
   color: #b0b8ac;
   text-decoration: underline;
