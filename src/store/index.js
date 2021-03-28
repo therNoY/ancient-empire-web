@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import user from './modules/user'
 import info from './modules/info'
 import gameCore from './modules/gameCore'
+import room from './modules/room'
 import action from './modules/actionState'
 import attach from './modules/attachState'
 import getters from './getters'
@@ -18,6 +19,7 @@ const store = new Vuex.Store({
     info,
     action,
     attach,
+    room,
     move, // 移动区域 移动相关的
     gameCore // 游戏核心先关的
   },

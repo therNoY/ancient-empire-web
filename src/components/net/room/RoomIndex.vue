@@ -6,9 +6,9 @@
       :showSearch="true"
       title="游戏大厅"
       :titleButtons="titleButtonList"
-      :titleButtonClickAction="titleButtonClickAction"
+      :titleButtonClickAction="[clickAddbutton]"
       :footerButtons="buttonList"
-      :footerButtonClickAction="footerButtonClickAction"
+      :footerButtonClickAction="[clickJoinGameButton, clickPreivewButton]"
       :queryDataGrid="queryDataFunction"
       :showItem="showItem"
       :showTitle="showTitle"
@@ -22,17 +22,37 @@
       :width="35"
       :formConfig="addNewRoomFormConfig"
       :footerButtons="createRoomButtons"
-      :footerButtonClickAction="footerButtonClickAction"
+      :footerButtonClickAction="[clickCreateRoom, clickCancelCreateRoom]"
     ></ae-dialog>
+    <join-room
+      ref="joinRoom"
+      :width="55"
+      v-model="showJoinRoom"
+      :roomName="joinRoomName"
+      :roomId="joinRoomId"
+      :roomOwner="roomOwner"
+      :armyConfigList="armyConfigList"
+    ></join-room>
+    <ae-map-preview
+      v-model="previewVisible"
+      @close="closePreview"
+      :mapId="previewMapId"
+      :armyConfigList="armyConfigList"
+    ></ae-map-preview>
   </div>
 </template>
 
 <script>
-import { GetRoomListByPage,PlayerJoinRoom,CreateRoom } from "@/api";
+import { GetRoomListByPage, PlayerJoinRoom, CreateRoom } from "@/api";
+import JoinRoom from "./JoinRoom.vue";
+import AeMapPreview from "../../map_manger/AeMapPreview.vue";
 import dialogShow from "../../../mixins/frame/dialogShow.js";
-import AeMessage from '../../frame/AeMessage.vue';
 export default {
   mixins: [dialogShow],
+  components: {
+    JoinRoom,
+    AeMapPreview,
+  },
   props: {},
   data() {
     return {
@@ -41,8 +61,8 @@ export default {
       queryDataFunction: null,
       buttonList: ["加入", "预览"],
       titleButtonList: ["新增"],
-      showItem: ["room_name", "create_time"],
-      showTitle: ["房间名字", "创建时间"],
+      showItem: ["room_id", "room_name", "creat_time_show", "ready"],
+      showTitle: ["房间号", "房间名字", "创建时间", "玩家"],
       createRoomButtons: ["创建", "取消"],
       addNewDialogShowModel: false,
       addNewRoomFormConfig: [
@@ -88,10 +108,18 @@ export default {
         },
         {
           type: "userMapSelect",
-          key: "map_id",
+          key: "init_map",
           des: "选择地图",
         },
       ],
+      joinMapId: "",
+      joinRoomId: null,
+      joinRoomName: "",
+      showJoinRoom: false,
+      previewMapId: null,
+      previewVisible: false,
+      armyConfigList: [],
+      roomOwner:"",
     };
   },
 
@@ -100,6 +128,7 @@ export default {
       console.log("页面创建");
       this.$refs.mainDiaglog.flushData();
     },
+    closePreview() {},
     onDialogDestroy() {
       console.log("页面销毁");
     },
@@ -108,10 +137,32 @@ export default {
       this.addNewDialogShowModel = true;
     },
     clickJoinGameButton() {
-      console.log("加入游戏");
+      let selectMap = this.$refs.mainDiaglog.getDataGridSelect();
+     
+      this.$appHelper.setLoading();
+      let joinRoomSocket = this.$refs.joinRoom.joinRoomSocket(selectMap.room_id);
+      joinRoomSocket.then((resp) => {
+          this.joinMapId = selectMap.map_id;
+          this.joinRoomId = selectMap.room_id;
+          this.joinRoomName = selectMap.room_name;
+          this.armyConfigList = JSON.parse(resp);
+          this.roomOwner = selectMap.room_owner;
+          this.showJoinRoom = true;
+          this.$message.info("加入成功");
+          this.$appHelper.setLoading();
+        })
+        .catch((error) => {
+          console.error(error);
+          this.$message.info("加入失败");
+          this.$appHelper.setLoading();
+        });
     },
     clickPreivewButton() {
-      console.log("点击预览");
+      let selectMap = this.$refs.mainDiaglog.getDataGridSelect();
+      this.previewMapId = selectMap.map_id;
+      let mapConfig = JSON.parse(selectMap.map_config);
+      this.armyConfigList = mapConfig.armyList;
+      this.previewVisible = true;
     },
     clickCreateRoom() {
       console.log("创建房间");
@@ -131,44 +182,56 @@ export default {
         return;
       }
 
-      if (!formData.map_id) {
+      if (!formData.init_map) {
         this.$message.info("必须选择地图");
         return;
       }
       let args = formData;
       this.$appHelper.setLoading();
-      CreateRoom(args).then(resp=>{
-        this.$appHelper.setLoading();
-        if (resp.resp_code == 0) {
-          console.log("创建房间成功");
-          this.addNewDialogShowModel = false;
-        } else {
-          console.log("创建房间失败, 请稍后重试");
-        }
-      }).catch(error=>{
-        this.$appHelper.setLoading();
-      })
+      CreateRoom(args)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.addNewDialogShowModel = false;
+            this.joinMapId = this.$refs.addNewRoomDialog.getFormData().init_map.map_id;
+            this.joinRoomId = resp.res_val.room_id;
+            this.joinRoomName = resp.res_val.room_name;
+            this.roomOwner = this.$store.getters.user.user_id;
+            this.armyConfigList = JSON.parse(resp.res_val.map_config).armyList;
+            console.log(this.$refs.addNewRoomDialog.getFormData());
+            let initSetting = this.$refs.joinRoom.initSetting(
+              resp.res_val.room_id
+            );
+            initSetting.then((joinRoomPromise) => {
+                this.showJoinRoom = true;
+                console.log("joinRoomPromise result >>>", resp, joinRoomPromise);
+                this.$message.info("创建成功");
+                this.$appHelper.setLoading();
+              })
+              .catch((error) => {
+                this.$message.info("加入房间失败");
+                this.$appHelper.setLoading();
+                this.showJoinRoom = false;
+              });
+          } else {
+            console.log("创建房间失败, 请稍后重试");
+            this.$appHelper.setLoading();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.$appHelper.setLoading();
+        });
     },
     clickCancelCreateRoom() {
       console.log("取消创建房间");
     },
   },
-  computed: {
-    titleButtonClickAction() {
-      let functionList = [];
-      functionList.push(this.clickAddbutton);
-      return functionList;
-    },
-    footerButtonClickAction() {
-      let functionList = [];
-      functionList.push(this.clickCreateRoom);
-      functionList.push(this.clickCancelCreateRoom);
-      return functionList;
-    },
-  },
+  computed: {},
   created() {
     window.RoomIndexVue = this;
     this.queryDataFunction = GetRoomListByPage;
+  },
+  destroyed() {
   },
 };
 </script>

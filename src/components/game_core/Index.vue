@@ -128,9 +128,9 @@ export default {
     },
     // 检测游戏是否可以开始
     checkGame() {
-      let isOk = false;
+      let isOk = true;
       // gameWS正常连接
-      isOk = this.$store.dispatch("testConnect");
+      // isOk = this.$store.dispatch("testConnect");
       if (!isOk) {
         return isOk;
       }

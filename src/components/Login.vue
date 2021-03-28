@@ -51,6 +51,7 @@ export default {
         let loginUser = {};
         loginUser.user_name = resp.res_val.user_name;
         loginUser.password = resp.res_val.password;
+        loginUser.user_id = resp.res_val.user_id;
         setUser(loginUser);
         let token = resp.res_val.token;
         console.log(token);

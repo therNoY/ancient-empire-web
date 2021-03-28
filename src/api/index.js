@@ -8,6 +8,14 @@ export const Login = (args) => request('/user/login', args, "POST");
 export const Register = (args) => request('/user/register', args, "POST");
 
 export const AdminLogin = (args) => request('/admin/login', args, "POST");
+
+/**
+ * 获取用户名称
+ * @param {*} args 
+ * @returns 
+ */
+export const GetUserNameById = (args) =>  request('/api/user/name', args, "GET");
+
 /**
  * 保存单位信息
  * @param {} args 
@@ -71,7 +79,19 @@ export const GetUserDownloadMap = () => request('/api/userMap/download/list', ''
  */
 export const GetWorldMapList = () => request('/api/worldMap/list', '', "GET");
 
+/**
+ * 根据ID获取地图 可以不展示某些单位
+ * @param {*} id 
+ * @returns 
+ */
 export const GetUserMapById = (id) => request('/api/userMap/' + id, '', "GET");
+/**
+ * 根据ID获取地图 可以不展示某些单位
+ * @param {*} id 
+ * @returns 
+ */
+export const GetUserMapWithConfig = (config) => request('/api/userMap/withConfig', config, "POST");
+
 export const DelUserMap = (id) => request('/api/userMap/' + id, '', "DELETE");
 
 /**
@@ -173,4 +193,11 @@ export const CreateRoom = (args) =>request("/api/room/save", args, "PUT");
  * @returns 
  */
 export const PlayerJoinRoom = (args) =>request("/api/room/playerJoin", args, "PUT");
+
+/**
+ * 改变控制军队
+ * @param {}} args 
+ * @returns 
+ */
+export const ChangeArmy = (args) =>request("/api/room/changeArmy", args, "POST");
 

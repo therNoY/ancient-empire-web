@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { GetUserMapById, GetRecordById } from "../../api";
+import { GetUserMapWithConfig, GetRecordById } from "../../api";
 import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import PointView from "../map_base/PointView.vue";
 import RegionViewList from "../map_base/RegionViewList.vue";
@@ -50,6 +50,9 @@ export default {
     mapId: {
       // 地图ID
       default: "",
+    },
+    armyConfigList:{
+      default: [],
     },
     map: {
       // 直接传地图进来
@@ -114,8 +117,10 @@ export default {
             });
         } else {
           this.loading = this.$appHelper.setLoading();
-          GetUserMapById(this.mapId)
-            .then((resp) => {
+          let args = {};
+          args.map_id = this.mapId;
+          args.army_config_list = this.armyConfigList;
+          GetUserMapWithConfig(args).then((resp) => {
               if (resp && resp.res_code == 0) {
                 this.currentMap = resp.res_val;
               }

@@ -10,13 +10,12 @@ import store from './store'
 import axios from 'axios'
 import animated from 'animate.css'
 import appHelper from '../src/utils/appHelper'
+import eventBus from '../src/manger/EventBus'
 import JsonViewer from 'vue-json-viewer'
 
-import AeDialog from "./components/frame/AeDialog"
+import AeDialog from "./components/frame/AeDialog";
+import AeBaseDialog from "./components/frame/AeBaseDialog.vue"
 import AeButton from "./components/frame/AeButton";
-
-
-
 
 import './permission' // 引入权限控制器
 
@@ -27,10 +26,12 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 Vue.prototype.$appHelper = appHelper;
+Vue.prototype.$eventBus = eventBus;
 appHelper.store = store;
 
 
 Vue.component("AeDialog", AeDialog);
+Vue.component("AeBaseDialog", AeBaseDialog);
 Vue.component("AeButton", AeButton);
 
 

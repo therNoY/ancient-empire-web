@@ -9,7 +9,7 @@
       :queryDataGrid="getUserMapSelect"
       :titleSwitchSelect="titleSwitchSelect"
       :footerButtons="buttonList"
-      :footerButtonClickAction="footerButtonClickAction"
+      :footerButtonClickAction="[clickChooseMap, clickPreivewButton]"
       :width="40"
       @titleSwtichSelectChange="titleSwtichSelectChange"
     >
@@ -28,10 +28,20 @@
     >
       {{ chooseMap.map_name }}
     </div>
-    <ae-base-dialog title="设置地图" v-model="setMapShow" @close="closeSetMap">
+
+    <ae-base-dialog
+      title="设置地图"
+      v-model="setMapShow"
+      @close="closeSetMap"
+    >
       <div>
-        <el-table :data="initArmys" style="width: 100%">
-          <el-table-column label="军队" width="80px">
+        <el-table
+          :data="initArmys"
+          :cell-style="tableCellStyle"
+          :header-cell-style="tableHeaderColor"
+          style="width: 100%;background-color: #5a5c59"
+        >
+          <el-table-column label="军队" width="50px">
             <template slot-scope="army">
               <img :src="$appHelper.getUnitImg('10', army.row.color)" />
             </template>
@@ -49,12 +59,13 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="color" label="玩家类型">
+          <el-table-column prop="color" label="玩家类型" width="200px">
             <template slot-scope="army">
-              <ae-switch-select
-                v-model="army.row.type"
-                :items="armyType"
-              ></ae-switch-select>
+              <el-radio-group v-model="army.row.type" size="mini">
+                <el-radio-button label="user">玩家</el-radio-button>
+                <el-radio-button label="ai">电脑</el-radio-button>
+                <el-radio-button label="no">无</el-radio-button>
+              </el-radio-group>
             </template>
           </el-table-column>
           <el-table-column label="阵营">
@@ -79,7 +90,7 @@
             size="mini"
             :step="500"
           ></el-input-number>
-          <span style="padding-left: 15%">最大人口:</span>
+          <span style="padding-left: 1%">最大人口:</span>
           <el-input-number
             v-model="maxPop"
             :min="15"
@@ -88,19 +99,19 @@
             :step="5"
           ></el-input-number>
         </div>
-        <el-button
-          style="width: 30%; margin-top: 10px"
-          @click="startStandGame"
-          type="primary"
-          size="mini"
-          >确认</el-button
-        >
+        <div style="width: 100%">
+          <ae-button :marginLeft="25" :width="50" @onClick="clickSetMap">
+            确认
+          </ae-button>
+        </div>
       </div>
     </ae-base-dialog>
+
     <ae-map-preview
       v-model="previewVisible"
       @close="close"
       :mapId="previewMapId"
+      :armyConfigList="initArmys"
     ></ae-map-preview>
   </div>
 </template>
@@ -117,14 +128,23 @@ import MapPreview from "../map_manger/MapPreview.vue";
 import AeMapPreview from "../map_manger/AeMapPreview.vue";
 import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import AeSwitchSelect from "../frame/AeSwitchSelect.vue";
+import AeButton from "../frame/AeButton.vue";
+import blackStyle from "../../mixins/style/blackStyle";
 export default {
-  components: { MapPreview, AeMapPreview, AeBaseDialog, AeSwitchSelect },
+  mixins: [blackStyle],
+  components: {
+    MapPreview,
+    AeMapPreview,
+    AeBaseDialog,
+    AeSwitchSelect,
+    AeButton,
+  },
   props: {
     label: {
       type: String,
     },
     value: {
-      type: String,
+      type: Object,
     },
   },
   data() {
@@ -167,12 +187,16 @@ export default {
           value: "无",
         },
       ],
+      initMapConfig: {},
     };
   },
   methods: {
     clickSelectMap() {
       this.showModel = true;
       console.log(this.$refs.aeDialog);
+    },
+    getInitMapConfig() {
+      return this.initMapConfig;
     },
     closeSetMap() {},
     titleSwtichSelectChange(value) {
@@ -185,10 +209,7 @@ export default {
       console.log(this.$refs.aeDialog);
       let value = this.$refs.aeDialog.getDataGridSelect();
       this.chooseMap = value;
-      // this.showModel = false;
       this.setMap();
-      console.log("选择地图", value);
-      this.$emit("input", value.map_id);
     },
     clickPreivewButton() {
       let value = this.$refs.aeDialog.getDataGridSelect();
@@ -247,6 +268,65 @@ export default {
         }
       }
     },
+    clickSetMap() {
+      this.initMapConfig.max_pop = this.maxPop;
+      this.initMapConfig.money = this.initMoney;
+      this.initMapConfig.army_list = this.initArmys;
+      this.initMapConfig.map_id = this.chooseMap.map_id;
+      this.chooseMap.config = this.initMapConfig;
+      this.$emit("input", this.initMapConfig);
+      console.log("选择地图", this.initMapConfig);
+      this.setMapShow = false;
+      this.showModel = false;
+    },
+    /**
+     * 开始一局单机游戏
+     * 1.创建ws连接,
+     * 2.后台根据地图和游戏类型生成一个游戏上下文,
+     * 3.可以开始游戏
+     */
+    startStandGame() {
+      this.loading = true;
+      console.log("开始一个遭遇战的单机游戏");
+      let record = {};
+      record.map_id = this.currentMap.map_id;
+      record.max_pop = this.maxPop;
+      record.money = this.money;
+      record.army_list = this.initArmys;
+      record.game_type = "encounter";
+      RecordInit(record)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.$store.commit("setGame", resp.res_val);
+            // 获取单位最大生命值
+            this.getUnitLevelByTemp(resp.res_val.template_id);
+            // 获取模板
+            GetUserTemp(resp.res_val.template_id).then((tempResp) => {
+              if (tempResp && tempResp.res_val) {
+                this.$store.commit("setTemplate", tempResp.res_val);
+                this.$store
+                  .dispatch("connectGameSocket", resp.res_val.uuid)
+                  .then((r) => {
+                    this.loading = false;
+                    this.$router.push("/gameIndex");
+                  })
+                  .catch((e) => {
+                    this.loading = false;
+                  });
+              } else {
+                this.$message.error(resp.res_mes);
+                this.loading = false;
+              }
+            });
+          } else {
+            this.$message.error(resp.res_mes);
+            this.loading = false;
+          }
+        })
+        .catch((e) => {
+          this.loading = false;
+        });
+    },
   },
   created() {
     window.UserMapSelectVue = this;
@@ -262,12 +342,6 @@ export default {
       } else if (this.queryModel == 4) {
         return GetWorldMapList;
       }
-    },
-    footerButtonClickAction() {
-      let functionList = [];
-      functionList.push(this.clickChooseMap);
-      functionList.push(this.clickPreivewButton);
-      return functionList;
     },
   },
 };
@@ -288,6 +362,15 @@ export default {
     padding: 2%;
     text-decoration: underline;
     cursor: pointer;
+  }
+  .common_init {
+    width: 100%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    float: left;
+    span {
+      font-size: 14px;
+    }
   }
 }
 </style>

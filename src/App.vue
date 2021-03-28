@@ -67,4 +67,8 @@ button.active.focus {
 .el-table th {
   padding: 8px, 0 !important;
 }
+.el-table td,
+.el-table th.is-leaf {
+  border-bottom: 1px solid #5a5c59 !important;
+}
 </style>

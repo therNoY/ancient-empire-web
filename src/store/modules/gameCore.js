@@ -85,6 +85,11 @@ const gameCore = {
         };
         socket.onmessage = (e) => {
           let data = JSON.parse(e.data);
+          if (data.open_status && data.open_status == '200') {
+            console.log("Room WS 连接成功", socket);
+            resolve(1);
+            return;
+          }
           console.log("收到服务发出的指令", data);
           if (data instanceof Array && data.length > 0) {
             commendDispatcher.dispatchOrder(data);
