@@ -5,6 +5,7 @@
     :value="value"
     id="aeMapPreview"
     @close="close"
+    :showCloseTip="false"
     :width="$appHelper.getMapSize(currentMap.column)"
   >
     <el-container :style="containerStyle">
@@ -52,7 +53,8 @@ export default {
       default: "",
     },
     armyConfigList:{
-      default: [],
+      type: Array,
+			default:()=>[]
     },
     map: {
       // 直接传地图进来

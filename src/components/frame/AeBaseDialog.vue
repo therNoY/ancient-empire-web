@@ -7,6 +7,7 @@
         <slot />
       </div>
     </div>
+    <ae-tip v-model="showTip" :closeTip="closeTip" @ok="closeOk"></ae-tip>
   </div>
 </template>
 
@@ -18,19 +19,36 @@ export default {
       default: false,
     },
     width: {
-      default: '42',
+      default: "42",
     },
     title: {
       type: String,
       default: "",
     },
+    closeTip: {
+      type: String,
+      default: "确定要关闭么?",
+    },
+    showCloseTip: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
-    return {};
+    return {
+      showTip: false,
+    };
   },
   methods: {
     close() {
-      console.log("close  close");
+      if (this.showCloseTip) {
+        this.showTip = true;
+      } else {
+        this.$emit("input", false);
+        this.$emit("close");
+      }
+    },
+    closeOk() {
       this.$emit("input", false);
       this.$emit("close");
     },
@@ -91,5 +109,12 @@ export default {
   font-weight: bold;
   color: #b0b8ac;
   background: transparent;
+}
+
+.ae-close-tip {
+  font-size: 16px;
+  color: rgb(195, 195, 195);
+  margin-top: 8%;
+  margin-bottom: 8%;
 }
 </style>

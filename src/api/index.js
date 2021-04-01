@@ -200,4 +200,10 @@ export const PlayerJoinRoom = (args) =>request("/api/room/playerJoin", args, "PU
  * @returns 
  */
 export const ChangeArmy = (args) =>request("/api/room/changeArmy", args, "POST");
+/**
+ * 离开控制军队 
+ * @param {*} args 
+ * @returns 
+ */
+export const LevelCtlArmy = (args) =>request("/api/room/levelCtlArmy", args, "POST");
 

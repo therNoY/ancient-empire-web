@@ -1,5 +1,12 @@
 <template>
-  <ae-base-dialog :value="value" :width="width" :title="title" @close="close">
+  <ae-base-dialog
+    :value="value"
+    :closeTip="closeTip"
+    :width="width"
+    :title="title"
+    :showCloseTip="showCloseTip"
+    @close="close"
+  >
     <div class="ae-dialog-body-title">
       <ae-button-list
         v-if="titleButtons"
@@ -124,6 +131,12 @@ export default {
       type: Object,
       default: null,
     },
+    closeTip: {
+      type: String,
+    },
+    showCloseTip: {
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -207,12 +220,12 @@ export default {
         }
       }
     },
-    getFormData(){
+    getFormData() {
       if (this.$refs.aeForm && this.$refs.aeForm.formData) {
         return this.$refs.aeForm.formData;
       }
       return null;
-    }
+    },
   },
   created() {
     window.AeDialogVue = this;
@@ -226,7 +239,7 @@ export default {
     bodyTitleButtonStyle() {
       if (this.showSearch) {
         return {
-          width: "30%",
+          width: "40%",
         };
       } else {
         return {
@@ -237,7 +250,7 @@ export default {
     bodyTitleSearchStyle() {
       if (this.titleButtons && this.titleButtons.length > 0) {
         return {
-          width: "50%",
+          width: "40%",
         };
       } else {
         return {

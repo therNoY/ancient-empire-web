@@ -62,9 +62,9 @@
           <el-table-column prop="color" label="玩家类型" width="200px">
             <template slot-scope="army">
               <el-radio-group v-model="army.row.type" size="mini">
-                <el-radio-button label="user">玩家</el-radio-button>
-                <el-radio-button label="ai">电脑</el-radio-button>
-                <el-radio-button label="no">无</el-radio-button>
+                <ae-radio-button label="user">玩家</ae-radio-button>
+                <ae-radio-button label="ai">电脑</ae-radio-button>
+                <ae-radio-button label="no">无</ae-radio-button>
               </el-radio-group>
             </template>
           </el-table-column>
@@ -278,54 +278,6 @@ export default {
       console.log("选择地图", this.initMapConfig);
       this.setMapShow = false;
       this.showModel = false;
-    },
-    /**
-     * 开始一局单机游戏
-     * 1.创建ws连接,
-     * 2.后台根据地图和游戏类型生成一个游戏上下文,
-     * 3.可以开始游戏
-     */
-    startStandGame() {
-      this.loading = true;
-      console.log("开始一个遭遇战的单机游戏");
-      let record = {};
-      record.map_id = this.currentMap.map_id;
-      record.max_pop = this.maxPop;
-      record.money = this.money;
-      record.army_list = this.initArmys;
-      record.game_type = "encounter";
-      RecordInit(record)
-        .then((resp) => {
-          if (resp.res_code == 0) {
-            this.$store.commit("setGame", resp.res_val);
-            // 获取单位最大生命值
-            this.getUnitLevelByTemp(resp.res_val.template_id);
-            // 获取模板
-            GetUserTemp(resp.res_val.template_id).then((tempResp) => {
-              if (tempResp && tempResp.res_val) {
-                this.$store.commit("setTemplate", tempResp.res_val);
-                this.$store
-                  .dispatch("connectGameSocket", resp.res_val.uuid)
-                  .then((r) => {
-                    this.loading = false;
-                    this.$router.push("/gameIndex");
-                  })
-                  .catch((e) => {
-                    this.loading = false;
-                  });
-              } else {
-                this.$message.error(resp.res_mes);
-                this.loading = false;
-              }
-            });
-          } else {
-            this.$message.error(resp.res_mes);
-            this.loading = false;
-          }
-        })
-        .catch((e) => {
-          this.loading = false;
-        });
     },
   },
   created() {

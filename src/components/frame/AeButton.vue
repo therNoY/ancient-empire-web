@@ -57,7 +57,7 @@ export default {
   margin-top: 5%;
   color: rgb(255, 255, 255);
   cursor: pointer;
-  -webkit-text-stroke: 0.4px #000000;
+  -webkit-text-stroke: 0.2px #2a2a2a;
   background-color: #5a5c59;
   border-top: 2px #818181 solid;
   border-left: 2px #818181 solid;

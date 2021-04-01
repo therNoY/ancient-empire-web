@@ -71,4 +71,7 @@ button.active.focus {
 .el-table th.is-leaf {
   border-bottom: 1px solid #5a5c59 !important;
 }
+.el-table::before{
+  z-index: -1;
+}
 </style>

@@ -16,6 +16,9 @@ import JsonViewer from 'vue-json-viewer'
 import AeDialog from "./components/frame/AeDialog";
 import AeBaseDialog from "./components/frame/AeBaseDialog.vue"
 import AeButton from "./components/frame/AeButton";
+import AeTip from "./components/frame/AeTip.vue"
+
+import AeRadioButton from "./components/frame/AeRadioButton.vue"
 
 import './permission' // 引入权限控制器
 
@@ -33,6 +36,8 @@ appHelper.store = store;
 Vue.component("AeDialog", AeDialog);
 Vue.component("AeBaseDialog", AeBaseDialog);
 Vue.component("AeButton", AeButton);
+Vue.component("AeRadioButton", AeRadioButton);
+Vue.component("AeTip", AeTip);
 
 
 

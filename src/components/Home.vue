@@ -5,8 +5,8 @@
     <div class="buttons">
       <button class="home_button" @click="getUserInfo">玩家</button>
       <button class="home_button" @click="get">战役</button>
-      <button class="home_button" @click="router('encounter')">遭遇战</button>
-      <button class="home_button" @click="clickNetGame">多人游戏</button>
+      <button class="home_button" @click="showEnCounter= true">遭遇战</button>
+      <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
       <button class="home_button" @click="router('setting')">我的设置</button>
       <button class="home_button" @click="router('userRecord')">读取游戏</button>
       <button class="home_button" @click="router('demo')">帮助</button>
@@ -32,7 +32,10 @@
       :isDisable="true"
       @close="userInfoDialog = false"
     ></user-info>
+    <!-- 多人游戏 -->
     <room-index v-model="showNetGameDialog"></room-index>
+    <!--遭遇战-->
+    <encounter v-model="showEnCounter"></encounter>
   </div>
 </template>
 
@@ -42,13 +45,15 @@ import login from "./Login";
 import register from "./Register";
 import UserInfo from "./UserInfo.vue";
 import RoomIndex from './net/room/RoomIndex.vue';
+import Encounter from './encounter/Encounter.vue';
 export default {
   components: {
     myDialog,
     login,
     register,
     UserInfo,
-    RoomIndex
+    RoomIndex,
+    Encounter,
   },
   data() {
     return {
@@ -58,6 +63,7 @@ export default {
       registerVisible: false,
       userInfoDialog: false,
       showNetGameDialog:false,
+      showEnCounter:false,
     };
   },
   methods: {
@@ -70,9 +76,6 @@ export default {
       } else {
         this.loginVisible = true;
       }
-    },
-    clickNetGame(){
-      this.showNetGameDialog = true;
     },
     register() {
       this.dialogVisible = false;

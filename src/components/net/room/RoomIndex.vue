@@ -6,7 +6,7 @@
       :showSearch="true"
       title="游戏大厅"
       :titleButtons="titleButtonList"
-      :titleButtonClickAction="[clickAddbutton]"
+      :titleButtonClickAction="[clickAddbutton, flushRoom]"
       :footerButtons="buttonList"
       :footerButtonClickAction="[clickJoinGameButton, clickPreivewButton]"
       :queryDataGrid="queryDataFunction"
@@ -30,8 +30,9 @@
       v-model="showJoinRoom"
       :roomName="joinRoomName"
       :roomId="joinRoomId"
-      :roomOwner="roomOwner"
-      :armyConfigList="armyConfigList"
+      :mapId="joinMapId"
+      :roomOwnerUser="roomOwner"
+      :armyConfigs="armyConfigList"
     ></join-room>
     <ae-map-preview
       v-model="previewVisible"
@@ -60,7 +61,7 @@ export default {
       canJoinRoom: {},
       queryDataFunction: null,
       buttonList: ["加入", "预览"],
-      titleButtonList: ["新增"],
+      titleButtonList: ["新增", "刷新"],
       showItem: ["room_id", "room_name", "creat_time_show", "ready"],
       showTitle: ["房间号", "房间名字", "创建时间", "玩家"],
       createRoomButtons: ["创建", "取消"],
@@ -126,7 +127,7 @@ export default {
   methods: {
     onDialogCreate() {
       console.log("页面创建");
-      this.$refs.mainDiaglog.flushData();
+      this.flushRoom();
     },
     closePreview() {},
     onDialogDestroy() {
@@ -147,6 +148,7 @@ export default {
           this.joinRoomName = selectMap.room_name;
           this.armyConfigList = JSON.parse(resp);
           this.roomOwner = selectMap.room_owner;
+          this.setJoinRoomShow();
           this.showJoinRoom = true;
           this.$message.info("加入成功");
           this.$appHelper.setLoading();
@@ -154,6 +156,7 @@ export default {
         .catch((error) => {
           console.error(error);
           this.$message.info("加入失败");
+          this.$refs.mainDiaglog.flushData();
           this.$appHelper.setLoading();
         });
     },
@@ -163,6 +166,10 @@ export default {
       let mapConfig = JSON.parse(selectMap.map_config);
       this.armyConfigList = mapConfig.armyList;
       this.previewVisible = true;
+    },
+    setJoinRoomShow(){
+      this.$refs.joinRoom.armyConfigList = JSON.parse(JSON.stringify(this.armyConfigList));
+      this.$refs.joinRoom.roomOwner = this.roomOwner;
     },
     clickCreateRoom() {
       console.log("创建房间");
@@ -198,6 +205,7 @@ export default {
             this.roomOwner = this.$store.getters.user.user_id;
             this.armyConfigList = JSON.parse(resp.res_val.map_config).armyList;
             console.log(this.$refs.addNewRoomDialog.getFormData());
+            this.setJoinRoomShow();
             let initSetting = this.$refs.joinRoom.initSetting(
               resp.res_val.room_id
             );
@@ -225,13 +233,20 @@ export default {
     clickCancelCreateRoom() {
       console.log("取消创建房间");
     },
+    flushRoom(){
+      if (this.$refs.mainDiaglog) {
+        this.$refs.mainDiaglog.flushData();
+      }
+    }
   },
   computed: {},
   created() {
     window.RoomIndexVue = this;
     this.queryDataFunction = GetRoomListByPage;
+    this.$eventBus.regist(this, "flushRoom", "flushRoom");
   },
   destroyed() {
+    this.$eventBus.unRegist(this, "flushRoom");
   },
 };
 </script>
