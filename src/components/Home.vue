@@ -3,7 +3,7 @@
   <div class="home">
     <img class="logo" src="../assets/images/assist/logo.png" alt />
     <div class="buttons">
-      <button class="home_button" @click="getUserInfo">玩家</button>
+      <button class="home_button" @click="clikUserInfo">玩家</button>
       <button class="home_button" @click="get">战役</button>
       <button class="home_button" @click="showEnCounter= true">遭遇战</button>
       <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
@@ -13,20 +13,21 @@
       <button class="home_button" @click="router('monitor')">监控</button>
     </div>
 
-    <register v-if="registerVisible" @close="registerVisible = false"></register>
+    <!-- <register v-if="registerVisible" @close="registerVisible = false"></register> -->
     <my-dialog
       v-if="dialogVisible"
       @login="goLogin"
       @close="dialogVisible = false"
     >由于该功能需要联网，请先登录使用此功能</my-dialog>
-    <login
+    <!-- <login
+
       v-if="loginVisible"
-      :user="loginUser"
+      v-model="loginVisible"
       @register="register"
       @close="loginVisible = false"
-    ></login>
+    ></login> -->
     <user-info
-      v-if="userInfoDialog"
+      v-model="userInfoDialog"
       :user="loginUser"
       @logout="logout"
       :isDisable="true"
@@ -41,7 +42,6 @@
 
 <script>
 import myDialog from "./MyDialog";
-import login from "./Login";
 import register from "./Register";
 import UserInfo from "./UserInfo.vue";
 import RoomIndex from './net/room/RoomIndex.vue';
@@ -49,7 +49,6 @@ import Encounter from './encounter/Encounter.vue';
 export default {
   components: {
     myDialog,
-    login,
     register,
     UserInfo,
     RoomIndex,
@@ -68,14 +67,8 @@ export default {
   },
   methods: {
     // 点击玩家时
-    getUserInfo() {
-      if (this.isHaveToken()) {
-        this.loginUser = this.$store.getters.user;
-        console.log(this.loginUser);
-        this.userInfoDialog = true;
-      } else {
-        this.loginVisible = true;
-      }
+    clikUserInfo() {
+      this.userInfoDialog = !this.userInfoDialog;
     },
     register() {
       this.dialogVisible = false;

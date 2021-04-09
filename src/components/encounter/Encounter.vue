@@ -21,7 +21,7 @@ import {
   InitEncounterMap,
   GetUserTemp,
   GetUnitLevelByTemp,
-  RecordInit,
+  MapInit,
 } from "@/api";
 import AeButtonList from "../frame/AeButtonList.vue";
 import UserMapSelect from "../map_base/UserMapSelect";
@@ -71,7 +71,7 @@ export default {
       console.log("开始一个遭遇战的单机游戏");
       let record = this.selectMap;
       record.game_type = "encounter";
-      RecordInit(record)
+      MapInit(record)
         .then((resp) => {
           if (resp.res_code == 0) {
             this.$store.commit("setGame", resp.res_val);
@@ -81,27 +81,33 @@ export default {
             GetUserTemp(resp.res_val.template_id).then((tempResp) => {
               if (tempResp && tempResp.res_val) {
                 this.$store.commit("setTemplate", tempResp.res_val);
+                let connArgs = {};
+                connArgs.recordId = resp.res_val.uuid;
+                connArgs.type = "stand_game";
                 this.$store
-                  .dispatch("connectGameSocket", resp.res_val.uuid)
+                  .dispatch("connectGameSocket", connArgs)
                   .then((r) => {
+                    this.$appHelper.setLoading();
                     this.loading = false;
                     this.$router.push("/gameIndex");
                   })
                   .catch((e) => {
-                    this.loading = false;
+                    console.error(e);
+                    this.$appHelper.setLoading();
                   });
               } else {
                 this.$message.error(resp.res_mes);
-                this.loading = false;
+                this.$appHelper.setLoading();
               }
             });
           } else {
             this.$message.error(resp.res_mes);
-            this.loading = false;
+            this.$appHelper.setLoading();
           }
         })
         .catch((e) => {
-          this.loading = false;
+          console.error(e);
+          this.$appHelper.setLoading();
         });
     },
     // 初始化军队

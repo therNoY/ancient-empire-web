@@ -8,16 +8,13 @@
 
 <script>
 import AeLoading from "./components/frame/AeLoading.vue";
-import AeMessage from './components/frame/AeMessage.vue';
+import AeMessage from "./components/frame/AeMessage.vue";
 export default {
   components: { AeLoading, AeMessage },
   name: "App",
   data() {
-    return {
-    };
+    return {};
   },
-  
-  
 };
 </script>
 
@@ -71,7 +68,13 @@ button.active.focus {
 .el-table th.is-leaf {
   border-bottom: 1px solid #5a5c59 !important;
 }
-.el-table::before{
+input:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+  background-color: transparent;
+  background-image: none;
+  transition: background-color 50000s ease-in-out 0s;
+}
+.el-table::before {
   z-index: -1;
 }
 </style>

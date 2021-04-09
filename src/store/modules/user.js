@@ -27,6 +27,7 @@ const user = {
     // 登出
     logout({ commit, state }) {
       return new Promise((resolve, reject) => {
+        console.log("用户登出");
         commit('setToken', '');
         commit('setUser', {});
         removeToken();

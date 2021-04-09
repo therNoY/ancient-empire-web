@@ -16,9 +16,9 @@ const gameCore = {
     // 地图状态是1的时候不能点击其他的
     mapState: "0",
     // 是否展示购买单位弹框
-    buyUnitDialog:false,
+    buyUnitDialog: false,
     // 游戏信息
-    gameMessage:null,
+    gameMessage: null,
   },
 
   mutations: {
@@ -49,7 +49,7 @@ const gameCore = {
     setBuyUnitDialog(state, dialog) {
       state.buyUnitDialog = dialog;
     },
-    addUnit(state, addUnit){
+    addUnit(state, addUnit) {
       console.log("准备添加单位", addUnit);
       state.game.army_list[addUnit.army_index].units.push(addUnit.unit);
     },
@@ -64,7 +64,7 @@ const gameCore = {
 
   actions: {
     // 连接一局游戏的socket 使用websocket
-    connectGameSocket(store, recordId, type = "stand_game") {
+    connectGameSocket(store, { recordId, type }) {
       return new Promise((resolve, reject) => {
         let token = store.getters.token;
         if (!token) {
@@ -81,7 +81,6 @@ const gameCore = {
           this.commit("setMoveArea", []);
           this.commit("setMoveLine", []);
           this.commit("setAction", []);
-          resolve();
         };
         socket.onmessage = (e) => {
           let data = JSON.parse(e.data);

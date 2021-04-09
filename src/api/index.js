@@ -58,8 +58,18 @@ export const SaveUnitLevel = (args) => request('/root/unitLevel', args, "PUT");
 export const GetRegionData = (args) => request('/root/region', args, "GET");
 export const SaveRegion = (args) => request('/root/region', args, "PUT");
 
-export const CheckPwd = (args) => request('/api/user/checkPwd', args, "POST");
-export const changeUserInfo = (args) => request('/api/user', args, "PUT");
+/**
+ * 修改密码
+ * @param {*} args 
+ * @returns 
+ */
+export const ChangePwd = (args) => request('/api/user/changePwd', args, "POST");
+/**
+ * 修改用户info
+ * @param {*} args 
+ * @returns 
+ */
+export const ChangeUserInfo = (args) => request('/api/user', args, "PUT");
 export const ChangeUserSetting = (args) => request('/api/user/useSetting', args, "PUT");
 
 // 用户地图有关
@@ -102,8 +112,24 @@ export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
 
 // 初始化map 信息
 export const InitEncounterMap = (args) => request("/encounter/initSetting", args, "GET");
-// 生成record
+/**
+ * 根据历史开始游戏
+ * @param {*} args 
+ * @returns 
+ */
+ export const MapInit = (args) => request("/api/map/init", args, "POST");
+/**
+ * 根据历史开始游戏
+ * @param {*} args 
+ * @returns 
+ */
 export const RecordInit = (args) => request("/api/record/init", args, "POST");
+/**
+ * 根据历史开始游戏
+ * @param {*} args 
+ * @returns 
+ */
+ export const RoomInit = (args) => request("/api/room/init", args, "POST");
 // 根据Id获取存档
 export const GetRecordById = (id) => request("/record/" + id, '', "GET");
 

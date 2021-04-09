@@ -1,160 +1,297 @@
 <template>
-  <div class="container">
-    <div class="popup">
-      <header class="popup-header">
-        <slot name="header">
-          <span class="title">用户信息</span>
-          <button type="button" class="btn-close" @click="close">x</button>
-        </slot>
-      </header>
-      <section class="userInfo-popup-body">
-        <div style="width:100%" v-show="willChange">请输入原密码</div>
-        <input type="password" v-show="willChange" placeholder="原密码" v-model="user.old_password" />
-        <input type="text" v-show="!willChange" :disabled="isDisable" v-model="user.user_name" />
-        <input type="password" v-show="!willChange" :disabled="isDisable" v-model="user.password" />
-      </section>
-      <footer>
-        <slot name="footer">
-          <button v-if="user" v-show="!willChange && isDisable" class="info_but" @click="logout">登出</button>
-          <button v-show="!willChange && isDisable" class="info_but" @click="changeInfo">修改信息</button>
-          <button v-show="willChange || !isDisable" class="info_but" @click="makeSure">确定</button>
-        </slot>
-      </footer>
-    </div>
+  <div>
+    <ae-base-dialog
+      v-model="showLogin"
+      title="登录"
+      @close="closeLoginDiaglog"
+      :showCloseTip="false"
+    >
+      <ae-form ref="loginForm" :formConfig="formConfig"></ae-form>
+      <ae-button-list
+        :buttonList="loginButton"
+        :clickAction="[getOldPassword, register, doLogin]"
+      ></ae-button-list>
+    </ae-base-dialog>
+
+    <ae-base-dialog
+      v-model="showRegister"
+      title="注册"
+      @close="closeLoginDiaglog"
+      :showCloseTip="false"
+    >
+      <ae-form ref="registerForm" :formConfig="registerFormConfig"></ae-form>
+      <ae-button-list
+        :buttonList="registerButton"
+        :clickAction="[doRegister, cancelRegistr]"
+      ></ae-button-list>
+    </ae-base-dialog>
+
+    <ae-base-dialog
+      title="用户信息"
+      :showCloseTip="false"
+      v-model="showUserInfo"
+      v-if="showUserInfo"
+    >
+      <ae-form
+        ref="userInfoForm"
+        :dataObj="user"
+        :edit="editAble"
+        :formConfig="userInfoFormConfig"
+      ></ae-form>
+      <ae-button-list
+        :buttonList="userInfoButton"
+        :clickAction="[changeUserPwdShow, logout]"
+      >
+      </ae-button-list>
+    </ae-base-dialog>
+
+    <ae-base-dialog
+      title="修改密码"
+      :showCloseTip="false"
+      v-model="showChangePwd"
+      v-if="showChangePwd"
+    >
+      <ae-form
+        v-if="showChangePwd"
+        ref="changePwdForm"
+        :formConfig="changePwdFormConfig"
+      ></ae-form>
+      <ae-button-list
+        :buttonList="changePwdButton"
+        :clickAction="[changePwd, cancelChangePwd]"
+      >
+      </ae-button-list>
+    </ae-base-dialog>
   </div>
 </template>
 
 <script>
-import { CheckPwd, changeUserInfo } from "../api";
-import { setToken, setUser } from '../utils/auth'
-import { Logout } from "../utils/auth";
+import { setUser, setToken } from "../utils/auth";
+import { Login, Register, ChangePwd } from "../api";
+import AeButtonList from "./frame/AeButtonList.vue";
+import AeForm from "./frame/AeForm.vue";
+import AeBaseDialog from "./frame/AeBaseDialog.vue";
 export default {
-  props: ["isDisable", "user"],
+  components: { AeButtonList, AeForm, AeBaseDialog },
+  props: {
+    value: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
-      willChange: false
+      showLogin: false,
+      showUserInfo: false,
+      showRegister: false,
+      formConfig: [
+        {
+          type: "input",
+          key: "user_name",
+          des: "用户名/邮箱",
+          password: false,
+        },
+        {
+          type: "input",
+          key: "password",
+          des: "密码",
+          password: true,
+        },
+      ],
+      registerFormConfig: [
+        {
+          type: "input",
+          key: "email",
+          des: "邮箱",
+          require: true,
+        },
+        {
+          type: "input",
+          key: "user_name",
+          des: "用户名",
+          require: true,
+        },
+        {
+          type: "input",
+          key: "password",
+          des: "密码",
+          password: true,
+          require: true,
+        },
+        {
+          type: "input",
+          key: "re_password",
+          des: "确认密码",
+          password: true,
+          require: true,
+        },
+      ],
+      userInfoFormConfig: [
+        {
+          type: "input",
+          key: "user_name",
+          des: "用户名",
+          password: false,
+          edit: false,
+        },
+      ],
+      changePwdFormConfig: [
+        {
+          type: "input",
+          key: "old_password",
+          des: "原密码",
+          password: true,
+          require: true,
+        },
+        {
+          type: "input",
+          key: "new_password",
+          des: "新密码",
+          password: true,
+          require: true,
+        },
+        {
+          type: "input",
+          key: "sure_password",
+          des: "确认密码",
+          password: true,
+          require: true,
+        },
+      ],
+      user: {},
+      showChangePwd: false,
+      editAble: false,
+      loginButton: ["找回密码", "注册", "登录"],
+      userInfoButton: ["修改密码", "登出"],
+      changePwdButton: ["修改", "取消"],
+      registerButton: ["注册", "取消"],
     };
   },
-
   methods: {
-    close() {
-      this.$emit("close");
+    closeLoginDiaglog() {
+      this.$emit("input", false);
+      this.showLogin = false;
     },
-    logout() {
-      if (this.user) {
-        this.$store.dispatch("logout");
-        this.$emit("logout");
+    changeUserInfo() {
+      this.editAble = true;
+    },
+    changeUserPwdShow() {
+      this.showChangePwd = true;
+    },
+    cancelChangePwd() {
+      this.showChangePwd = false;
+    },
+
+    changePwd() {
+      let args = this.$refs.changePwdForm.getFormData();
+      if (args.new_password != args.sure_password) {
+        this.$message.info("确认密码不正确");
+        return;
       }
-    },
-    async makeSure() {
-      if (this.willChange) {
-        if (
-          this.user.old_password == null ||
-          this.user.old_password != this.user.password
-        ) {
-          this.$message.error("原密码错误");
-          return;
-        } else {
-          // 验证密码
-          const resp = await CheckPwd(this.user);
+      this.$appHelper.setLoading();
+      ChangePwd(args)
+        .then((resp) => {
           if (resp.res_code == 0) {
-            this.user.id = resp.res_val;
-            this.willChange = false;
-            this.isDisable = false;
+            this.$message.info("修改成功");
           } else {
-            this.$message.error(resp.res_mes);
+            this.$message.info(resp.res_mes);
           }
-        }
-      } else {
-        // 修改信息
-        const resp = await changeUserInfo(this.user);
+          this.$appHelper.setLoading();
+          this.showChangePwd = false;
+        })
+        .catch((error) => {
+          console.error(error);
+          this.$appHelper.setLoading();
+        });
+    },
+
+    logout() {
+      this.$store.dispatch("logout");
+      this.user.user_name = "";
+      this.user.password = "";
+      this.showUserInfo = false;
+      this.editAble = false;
+      this.showChangePwd = false;
+      this.$emit("input", false);
+    },
+
+    doLogin() {
+      this.user = this.$refs.loginForm.formData;
+      console.log(this.user);
+      // 验证
+      if (this.user.user_name == null || this.user.user_name == "") {
+        this.$message.info("用户名/邮箱 不能为空");
+        return;
+      }
+      this.$appHelper.setLoading();
+      Login(this.user).then((resp) => {
+        console.log(resp);
         if (resp.res_code == 0) {
-          this.$message("修改成功");
-          // 重新设置token 和 用户信息
-          setToken(resp.res_val);
-          setUser(this.user);
+          let loginUser = {};
+          loginUser.user_name = resp.res_val.user_name;
+          loginUser.password = resp.res_val.password;
+          loginUser.user_id = resp.res_val.user_id;
+          setUser(loginUser);
+          let token = resp.res_val.token;
+          console.log(token);
+          setToken(token);
+          this.$message.info("登录成功");
+          this.showLogin = false;
+          this.showChangePwd = false;
+          this.$emit("input", false);
+        } else {
+          this.$message.info(resp.res_mes);
+        }
+        this.$appHelper.setLoading();
+      });
+    },
+    doRegister() {
+      let args = this.$refs.registerForm.getFormData();
+      if (args.password != args.re_password) {
+        this.$message.info("确认密码不正确");
+        return;
+      }
+      Register(args).then((resp) => {
+        if (resp.res_code == 0) {
+          this.$message("确认邮件已发出 请确认查收");
           this.close();
         } else {
           this.$message.error(resp.res_mes);
         }
+      });
+    },
+    cancelRegistr() {
+      this.showRegister = false;
+    },
+    getOldPassword() {},
+    register() {
+      this.showRegister = true;
+    },
+  },
+  watch: {
+    value(v) {
+      if (v) {
+        console.log(
+          "查看用户信息,",
+          this.$store.getters.token,
+          this.$store.getters.user
+        );
+        if (this.$store.getters.token) {
+          this.user = this.$store.getters.user;
+          this.showUserInfo = true;
+          this.editAble = false;
+          this.showChangePwd = false;
+        } else {
+          this.showLogin = true;
+        }
       }
     },
-    changeInfo() {
-      this.user.old_password = null;
-      this.willChange = true;
-    }
-  }
+  },
+  created() {
+    window.UserInfoVue = this;
+  },
 };
 </script>
 
 <style lang="scss" scope>
-.container {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(167, 167, 167, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.popup {
-  background: #242a43;
-  box-shadow: 2px 2px 20px 1px;
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
-}
-.popup-header {
-  color: #b0b8ac;
-  justify-content: space-between;
-}
-.userInfo-popup-body {
-  color: rgb(255, 255, 255);
-  font-size: 17px;
-  font-weight: 530;
-  -webkit-text-stroke: 0.4px #000000;
-  position: relative;
-}
-
-.userInfo-popup-body span {
-  float: left;
-  font-size: 14px;
-  color: red;
-}
-.userInfo-popup-body a {
-  font-size: 14px;
-  float: right;
-}
-.userInfo-popup-body a:hover {
-  cursor: pointer;
-  color: #b0b8ac;
-  text-decoration: underline;
-}
-.btn-close {
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  float: right;
-  font-weight: bold;
-  color: #b0b8ac;
-  background: transparent;
-}
-.info_but {
-  float: right;
-  margin-right: 20%;
-  margin-bottom: 10px;
-  height: 30px;
-  width: 20%;
-  color: rgb(255, 255, 255);
-  font-size: 16px;
-  cursor: pointer;
-  -webkit-text-stroke: 0.4px #000000;
-  background-color: #5a5c59;
-  border-top: 2px #818181 solid;
-  border-left: 2px #818181 solid;
-  border-right: 2px #494949 solid;
-  border-bottom: 2px #494949 solid;
-}
 </style>

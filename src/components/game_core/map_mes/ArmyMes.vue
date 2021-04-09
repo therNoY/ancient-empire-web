@@ -31,10 +31,10 @@
       </el-tooltip>
     </div>
     <div class="bar_button">
-      <el-button size="mini" type="primary">主菜单</el-button>
-      <el-button size="mini" type="primary">小地图</el-button>
-      <el-button size="mini" type="primary">保存游戏</el-button>
-      <el-button size="mini" type="primary" @click="roundEnd"
+      <el-button size="mini" :type="getButtonType">主菜单</el-button>
+      <el-button size="mini" :type="getButtonType">小地图</el-button>
+      <el-button size="mini" :type="getButtonType">保存游戏</el-button>
+      <el-button size="mini" :type="getButtonType" @click="roundEnd"
         >结束回合</el-button
       >
     </div>
@@ -57,6 +57,22 @@ export default {
       currArmy.max_pop = game.max_pop;
       currArmy.current_round = game.current_round;
       return currArmy;
+    },
+    getButtonType() {
+      let color = this.curr_color;
+      let bkColor = "primary";
+      if (color) {
+        if (color == "blue") {
+          bkColor = "primary";
+        } else if (color == "red") {
+          bkColor = "danger";
+        } else if (color == "green") {
+          bkColor = "success";
+        } else if (color == "black") {
+          bkColor = "info";
+        }
+      }
+      return bkColor;
     },
   },
 };

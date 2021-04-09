@@ -279,7 +279,6 @@ var commendDispatcher = {
         break;
       case commendType.CHANG_REGION:
         store.commit("changeRegion", ext_mes);
-        store.commit("setAction", []);
         if (callback) {
           this.dispatch(callback.call(), callback);
         }
@@ -341,7 +340,6 @@ var commendDispatcher = {
         console.log("展示移动区域");
         store.commit("setMoveArea", ext_mes.move_area);
         store.commit("setMoveLine", []);
-        store.commit("setAction", []);
         break;
       case commendType.DIS_SHOW_MOVE_AREA:
         console.log("不展示移动区域");
@@ -368,7 +366,6 @@ var commendDispatcher = {
       case commendType.ROLLBACK_MOVE:
         console.log("回退攻击");
         store.commit("setMoveLength", 0);
-        store.commit("setAction", []);
         let game = store.getters.game;
         let currUnit = game.army_list[game.curr_army_index].units[unit_index];
         currUnit.row = aim_site.row;
@@ -377,7 +374,6 @@ var commendDispatcher = {
       // ---------------------单位行动--------------------------------
       case commendType.SHOW_ATTACH_AREA:
         console.log("展示攻击区域", ext_mes.attach_area);
-        store.commit("setAction", []);
         store.commit("setAttachArea", ext_mes.attach_area);
         break;
       case commendType.SHOW_ACTION:

@@ -2,9 +2,10 @@
   <div class="ae-input">
     <div v-if="label" class="ae-input-label">{{ label }}</div>
     <input
-      type="text"
+      :type="type"
       :style="inputStyle"
       v-model="inputValue"
+      :disabled="!editAble"
       :placeholder="placeholder"
     />
   </div>
@@ -13,6 +14,14 @@
 <script>
 export default {
   props: {
+    editAble:{
+      type:Boolean,
+      default:true,
+    },
+    type: {
+      type: String,
+      default: "text",
+    },
     value: {
       type: String,
     },
@@ -90,5 +99,12 @@ input {
   border-bottom: 2px #818181 solid;
   -webkit-text-fill-color: white; /*输入文字、placeholder颜色*/
   font-size: 14px;
+}
+
+input:disabled{
+  border-top: 2px #ffffff00 solid;
+  border-left: 2px #ffffff00 solid;
+  border-right: 2px #ffffff00 solid;
+  border-bottom: 2px #ffffff00 solid;
 }
 </style>

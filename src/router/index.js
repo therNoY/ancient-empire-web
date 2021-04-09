@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import MapEdit from '@/components/map_manger/MapEdit'
-import EncounterMap from '@/components/encounter'
 import GameIndex from '../components/game_core/Index.vue'
 import GameMonitor from '../components/game_core/GameMonitor.vue'
 import Demo from '@/components/Demo'
@@ -34,11 +33,6 @@ export default new Router({
       path: '/demo',
       name: 'Demo',
       component: Demo
-    },
-    {
-      path: '/encounter',
-      name: 'EncounterMap',
-      component: EncounterMap
     },
     {
       path: '/monitor',
