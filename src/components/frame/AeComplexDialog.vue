@@ -1,3 +1,4 @@
+<!--继承了基础功能的弹框-->
 <template>
   <ae-base-dialog
     :value="value"
@@ -11,13 +12,13 @@
       <ae-button-list
         v-if="titleButtons"
         :style="bodyTitleButtonStyle"
-        :buttonList="titleButtons"
-        @onClick="onTitleButtonClick"
+        :buttonList="titleButtons.map(a=>a.name)"
+        :clickAction="titleButtons.map(a=>a.action)"
       ></ae-button-list>
       <ae-switch-select
         v-if="titleSwitchSelect"
         ref="titleSwitchSelect"
-        style="width: 80%"
+        :style="bodySwitchStyle"
         v-model="titleSwitchSelectValue"
         :default="titleSwitchSelect.default"
         :items="titleSwitchSelect.items"
@@ -42,11 +43,11 @@
           :showItem="showItem"
           :showTitle="showTitle"
           :page="page"
-          :pageCount="getPageCount"
+          :count="pageCount"
           @onPageNowChange="onPageNowChange"
         ></ae-data-grid>
       </div>
-      <div class="main-body" v-if="showModel == 'showForm'">
+      <div class="main-body" v-else-if="showModel == 'showForm'">
         <ae-form ref="aeForm" :formConfig="formConfig"></ae-form>
       </div>
     </section>
@@ -54,8 +55,8 @@
     <div class="ae-dialog-popup-footer">
       <ae-button-list
         v-if="footerButtons"
-        :buttonList="footerButtons"
-        @onClick="onFooterButtonClick"
+        :buttonList="footerButtons.map(a=>a.name)"
+        :clickAction="footerButtons.map(a=>a.action)"
       ></ae-button-list>
     </div>
   </ae-base-dialog>
@@ -66,11 +67,9 @@ import AeBaseDialog from "./AeBaseDialog.vue";
 import AeButtonList from "./AeButtonList.vue";
 import AeDataGrid from "./AeDataGrid.vue";
 import AeForm from "./AeForm.vue";
-import AeInput from "./AeInput.vue";
 import AeSwitchSelect from "./AeSwitchSelect.vue";
 export default {
   components: {
-    AeInput,
     AeButtonList,
     AeDataGrid,
     AeForm,
@@ -102,7 +101,7 @@ export default {
       type: Array,
       defult: [],
     },
-    queryDataGrid: {
+    initQueryDataGrid: {
       type: Function,
     },
     showTitle: {
@@ -115,14 +114,6 @@ export default {
     page: {
       type: Boolean,
       default: false,
-    },
-    titleButtonClickAction: {
-      type: Array,
-      defult: [],
-    },
-    footerButtonClickAction: {
-      type: Array,
-      defult: [],
     },
     formConfig: {
       type: Array,
@@ -149,6 +140,7 @@ export default {
       },
       pageCount: 0,
       titleSwitchSelectValue: "",
+      queryDataGrid: null,
     };
   },
   methods: {
@@ -161,6 +153,7 @@ export default {
       queryInfo.page_start = this.pageInfo.pageStart;
       queryInfo.page_size = this.pageInfo.pageSize;
       let _this = this;
+      console.log("查询");
       return new Promise((resove, reject) => {
         if (!_this.queryDataGrid) {
           reject(false);
@@ -198,28 +191,6 @@ export default {
       this.pageInfo.pageStart = pageNow;
       this.flushData();
     },
-    onTitleButtonClick(index) {
-      if (
-        this.titleButtonClickAction &&
-        this.titleButtonClickAction.length > index
-      ) {
-        let fun = this.titleButtonClickAction[index];
-        if (fun && fun instanceof Function) {
-          fun();
-        }
-      }
-    },
-    onFooterButtonClick(index) {
-      if (
-        this.footerButtonClickAction &&
-        this.footerButtonClickAction.length > index
-      ) {
-        let fun = this.footerButtonClickAction[index];
-        if (fun && fun instanceof Function) {
-          fun();
-        }
-      }
-    },
     getFormData() {
       if (this.$refs.aeForm && this.$refs.aeForm.formData) {
         return this.$refs.aeForm.formData;
@@ -229,6 +200,7 @@ export default {
   },
   created() {
     window.AeDialogVue = this;
+    this.queryDataGrid = this.initQueryDataGrid;
     if (this.queryDataGrid) {
       this.showModel = "dataGrid";
     } else if (this.formConfig && this.formConfig.length > 0) {
@@ -237,37 +209,63 @@ export default {
   },
   computed: {
     bodyTitleButtonStyle() {
-      if (this.showSearch) {
-        return {
-          width: "40%",
-        };
+      if (this.showSearch || this.titleSwitchSelect) {
+        if (this.showSearch && !this.titleSwitchSelect) {
+          return {
+            width: "40%",
+          };
+        } else if (!this.showSearch && this.titleSwitchSelect) {
+          return {
+            width: "20%",
+          };
+        } else {
+          return {
+            width: "10%",
+          };
+        }
       } else {
         return {
-          width: "100%",
+          width: "50%",
         };
       }
+    },
+    bodySwitchStyle() {
+      return {
+        width: "80%",
+      };
+      // if (this.titleButtons && this.titleButtons.length > 0) {
+      //   return {
+      //     width: "80%",
+      //   };
+      // } else {
+
+      // }
     },
     bodyTitleSearchStyle() {
       if (this.titleButtons && this.titleButtons.length > 0) {
         return {
-          width: "40%",
+          width: "30%",
         };
       } else {
         return {
-          width: "80%",
+          width: "30%",
         };
-      }
-    },
-    getPageCount() {
-      if (this.pageCount % this.pageInfo.pageSize == 0) {
-        return this.pageCount / this.pageInfo;
-      } else {
-        return Number.parseInt(this.pageCount / this.pageInfo.pageSize) + 1;
       }
     },
   },
   watch: {
     titleSwitchSelectValue(v) {
+      for (const select of this.titleSwitchSelect.items) {
+        if (
+          select.key == v &&
+          select.query &&
+          select.query instanceof Function
+        ) {
+          this.queryDataGrid = select.query;
+          this.flushData();
+          break;
+        }
+      }
       this.$emit("titleSwtichSelectChange", v);
     },
   },
@@ -284,8 +282,8 @@ export default {
 .ae-dialog-body-title {
   width: 100%;
   float: left;
-  margin-top: 3%;
-  margin-bottom: 2%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .main-body {
   float: left;

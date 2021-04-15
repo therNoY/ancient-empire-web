@@ -1,92 +1,26 @@
 <template>
   <div class="body">
-    <el-table style="width: 100%" :data="unitMess">
-      <el-table-column type="expand">
-        <template slot-scope="scope">
-          <span>描述: {{ scope.row.description }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Id" prop="id"></el-table-column>
-      <el-table-column label="图片" width="120%">
-        <template slot-scope="scope">
-          <img :src="UnitImg(scope.row.id)" />
-        </template>
-      </el-table-column>
-      <el-table-column label="名称" prop="name"></el-table-column>
+    <ae-complex-dialog
+      ref="mainDiaglog"
+      v-model="showModel"
+      showSearch
+      title="单位管理"
+      :footerButtons="footButtonList"
+      :initQueryDataGrid="queryDataFunction"
+      :showItem="showItem"
+      :showTitle="showTitle"
+      :width="70"
+      page
+    >
+    </ae-complex-dialog>
 
-      <el-table-column label="攻击类型" width="110%">
-        <template slot-scope="scope">{{
-          GetAttachType(scope.row.attack_type)
-        }}</template>
-      </el-table-column>
-      <el-table-column label="攻击范围" width="120%">
-        <template slot-scope="scope"
-          >{{ scope.row.min_attach_range }}-{{
-            scope.row.max_attach_range
-          }}</template
-        >
-      </el-table-column>
-      <el-table-column label="人口" prop="population"></el-table-column>
-      <el-table-column label="价格" prop="price"></el-table-column>
-      <el-table-column label="是否可以购买" prop="name" width="120%">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.tradeable == '1'" type="success">是</el-tag>
-          <el-tag v-else type="danger">否</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="晋升单位" prop="name">
-        <template slot-scope="scope">
-          <img v-if="scope.row.promotion" :src="UnitImg(scope.row.promotion)" />
-          <div v-else>-</div>
-        </template>
-      </el-table-column>
-      <!--编辑删除-->
-      <el-table-column align="right" width="200%">
-        <template slot="header" slot-scope="scope">
-          <div class="serchInput">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="输入关键字搜索"
-            />
-          </div>
-          <!-- <div class="addButton">
-            <el-button
-            type="primary"
-            style="float: left"
-            @click="addUnit"
-            size="mini"
-            >新增</el-button
-          >
-          </div> -->
-        </template>
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-            >编辑</el-button
-          >
-          <el-button
-            size="mini"
-            type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
-            >禁用</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="page">
-      <el-pagination
-        :current-page="page.page_start"
-        :page-size="page.page_size"
-        layout="prev, pager, next"
-        :total="pageCount"
-        @current-change="currentChange"
-      ></el-pagination>
-    </div>
-    <el-dialog
+    <ae-base-dialog
+      :showCloseTip="false"
       :title="diaTitle"
-      :close-on-click-modal="false"
-      :visible.sync="dialogVisible"
-      width="50%"
+      v-model="dialogVisible"
+      fixedDialog
+      :top="3"
+      :width="48"
     >
       <el-tabs v-model="activeName">
         <el-tab-pane label="基础信息" name="baseInfo">
@@ -96,10 +30,10 @@
                 <el-input v-model="unit.name"></el-input>
               </el-form-item>
               <el-form-item label="攻击类型">
-                <el-select v-model="unit.attack_type" placeholder="攻击类型">
-                  <el-option label="物理攻击" value="1"></el-option>
-                  <el-option label="魔法攻击" value="2"></el-option>
-                </el-select>
+                <el-radio-group v-model="unit.attack_type">
+                  <ae-radio-button label="1">物理攻击</ae-radio-button>
+                  <ae-radio-button label="2">魔法攻击</ae-radio-button>
+                </el-radio-group>
               </el-form-item>
               <el-form-item label="攻击范围">
                 <el-col :span="11">
@@ -118,8 +52,8 @@
               </el-form-item>
               <el-form-item label="是否可以购买">
                 <el-radio-group v-model="unit.tradeable">
-                  <el-radio-button label="1">是</el-radio-button>
-                  <el-radio-button label="0">否</el-radio-button>
+                  <ae-radio-button label="1">是</ae-radio-button>
+                  <ae-radio-button label="0">否</ae-radio-button>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="晋升单位">
@@ -135,7 +69,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="绑定能力" name="unitAbility">
-          <transfer
+          <ae-transfer
             v-model="currUnitInfo.abilityInfo"
             showKey="name"
             valueKey="id"
@@ -144,39 +78,63 @@
           />
         </el-tab-pane>
         <el-tab-pane label="等级面板" name="levelInfo">
-          <el-table :data="currUnitInfo.levelInfoData" style="levelInfoStyle">
+          <el-table
+            :data="currUnitInfo.levelInfoData"
+            style="levelInfoStyle"
+            :cell-style="tableCellStyle"
+            :header-cell-style="tableHeaderColor"
+          >
             <el-table-column label="等级" prop="level"> </el-table-column>
-            <el-table-column label="最小攻击" prop="min_attack"> </el-table-column>
-            <el-table-column label="最大攻击" prop="max_attack"> </el-table-column>
-            <el-table-column label="物理防御" prop="physical_defense"> </el-table-column>
-            <el-table-column label="魔法防御" prop="magic_defense"> </el-table-column>
-            <el-table-column label="最大生命" prop="max_life"> </el-table-column>
+            <el-table-column label="最小攻击" prop="min_attack">
+            </el-table-column>
+            <el-table-column label="最大攻击" prop="max_attack">
+            </el-table-column>
+            <el-table-column label="物理防御" prop="physical_defense">
+            </el-table-column>
+            <el-table-column label="魔法防御" prop="magic_defense">
+            </el-table-column>
+            <el-table-column label="最大生命" prop="max_life">
+            </el-table-column>
             <el-table-column label="移动力" prop="speed"> </el-table-column>
             <el-table-column align="right">
-              <template slot="header" slot-scope="scope">
-                <el-button size="mini" type="primary" @click="addNewLevel">增加</el-button>
+              <template slot="header">
+                <el-button size="mini" type="primary" @click="addNewLevel"
+                  >增加</el-button
+                >
               </template>
               <template slot-scope="scope">
-                <el-button size="mini" @click="editUnitLevelInfo(scope.$index)">修改</el-button>
+                <el-button size="mini" @click="editUnitLevelInfo(scope.$index)"
+                  >修改</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="动画管理" name="fourth">
-          暂未开通
-        </el-tab-pane>
+        <!-- <el-tab-pane label="动画管理" name="fourth"> 暂未开通 </el-tab-pane> -->
       </el-tabs>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
-        <el-button type="primary" @click="save" size="mini">保 存</el-button>
-      </span>
-    </el-dialog>
+      <ae-button @onClick="dialogVisible = false">取 消</ae-button>
+      <ae-button @onClick="save">保 存</ae-button>
+    </ae-base-dialog>
 
-    <el-dialog title="修改等级信息" width="40%" append-to-body :visible.sync="editUnitLevelInfoDialog">
-      <el-form ref="levelInfoForm" v-if="currentLevelInfo" label-width="18%" :model="currentLevelInfo" size="mini">
+    <ae-base-dialog
+      title="修改等级信息"
+      :width="40"
+      v-model="editUnitLevelInfoDialog"
+      :showCloseTip="false"
+    >
+      <el-form
+        ref="levelInfoForm"
+        v-if="currentLevelInfo"
+        label-width="18%"
+        :model="currentLevelInfo"
+        size="mini"
+      >
         <el-form-item label="等级" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.level" :disabled="true"></el-input>
+          <el-input
+            v-model.number="currentLevelInfo.level"
+            :disabled="true"
+          ></el-input>
         </el-form-item>
         <el-form-item label="最小攻击" :rules="inputNumRule">
           <el-input v-model.number="currentLevelInfo.min_attack"></el-input>
@@ -185,7 +143,9 @@
           <el-input v-model.number="currentLevelInfo.max_attack"></el-input>
         </el-form-item>
         <el-form-item label="物理防御" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.physical_defense"></el-input>
+          <el-input
+            v-model.number="currentLevelInfo.physical_defense"
+          ></el-input>
         </el-form-item>
         <el-form-item label="魔法防御" :rules="inputNumRule">
           <el-input v-model.number="currentLevelInfo.magic_defense"></el-input>
@@ -197,10 +157,8 @@
           <el-input v-model.number="currentLevelInfo.speed"></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="saveLevelInfo" size="mini">确 定</el-button>
-      </span>
-    </el-dialog>
+      <ae-button @onClick="saveLevelInfo">确 定</ae-button>
+    </ae-base-dialog>
   </div>
 </template>
 
@@ -214,24 +172,28 @@ import {
   GetUnitLevelInfoById,
 } from "@/api";
 import UnitRadio from "../map_base/UnitRadio.vue";
-import Transfer from "../frame/Transfer.vue";
+import AeTransfer from "../frame/AeTransfer.vue";
+import dialogShow from "../../mixins/frame/dialogShow.js";
+import AeBaseDialog from "../frame/AeBaseDialog.vue";
+import blackStyle from "../../mixins/style/blackStyle";
+import AeComplexDialog from "../frame/AeComplexDialog.vue";
+import AeButtonList from "../frame/AeButtonList.vue";
 export default {
-  components: { UnitRadio, Transfer },
+  mixins: [dialogShow, blackStyle],
+  components: {
+    UnitRadio,
+    AeTransfer,
+    AeBaseDialog,
+    AeComplexDialog,
+    AeButtonList,
+  },
   data() {
     return {
-      search: null,
-      page: {
-        page_start: 1,
-        page_size: 8,
-      },
       unit: {},
       dialogVisible: false,
       editUnitLevelInfoDialog: false,
-      editUnitLevelInfoLoading: true,
       diaTitle: "新增单位",
-      pageCount: 1,
-      unitMess: [],
-      addLevel:false,
+      addLevel: false,
       activeName: "baseInfo",
       allUnitList: [],
       allAbilityList: [],
@@ -240,43 +202,91 @@ export default {
         abilityInfo: [],
         levelInfoData: [],
       },
-      inputNumRule:[
-        { required: true, message: '不能为空'},
-        { type: 'number', message: '必须是数字'}
+      footButtonList: [
+        { name: "编辑", action: this.handleEdit },
+        { name: "删除", action: this.handleDelete },
+      ],
+      inputNumRule: [
+        { required: true, message: "不能为空" },
+        { type: "number", message: "必须是数字" },
       ],
       currentLevelInfo: null,
+      queryDataFunction: null,
+      showTitle: [
+        "id",
+        "单位",
+        "名称",
+        "攻击类型",
+        "攻击范围",
+        "所占人口",
+        "价格",
+        "可以购买",
+        "晋升",
+      ],
+      showItem: [
+        "id",
+        (h, p) => {
+          return h("img", { attrs: { src: this.$appHelper.getUnitImg(p.id) } });
+        },
+        "name",
+        (h, p) => {
+          if (p.attack_type == "1") {
+            return h("div", {}, "物理攻击");
+          } else if (p.attack_type == "2") {
+            return h("div", {}, "魔法攻击");
+          }
+        },
+        (h, p) => {
+          return h("div", {}, p.min_attach_range + "-" + p.max_attach_range);
+        },
+        "population",
+        "price",
+        (h, p) => {
+          if (p.tradeable) {
+            return h("div", {}, "是");
+          } else {
+            return h("div", {}, "否");
+          }
+        },
+        (h, p) => {
+          if (p.promotion) {
+            return h("img", {
+              attrs: { src: this.$appHelper.getUnitImg(p.promotion) },
+            });
+          } else {
+            return h("div", {}, "-");
+          }
+        },
+      ],
     };
   },
   methods: {
     save() {
-      this.editUnitLevelInfoLoading = this.$loading({
-          lock: true,
-          text: '保存中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.7)'
-        });
+      this.$appHelper.setLoading();
       let args = {};
       args.base_info = this.unit;
       args.ability_info = this.currUnitInfo.abilityInfo;
       args.level_info_data = this.currUnitInfo.levelInfoData;
-      SaveUnitInfo(args).then(resp=>{
-        if (resp.res_code == 0) {
-          this.dialogVisible = false;
-          this.$message.success("保存成功")
-          this.editUnitLevelInfoLoading.close();
-        } else {
-          this.editUnitLevelInfoLoading.close();
-          this.$message.error(resp.res_mes);
-        }
-      }).catch(function (error) {
-          this.editUnitLevelInfoLoading.close();
+      SaveUnitInfo(args)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.dialogVisible = false;
+            this.$message.info("保存成功");
+          } else {
+            this.$message.error(resp.res_mes);
+          }
+          this.$appHelper.setLoading();
         })
+        .catch(function (error) {
+          console.log(error);
+          this.$appHelper.setLoading();
+        });
     },
-    currentChange(page_start) {
-      this.page.page_start = page_start;
-      this.init();
+    onDialogCreate() {
+      this.$refs.mainDiaglog.flushData();
     },
-    handleEdit(index, unit) {
+    handleEdit() {
+      let unit = this.$refs.mainDiaglog.getDataGridSelect();
       this.diaTitle = "编辑单位";
       this.dialogVisible = true;
       this.unit = unit;
@@ -291,7 +301,8 @@ export default {
         }
       });
     },
-    handleDelete(index, unit) {
+    handleDelete() {
+      let unit = this.$refs.mainDiaglog.getDataGridSelect();
       console.log("删除" + unit);
     },
     editUnitLevelInfo(index) {
@@ -299,27 +310,21 @@ export default {
       this.editUnitLevelInfoDialog = true;
       this.currentLevelInfo = this.currUnitInfo.levelInfoData[index];
     },
-    addNewLevel(){
+    addNewLevel() {
       this.addLevel = true;
       this.editUnitLevelInfoDialog = true;
       this.currentLevelInfo = {};
       this.currentLevelInfo.level = this.currUnitInfo.levelInfoData.length;
     },
-    saveLevelInfo(){
+    saveLevelInfo() {
       this.editUnitLevelInfoDialog = false;
       if (this.addLevel) {
-        this.currUnitInfo.levelInfoData.push(Object.assign(this.currentLevelInfo));
+        this.currUnitInfo.levelInfoData.push(
+          Object.assign(this.currentLevelInfo)
+        );
       }
     },
     init() {
-      GetUnitMesList(this.page).then((resp) => {
-        if (resp.res_code == 0) {
-          this.pageCount = resp.res_val.pageCount;
-          this.unitMess = resp.res_val.data;
-        } else {
-          this.$message.error(resp.res_mes);
-        }
-      });
       GetAllUserUnitMes().then((resp) => {
         if (resp.res_code == 0) {
           this.allUnitList = resp.res_val;
@@ -358,23 +363,32 @@ export default {
   created() {
     // 初始化
     this.init();
+    this.queryDataFunction = GetUnitMesList;
     window.UnitMesMangerVue = this;
   },
 };
 </script>
 
 <style lang="css" scoped>
-.body {
-  float: left;
+.unitMesMangerMainTableStyle {
+  max-height: 500px;
+  width: 100%;
 }
-/* .serchInput {
+.serchInput {
   width: 200px;
   float: left;
-} */
+}
 .addButton {
   float: left;
 }
-.levelInfoStyle th{
+.input_mes {
+  background-color: #5a5c59;
+  padding: 1%;
+}
+.el-form-item__content {
+  float: left;
+}
+.levelInfoStyle th {
   padding: 8px, 0 !important;
 }
 </style>

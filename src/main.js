@@ -13,10 +13,11 @@ import appHelper from '../src/utils/appHelper'
 import eventBus from '../src/manger/EventBus'
 import JsonViewer from 'vue-json-viewer'
 
-import AeDialog from "./components/frame/AeDialog";
+import AeComplexDialog from "./components/frame/AeComplexDialog.vue";
 import AeBaseDialog from "./components/frame/AeBaseDialog.vue"
 import AeButton from "./components/frame/AeButton";
 import AeTip from "./components/frame/AeTip.vue"
+import AeInput from "./components/frame/AeInput.vue"
 
 import AeRadioButton from "./components/frame/AeRadioButton.vue"
 
@@ -33,11 +34,12 @@ Vue.prototype.$eventBus = eventBus;
 appHelper.store = store;
 
 
-Vue.component("AeDialog", AeDialog);
+Vue.component("AeComplexDialog", AeComplexDialog);
 Vue.component("AeBaseDialog", AeBaseDialog);
 Vue.component("AeButton", AeButton);
 Vue.component("AeRadioButton", AeRadioButton);
 Vue.component("AeTip", AeTip);
+Vue.component("AeInput", AeInput);
 
 
 

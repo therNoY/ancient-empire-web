@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
+import MapEdit2 from '@/components/map_manger/MapEdit2'
 import MapEdit from '@/components/map_manger/MapEdit'
 import GameIndex from '../components/game_core/Index.vue'
 import GameMonitor from '../components/game_core/GameMonitor.vue'
@@ -9,8 +10,8 @@ import Demo from '@/components/Demo'
 import AdminLogin from '@/components/template_mange/AdminLogin'
 import Setting from '@/components/template_mange/MySetting'
 import UserRecord from '@/components/map_manger/UserRecord'
-import TemplateManger from '@/components/template_mange/TemplateManger'
-import UnitMesManger from '@/components/template_mange/UnitMesManger'
+import TemplateManger from '@/components/template_mange/TemplateManger2'
+import UnitMesManger from '@/components/template_mange/UnitMesManger2'
 import AdminRegion from '@/components/template_mange/AdminRegion'
 
 import WebSocket from '@/components/WebSocket'
@@ -23,11 +24,6 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
-    },
-    {
-      path: '/mapEdit',
-      name: 'MapEdit',
-      component: MapEdit
     },
     {
       path: '/demo',
@@ -48,6 +44,10 @@ export default new Router({
       path: '/gameIndex',
       name: 'GameIndex',
       component: GameIndex
+    }, {
+      path: '/mapEdit',
+      name: 'MapEdit',
+      component: MapEdit,
     },
     {
       path: '/admin/login',
@@ -69,7 +69,7 @@ export default new Router({
       }, {
         path: '/userMapManger',
         name: 'UserMapManger',
-        component: MapEdit,
+        component: MapEdit2,
       }, {
         path: '/admin/region',
         name: 'AdminRegion',

@@ -30,7 +30,7 @@ var eventBus = {
   },
 
 
-  unRegister:function(component, queue) {
+  unRegist:function(component, queue) {
     if (this.register[queue] && this.register[queue].length > 0) {
       for (let i = 0; i < this.register[queue].length; i ++) {
         const reg = this.register[queue][i];

@@ -2,6 +2,7 @@
   <div id="app">
     <router-view />
     <ae-loading></ae-loading>
+    <ae-tip v-model="showGlableTip" :closeTip="closeTip" @ok="tipOk"></ae-tip>
     <!-- <ae-message></ae-message> -->
   </div>
 </template>
@@ -9,11 +10,32 @@
 <script>
 import AeLoading from "./components/frame/AeLoading.vue";
 import AeMessage from "./components/frame/AeMessage.vue";
+import AeTip from "./components/frame/AeTip.vue";
 export default {
-  components: { AeLoading, AeMessage },
+  components: { AeLoading, AeMessage, AeTip },
   name: "App",
   data() {
-    return {};
+    return {
+      showGlableTip: false,
+      callback: null,
+      closeTip: null,
+    };
+  },
+  methods: {
+    showTip({ message, callback, invoke }) {
+      this.showGlableTip = true;
+      this.closeTip = message;
+      this.callback = callback;
+    },
+    tipOk() {
+      if (this.callback && this.callback instanceof Function
+      ) {
+        this.callback();
+      }
+    },
+  },
+  created() {
+    this.$eventBus.regist(this, "showTip", "showTip");
   },
 };
 </script>
@@ -76,5 +98,11 @@ input:-webkit-autofill {
 }
 .el-table::before {
   z-index: -1;
+}
+.el-tabs__item{
+  color: white;
+}
+.el-form-item__label {
+  color: aliceblue !important;
 }
 </style>

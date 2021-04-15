@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="(unit,index) in unit_list" class="showList">
+    <div v-for="(unit,index) in unit_list" class="showList" v-bind:key="index">
       <unit v-if="index  < showNum" class="showUnit" :unit_id="unit.id"></unit>
     </div>
   </div>
@@ -42,10 +42,9 @@ export default {
 
 <style lang="scss" scoped>
 .showList {
-  background-color: burlywood;
   .showUnit {
     float: left;
-    width: 20px;
+    width: 19px;
   }
 }
 </style>

@@ -5,27 +5,22 @@
     <div class="buttons">
       <button class="home_button" @click="clikUserInfo">玩家</button>
       <button class="home_button" @click="get">战役</button>
-      <button class="home_button" @click="showEnCounter= true">遭遇战</button>
+      <button class="home_button" @click="showEncounter= true">遭遇战</button>
       <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
+      <button class="home_button" @click="showUserRecord = true">读取游戏</button>
       <button class="home_button" @click="router('setting')">我的设置</button>
-      <button class="home_button" @click="router('userRecord')">读取游戏</button>
-      <button class="home_button" @click="router('demo')">帮助</button>
+      <button class="home_button" @click="showUnitMange = true">单位管理</button>
+      <button class="home_button" @click="showTemplatManger = true">模板管理</button>
+      <button class="home_button" @click="router('mapEdit')">地图管理</button>
+      <!-- <button class="home_button" @click="router('demo')">帮助</button>   -->
       <button class="home_button" @click="router('monitor')">监控</button>
     </div>
 
-    <!-- <register v-if="registerVisible" @close="registerVisible = false"></register> -->
     <my-dialog
       v-if="dialogVisible"
       @login="goLogin"
       @close="dialogVisible = false"
     >由于该功能需要联网，请先登录使用此功能</my-dialog>
-    <!-- <login
-
-      v-if="loginVisible"
-      v-model="loginVisible"
-      @register="register"
-      @close="loginVisible = false"
-    ></login> -->
     <user-info
       v-model="userInfoDialog"
       :user="loginUser"
@@ -33,10 +28,18 @@
       :isDisable="true"
       @close="userInfoDialog = false"
     ></user-info>
-    <!-- 多人游戏 -->
+    <!-- 多人游戏 房间管理 -->
     <room-index v-model="showNetGameDialog"></room-index>
     <!--遭遇战-->
-    <encounter v-model="showEnCounter"></encounter>
+    <encounter v-model="showEncounter"></encounter>
+    <!--模板管理-->
+    <template-manger v-model="showTemplatManger"></template-manger>
+    <!--单位信息管理-->
+    <unit-mes-manger v-model="showUnitMange"></unit-mes-manger>
+    <!--用户记录-->
+    <user-record v-model="showUserRecord"></user-record>
+    <!---地图管理-->
+    <map-edit v-model="showMapEdit"></map-edit>
   </div>
 </template>
 
@@ -46,6 +49,11 @@ import register from "./Register";
 import UserInfo from "./UserInfo.vue";
 import RoomIndex from './net/room/RoomIndex.vue';
 import Encounter from './encounter/Encounter.vue';
+import UserRecord from './encounter/UserRecord.vue';
+import TemplateManger from "./template_mange/TemplateManger.vue"
+import UnitMesManger from "./template_mange/UnitMesManger.vue"
+import MapEdit from './map_manger/MapEdit.vue';
+
 export default {
   components: {
     myDialog,
@@ -53,6 +61,10 @@ export default {
     UserInfo,
     RoomIndex,
     Encounter,
+    UserRecord,
+    TemplateManger,
+    UnitMesManger,
+    MapEdit
   },
   data() {
     return {
@@ -62,7 +74,11 @@ export default {
       registerVisible: false,
       userInfoDialog: false,
       showNetGameDialog:false,
-      showEnCounter:false,
+      showEncounter:false,
+      showUserRecord:false,
+      showTemplatManger:false,
+      showUnitMange:false,
+      showMapEdit:false,
     };
   },
   methods: {
@@ -143,7 +159,7 @@ export default {
 .home_button {
   float: left;
   width: 80%;
-  margin-top: 5%;
+  margin-top: 3%;
   margin-left: 10%;
   color: rgb(255, 255, 255);
   font-size: 20px;

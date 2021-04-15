@@ -277,9 +277,9 @@ export default {
     this.$eventBus.regist(this, "stratGame", "onStartGame");
   },
   destroyed() {
-    this.$eventBus.unRegister(this, "roomChangeArmy");
-    this.$eventBus.unRegister(this, "changeRoomOwner");
-    this.$eventBus.unRegister(this, "stratGame");
+    this.$eventBus.unRegist(this, "roomChangeArmy");
+    this.$eventBus.unRegist(this, "changeRoomOwner");
+    this.$eventBus.unRegist(this, "stratGame");
   },
   computed: {
     canJoinArmy() {

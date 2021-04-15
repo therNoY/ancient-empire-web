@@ -53,7 +53,7 @@ export default {
     this.$eventBus.regist(this, "roomMessage", "onGetRoomMessage");
   },
   destroyed() {
-    this.$eventBus.unRegister(this, "roomMessage");
+    this.$eventBus.unRegist(this, "roomMessage");
   },
 };
 </script>

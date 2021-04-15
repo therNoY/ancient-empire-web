@@ -1,19 +1,17 @@
 <!-- 用户地图选择器 -->
 <template>
   <div class="userMap-select">
-    <ae-dialog
+    <ae-complex-dialog
       ref="aeDialog"
       v-model="showModel"
       :showItem="showItem"
       title="选择地图"
-      :queryDataGrid="getUserMapSelect"
+      :initQueryDataGrid="()=>GetEncounterMap"
       :titleSwitchSelect="titleSwitchSelect"
       :footerButtons="buttonList"
-      :footerButtonClickAction="[clickChooseMap, clickPreivewButton]"
       :width="40"
-      @titleSwtichSelectChange="titleSwtichSelectChange"
     >
-    </ae-dialog>
+    </ae-complex-dialog>
     <ae-button
       :width="80"
       class="userMap-select-button"
@@ -151,20 +149,22 @@ export default {
     return {
       titleSwitchSelect: {
         type: "switchSelect",
-        key: "round_time",
+        key: "queryType",
         default: "1",
         des: "",
         items: [
-          { key: "1", value: "系统地图" },
-          { key: "2", value: "我的地图" },
-          { key: "3", value: "下载地图" },
-          { key: "4", value: "世界地图" },
+          { key: "1", value: "系统地图",query:GetEncounterMap },
+          { key: "2", value: "我的地图",query:GetUserMapList },
+          { key: "3", value: "下载地图",query:GetUserDownloadMap },
+          { key: "4", value: "世界地图",query:GetWorldMapList },
         ],
       },
       showItem: ["map_name"],
       showModel: false,
-      buttonList: ["选择", "预览"],
-      queryModel: 1,
+      buttonList: [
+        { name: "选择", action: this.clickChooseMap },
+        { name: "预览", action: this.clickPreivewButton },
+      ],
       previewVisible: false,
       previewMapId: null,
       chooseMap: null,
@@ -199,12 +199,6 @@ export default {
       return this.initMapConfig;
     },
     closeSetMap() {},
-    titleSwtichSelectChange(value) {
-      this.queryModel = value;
-      this.$nextTick(() => {
-        this.$refs.aeDialog.flushData();
-      });
-    },
     clickChooseMap() {
       console.log(this.$refs.aeDialog);
       let value = this.$refs.aeDialog.getDataGridSelect();
@@ -284,17 +278,6 @@ export default {
     window.UserMapSelectVue = this;
   },
   computed: {
-    getUserMapSelect() {
-      if (this.queryModel == 1) {
-        return GetEncounterMap;
-      } else if (this.queryModel == 2) {
-        return GetUserMapList;
-      } else if (this.queryModel == 3) {
-        return GetUserDownloadMap;
-      } else if (this.queryModel == 4) {
-        return GetWorldMapList;
-      }
-    },
   },
 };
 </script>

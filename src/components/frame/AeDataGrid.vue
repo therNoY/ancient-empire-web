@@ -14,7 +14,12 @@
           @click="clickItem(index)"
         >
           <td v-for="(key, keyIndx) in showKey" v-bind:key="keyIndx">
-            {{ item[key] }}
+            <div v-if="(typeof key != 'function')">
+              {{ item[key] }}
+            </div>
+            <div v-else>
+              <ae-dynamic :componentFunction="key" :item="item"></ae-dynamic>
+            </div>
           </td>
         </tr>
       </table>
@@ -22,14 +27,15 @@
         暂无
       </div>
     </div>
-    <ae-page ref="aePage" v-show="page && pageCount > 0" :pageCount="pageCount" @onPageNowChange="onPageNowChange"></ae-page>
+    <ae-page ref="aePage" v-if="page" :count="count" @onPageNowChange="onPageNowChange"></ae-page>
   </div>
 </template>
 
 <script>
+import AeDynamic from './AeDynamic.vue';
 import AePage from "./AePage.vue";
 export default {
-  components: { AePage },
+  components: { AePage, AeDynamic },
   props: {
     data: {
       type: Array,
@@ -44,7 +50,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    pageCount:{
+    count:{
       type: Number,
       default: 0,
     }
@@ -99,13 +105,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .ae-data-grid {
   width: 100%;
-  max-height: 240px;
-  height: 250px;
+  max-height: 320px;
+  height: 320px;
   overflow: auto;
-   border-top: 2px #242424 solid;
+  border-top: 2px #242424 solid;
   border-left: 2px #242424 solid;
   border-right: 2px #aaaaaa solid;
   border-bottom: 2px #aaaaaa solid;

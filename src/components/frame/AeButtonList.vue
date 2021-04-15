@@ -1,3 +1,4 @@
+<!--按钮集合-->
 <template>
   <div class="ae-button-list" v-if="buttonList.length > 0">
     <div
@@ -40,7 +41,7 @@ export default {
   methods: {
     onClick(index) {
       this.$emit("onClick", index);
-      if (this.clickAction) {
+      if (this.clickAction && this.clickAction[index] && this.clickAction[index] instanceof Function) {
         this.clickAction[index]();
       }
     },

@@ -1,29 +1,29 @@
 <template>
   <div>
-    <ae-dialog
+    
+    <ae-complex-dialog
       ref="mainDiaglog"
       v-model="showModel"
       :showSearch="true"
       title="游戏大厅"
       :titleButtons="titleButtonList"
-      :titleButtonClickAction="[clickAddbutton, flushRoom]"
       :footerButtons="buttonList"
-      :footerButtonClickAction="[clickJoinGameButton, clickPreivewButton]"
-      :queryDataGrid="queryDataFunction"
+      :initQueryDataGrid="queryDataFunction"
       :showItem="showItem"
       :showTitle="showTitle"
       page
     >
-    </ae-dialog>
-    <ae-dialog
+    </ae-complex-dialog>
+
+    <ae-complex-dialog
       ref="addNewRoomDialog"
       v-model="addNewDialogShowModel"
       title="新建房间"
       :width="35"
       :formConfig="addNewRoomFormConfig"
       :footerButtons="createRoomButtons"
-      :footerButtonClickAction="[clickCreateRoom, clickCancelCreateRoom]"
-    ></ae-dialog>
+    ></ae-complex-dialog>
+
     <join-room
       ref="joinRoom"
       :width="55"
@@ -34,6 +34,7 @@
       :roomOwnerUser="roomOwner"
       :armyConfigs="armyConfigList"
     ></join-room>
+
     <ae-map-preview
       v-model="previewVisible"
       @close="closePreview"
@@ -60,11 +61,20 @@ export default {
       willChange: false,
       canJoinRoom: {},
       queryDataFunction: null,
-      buttonList: ["加入", "预览"],
-      titleButtonList: ["新增", "刷新"],
+      buttonList: [
+        { name: "加入", action: this.clickJoinGameButton },
+        { name: "预览", action: this.clickPreivewButton },
+      ],
+      titleButtonList: [
+        { name: "新增", action: this.clickAddbutton },
+        { name: "刷新", action: this.flushRoom },
+      ],
       showItem: ["room_id", "room_name", "creat_time_show", "ready"],
       showTitle: ["房间号", "房间名字", "创建时间", "玩家"],
-      createRoomButtons: ["创建", "取消"],
+      createRoomButtons: [
+        { name: "创建", action: this.clickCreateRoom },
+        { name: "取消", action: this.clickCancelCreateRoom },
+      ],
       addNewDialogShowModel: false,
       addNewRoomFormConfig: [
         {

@@ -125,7 +125,7 @@ export default {
     async init() {
       const resp = await GetRegionData(this.page);
       if (resp.res_code == 0) {
-        this.pageCount = resp.res_val.pageCount;
+        this.pageCount = resp.res_val.page_count;
         this.regionMes = resp.res_val.data;
       } else {
         this.$message.error(resp.res_mes);

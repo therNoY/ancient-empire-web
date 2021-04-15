@@ -1,5 +1,7 @@
 import { imgUrl } from "../api/env"
 import store from "../store";
+import eventBus from "../manger/EventBus"
+
 var appHelper = {
 
   store: store,
@@ -12,21 +14,29 @@ var appHelper = {
       .setAttribute("style", "background-color:#f7f7f7");
   },
 
-  setLoading: function(){
+  setLoading: function () {
     this.store.commit("setLoading");
     return this.store.getters.gloadLoading;
   },
 
-  successMsg: function(){
+  successMsg: function () {
 
   },
 
-  warningMsg: function(){
+  warningMsg: function () {
 
   },
 
-  errorMsg: function(){
+  errorMsg: function () {
 
+  },
+
+  showTip: function (message, fun) {
+    let mes = {
+      message: message,
+      callback: fun,
+    }
+    eventBus.publish("showTip", mes)
   },
 
   // 获取地形的图片
@@ -67,6 +77,10 @@ var appHelper = {
     return num * 24 + "px";
   },
 
+  getUnitImgRender: function (h, id, color = "blue") {
+    return h("img", { attrs: { src: this.getUnitImg(id,color)} });
+  },
+
   /**
    * 返回单位的图片位置
    * @param {} typeId 单位Id
@@ -81,7 +95,7 @@ var appHelper = {
    * 获取模板图片
    * @param {*} img 
    */
-  getTemplateImg: function(img){
+  getTemplateImg: function (img) {
     return imgUrl + "temp/" + img;
   },
 

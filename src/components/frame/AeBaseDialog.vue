@@ -1,9 +1,12 @@
+<!--基础弹框-->
 <template>
-  <div class="ae-base-dialog-container" v-if="value">
+  <div class="ae-base-dialog-container" :style="dialogContiner" v-if="value">
     <div class="ae-base-dialog-popup" :style="popupStyle">
       <div class="ae-base-dialog-popup-header">
         <span>{{ title }}</span>
         <button type="button" class="btn-close" @click="close">x</button>
+      </div>
+      <div class="ae-base-dialog-popup-main">
         <slot />
       </div>
     </div>
@@ -33,6 +36,15 @@ export default {
       type: Boolean,
       default: true,
     },
+    // fixedDialog为true的时候有用
+    top:{
+      type: Number,
+      default: 10,
+    },
+    fixedDialog: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -54,15 +66,35 @@ export default {
     },
   },
   computed: {
+    dialogContiner() {
+      if (!this.fixedDialog) {
+        return {
+          display: "flex",
+          left: 0,
+          top: 0,
+        };
+      } else {
+        return {
+          top: this.top + "%",
+          left: (100 - this.width) / 2 + "%",
+        };
+      }
+    },
     popupStyle() {
       if ((this.width + "").indexOf("px") > 0) {
         return {
           width: this.width,
         };
       }
-      return {
-        width: this.width + "%",
-      };
+      if (!this.fixedDialog) {
+        return {
+          width: this.width + "%",
+        };
+      } else {
+        return {
+          width: this.width * 1.3 + "%",
+        };
+      }
     },
   },
 };
@@ -71,19 +103,15 @@ export default {
 <style lang="scss" scope>
 .ae-base-dialog-container {
   position: fixed;
-  top: 0;
   bottom: 0;
-  left: 0;
   right: 0;
-  background-color: rgba(167, 167, 167, 0.3);
-  display: flex;
   justify-content: center;
   align-items: center;
 }
 .ae-base-dialog-popup {
   background: #242a43;
   box-shadow: 2px 2px 20px 1px;
-  overflow-x: auto;
+  overflow-y: 10%;
   display: flex;
   flex-direction: column;
   border: 2px #afb7aa solid;
@@ -92,10 +120,14 @@ export default {
   padding-right: 1%;
   padding-bottom: 1%;
 }
+.ae-base-dialog-popup-main {
+  padding-bottom: 2%;
+}
 .ae-base-dialog-popup-header {
   color: #b0b8ac;
   justify-content: space-between;
-  margin-top: 2%;
+  margin-top: 15px;
+  margin-bottom: 15px;
   span {
     font-size: 18px;
   }

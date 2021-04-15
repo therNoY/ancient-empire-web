@@ -123,11 +123,13 @@ export default {
   .transfer_left {
     width: 45%;
     float: left;
+    color: white;
   }
   .transfer_right {
     width: 45%;
     float: left;
     margin-left: 5%;
+    color: white;
   }
   .transfer_item {
     float: left;

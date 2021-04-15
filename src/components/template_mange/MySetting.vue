@@ -24,7 +24,7 @@
               <span>单位管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/unitMesManger" @click>单位信息管理</el-menu-item>
+              <el-menu-item index="/unitMesManger">单位信息管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -33,7 +33,7 @@
               <span>地图管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/userMapManger" @click>我的地图</el-menu-item>
+              <el-menu-item index="/userMapManger" >我的地图</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

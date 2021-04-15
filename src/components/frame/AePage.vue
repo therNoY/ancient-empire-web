@@ -17,10 +17,14 @@
 <script>
 export default {
   props: {
-    pageCount: {
+    count: {
       type: Number,
       default: 0,
     },
+    pageSize:{
+      type: Number,
+      default: 10,
+    }
   },
   data() {
     return {
@@ -53,6 +57,13 @@ export default {
     },
   },
   computed: {
+    pageCount() {
+      if (this.count % this.pageSize == 0) {
+        return this.count / this.pageSize;
+      } else {
+        return Number.parseInt(this.count / this.pageSize) + 1;
+      }
+    },
     getPageCount() {
       let returnArry = [];
       if (this.pageCount < 10 || this.pageNow <= 5) {
@@ -95,6 +106,7 @@ export default {
     float: left;
     cursor: pointer;
     width: 10%;
+    color: white;
   }
 }
 </style>

@@ -16,9 +16,13 @@ export default {
         value(v) {
             this.showModel = v;
             if (v) {
-                this.onDialogCreate();
+                if (this.onDialogCreate && this.onDialogCreate instanceof Function) {
+                    this.onDialogCreate();
+                }
             } else {
-                this.onDialogDestroy();
+                if (this.onDialogDestroy && this.onDialogDestroy instanceof Function) {
+                    this.onDialogDestroy();
+                }
             }
         }
     },
@@ -26,6 +30,8 @@ export default {
         this.showModel = this.value;
     },
     destroyed() {
-        this.onDialogDestroy();
+        if (this.onDialogDestroy && this.onDialogDestroy instanceof Function) {
+            this.onDialogDestroy();
+        }
     },
 }

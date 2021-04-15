@@ -105,7 +105,7 @@ export default {
       const resp = await GetUnitLevel(this.page);
       if (resp.res_code == 0) {
         this.unitLevels = resp.res_val.data;
-        this.pageCount = resp.res_val.pageCount;
+        this.pageCount = resp.res_val.page_count;
       } else {
         this.$message.error(resp.res_mes);
       }

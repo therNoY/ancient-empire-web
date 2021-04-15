@@ -73,10 +73,33 @@ export const ChangeUserInfo = (args) => request('/api/user', args, "PUT");
 export const ChangeUserSetting = (args) => request('/api/user/useSetting', args, "PUT");
 
 // 用户地图有关
+/**
+ * 获取草稿地图
+ * @returns 
+ */
 export const GetInitUserMap = () => request('/api/userMap/draft', '', "GET");
+/**
+ * 保存临时地图
+ * @param {*} args 
+ * @returns 
+ */
 export const SaveTempMap = (args) => request('/api/userMap/saveTemp', args, "POST");
+/**
+ * 保存地图
+ * @param {*} args 
+ * @returns 
+ */
 export const SaveMap = (args) => request('/api/userMap', args, "POST");
+/**
+ * 优化地图
+ * @param {*} args 
+ * @returns 
+ */
 export const SimpleDrawing = (args) => request('/api/userMap/simpleDrawing', args, "POST");
+/**
+ * 获取用户创建的地图
+ * @returns 
+ */
 export const GetUserMapList = () => request('/api/userMap/list', '', "GET");
 /**
  * 获取用户下载的地图
@@ -88,7 +111,6 @@ export const GetUserDownloadMap = () => request('/api/userMap/download/list', ''
  * @returns 
  */
 export const GetWorldMapList = () => request('/api/worldMap/list', '', "GET");
-
 /**
  * 根据ID获取地图 可以不展示某些单位
  * @param {*} id 

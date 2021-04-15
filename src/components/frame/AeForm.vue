@@ -34,10 +34,9 @@
 
 <script>
 import UserMapSelect from "../map_base/UserMapSelect.vue";
-import AeInput from "./AeInput.vue";
 import AeSwitchSelect from "./AeSwitchSelect.vue";
 export default {
-  components: { AeInput, AeSwitchSelect, UserMapSelect },
+  components: { AeSwitchSelect, UserMapSelect },
   props: {
     formConfig: {
       type: Array,

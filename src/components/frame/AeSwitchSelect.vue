@@ -4,7 +4,6 @@
     <div v-if="label" class="ae-switch-label">{{ label }}</div>
     <ae-button
       class="ae-switch-select-right-button"
-      :disabled="showIndex == 0"
       :width="100"
       :height="23"
       @onClick="getRightItem"
@@ -14,7 +13,6 @@
     <div class="ae-switch-select-body">{{ showValue }}</div>
     <ae-button
       class="ae-switch-select-left-button"
-      :disabled="showIndex == items.length - 1"
       :width="100"
       :height="23"
       @onClick="getLeftItem"
@@ -74,11 +72,15 @@ export default {
     getRightItem() {
       if (this.showIndex > 0) {
         this.$emit("input", this.items[this.showIndex - 1].key);
+      } else {
+        this.$emit("input", this.items[this.items.length - 1].key);
       }
     },
     getLeftItem() {
       if (this.showIndex < this.items.length - 1) {
         this.$emit("input", this.items[this.showIndex + 1].key);
+      } else {
+        this.$emit("input", this.items[0].key);
       }
     },
   },
@@ -116,6 +118,7 @@ export default {
     font-size: 14px;
     padding-top: 1%;
     float: left;
+    color: blanchedalmond;
   }
   .ae-switch-select-left-button {
     width: 10%;
