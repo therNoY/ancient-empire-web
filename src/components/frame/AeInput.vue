@@ -30,7 +30,7 @@ export default {
     },
     width: {
       type: Number,
-      default: 80,
+      default: 70,
     },
     height: {
       type: Number,
@@ -80,17 +80,21 @@ export default {
   width: 96%;
   float: left;
   padding: 2%;
+  height: 20px;
   .ae-input-label {
     width: 20%;
     float: left;
+    height: 20px;
     font-size: 14px;
     padding-top: 2%;
+    color: white;
   }
 }
 
 input {
   outline: none;
   float: left;
+  height: 20px;
   margin-left: 1%;
   background-color: #696565be;
   border-top: 2px #494949 solid;

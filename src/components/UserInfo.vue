@@ -4,7 +4,6 @@
       v-model="showLogin"
       title="登录"
       @close="closeLoginDiaglog"
-      :showCloseTip="false"
     >
       <ae-form ref="loginForm" :formConfig="formConfig"></ae-form>
       <ae-button-list
@@ -17,7 +16,6 @@
       v-model="showRegister"
       title="注册"
       @close="closeLoginDiaglog"
-      :showCloseTip="false"
     >
       <ae-form ref="registerForm" :formConfig="registerFormConfig"></ae-form>
       <ae-button-list
@@ -28,7 +26,6 @@
 
     <ae-base-dialog
       title="用户信息"
-      :showCloseTip="false"
       v-model="showUserInfo"
       v-if="showUserInfo"
     >
@@ -47,7 +44,6 @@
 
     <ae-base-dialog
       title="修改密码"
-      :showCloseTip="false"
       v-model="showChangePwd"
       v-if="showChangePwd"
     >

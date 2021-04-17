@@ -1,4 +1,4 @@
-
+// 全局消息总线
 
 var eventBus = {
 

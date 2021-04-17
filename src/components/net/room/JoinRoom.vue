@@ -1,5 +1,5 @@
 <template>
-  <ae-base-dialog v-model="value" :width="width" closeTip="确定要退出房间吗？">
+  <ae-base-dialog v-model="value" :width="width" showCloseTip closeTip="确定要退出房间吗？">
     <div>欢迎加入{{ roomName }} 房间号{{ roomId }}</div>
     <div class="player_list">
       <el-table

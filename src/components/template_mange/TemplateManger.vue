@@ -2,13 +2,13 @@
   <div>
     <ae-complex-dialog
       ref="aeDialog"
-      title="选择地图"
+      title="模板管理"
       v-model="showModel"
       :showItem="showItem"
       :showTitle="showTitle"
       :titleButtons="titleButtonList"
       :titleSwitchSelect="titleSwitchSelect"
-      :initQueryDataGrid="() => GetUserTemplate"
+      :initQueryDataGrid="initQueryDataFunction"
       :footerButtons="footerButtonList"
       :width="55"
       @titleSwtichSelectChange="swtichSelectChange"
@@ -79,9 +79,11 @@ export default {
       showTempDetail: false,
       currentTemp: {},
       model: "myTemp",
+      initQueryDataFunction:null,
     };
   },
   created() {
+    this.initQueryDataFunction = GetUserTemplate
     window.TemplateMangerVue = this;
   },
   methods: {

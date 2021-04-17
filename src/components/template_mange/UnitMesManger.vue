@@ -8,14 +8,13 @@
       :footerButtons="footButtonList"
       :initQueryDataGrid="queryDataFunction"
       :showItem="showItem"
-      :showTitle="showTitle"
+      :showTitle="showTitle"A
       :width="70"
       page
     >
     </ae-complex-dialog>
 
     <ae-base-dialog
-      :showCloseTip="false"
       :title="diaTitle"
       v-model="dialogVisible"
       fixedDialog
@@ -121,7 +120,6 @@
       title="修改等级信息"
       :width="40"
       v-model="editUnitLevelInfoDialog"
-      :showCloseTip="false"
     >
       <el-form
         ref="levelInfoForm"
@@ -213,7 +211,6 @@ export default {
       currentLevelInfo: null,
       queryDataFunction: null,
       showTitle: [
-        "id",
         "单位",
         "名称",
         "攻击类型",
@@ -224,7 +221,6 @@ export default {
         "晋升",
       ],
       showItem: [
-        "id",
         (h, p) => {
           return h("img", { attrs: { src: this.$appHelper.getUnitImg(p.id) } });
         },
@@ -283,7 +279,7 @@ export default {
         });
     },
     onDialogCreate() {
-      this.$refs.mainDiaglog.flushData();
+      this.init();
     },
     handleEdit() {
       let unit = this.$refs.mainDiaglog.getDataGridSelect();
@@ -362,7 +358,6 @@ export default {
   },
   created() {
     // 初始化
-    this.init();
     this.queryDataFunction = GetUnitMesList;
     window.UnitMesMangerVue = this;
   },

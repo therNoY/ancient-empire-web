@@ -1,7 +1,7 @@
 <!--单位多选-->
 <template>
   <div id="unit-check-box">
-    <div class="removeAbleUnit" v-for="(unit, index) in localUnitList">
+    <div class="removeAbleUnit" v-for="(unit, index) in localUnitList" :key="index">
       <click-point :disabled="disabled"  @clickPoint="removeUnitFromList(unit, index)">
         <unit class="unit" :unit_id="unit.id"></unit>
       </click-point>
@@ -90,6 +90,7 @@ export default {
     padding-right: 10px;
     .unit {
       width: 30px;
+      background-color: rgba(255, 255, 255, 0);
     }
   }
   .addButton{

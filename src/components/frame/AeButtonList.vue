@@ -18,7 +18,7 @@
         @onClick="onClick(index)"
         v-else
         :width="buttonWidth"
-        :marginLeft="buttonWidth"
+        :marginLeft="flontLeft"
       >
         {{ button }}
       </ae-button>
@@ -37,6 +37,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    factor:{
+      type: Number,
+      default: 50,
+    }
   },
   methods: {
     onClick(index) {
@@ -48,7 +52,10 @@ export default {
   },
   computed: {
     buttonWidth() {
-      return 50 / this.buttonList.length;
+      return this.factor / this.buttonList.length;
+    },
+    flontLeft(){
+       return (100 - this.factor) / this.buttonList.length;
     },
     buttonMarginLeft() {
       return 36 / this.buttonList.length;

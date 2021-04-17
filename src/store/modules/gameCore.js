@@ -110,6 +110,11 @@ const gameCore = {
       state.socket.send(JSON.stringify(mes));
     },
 
+    levelGame({ state }) {
+      state.socket.close();
+      this.commit("setSocket", null);
+    },
+
     // 测试是否连接
     testConnect({ state }) {
       /**

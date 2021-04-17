@@ -5,7 +5,7 @@
     :closeTip="closeTip"
     :width="width"
     :title="title"
-    :showCloseTip="showCloseTip"
+    @open="open"
     @close="close"
   >
     <div class="ae-dialog-body-title">
@@ -182,6 +182,12 @@ export default {
           });
       });
     },
+    open(){
+      console.log("初始化查询");
+      if (!this.titleSwitchSelect) {
+        this.flushData();
+      }
+    },
     getDataGridSelect() {
       if (this.$refs.dataGrid) {
         return this.$refs.dataGrid.getSelect();
@@ -233,13 +239,6 @@ export default {
       return {
         width: "80%",
       };
-      // if (this.titleButtons && this.titleButtons.length > 0) {
-      //   return {
-      //     width: "80%",
-      //   };
-      // } else {
-
-      // }
     },
     bodyTitleSearchStyle() {
       if (this.titleButtons && this.titleButtons.length > 0) {

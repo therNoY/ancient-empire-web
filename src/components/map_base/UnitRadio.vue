@@ -66,5 +66,6 @@ export default {
 .unit {
   float: left;
   margin-top: 3px;
+  background-color: rgba(255, 255, 255, 0);
 };
 </style>

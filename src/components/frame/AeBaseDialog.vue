@@ -34,7 +34,7 @@ export default {
     },
     showCloseTip: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     // fixedDialog为true的时候有用
     top:{
@@ -97,6 +97,13 @@ export default {
       }
     },
   },
+  watch:{
+    value(v){
+      if (v) {
+        this.$emit("open");
+      }
+    }
+  }
 };
 </script>
 

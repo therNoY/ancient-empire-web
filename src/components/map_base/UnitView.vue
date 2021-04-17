@@ -14,10 +14,7 @@
     <!--单位的状态 血量 等级 buff-->
     <div class="status">
       <!--状态-->
-      <div
-        v-if="unit.status && unit.status != 'normal'"
-        class="unit_status"
-      >
+      <div v-if="unit.status && unit.status != 'normal'" class="unit_status">
         <img :src="statusImg" />
       </div>
       <!--等级-->
@@ -26,7 +23,11 @@
       </div>
       <!--血量-->
       <div v-if="unit.life_num && isNotMaxLife" class="lifeNum">
-        <img v-for="lifeNum in unit.life_num" :src="liftImg(lifeNum)" />
+        <img
+          v-for="(lifeNum, index) in unit.life_num"
+          :key="index"
+          :src="liftImg(lifeNum)"
+        />
       </div>
     </div>
   </div>
@@ -51,12 +52,20 @@ export default {
         for (let i = 0; i < life.length; i++) {
           lifeString += life[i];
         }
-        let res =
-          lifeString ==
+        if (
           this.$store.getters.levelInfo[
             this.unit.type_id + "," + this.unit.level
-          ].max_life;
-        return !res;
+          ]
+        ) {
+          let res =
+            lifeString ==
+            this.$store.getters.levelInfo[
+              this.unit.type_id + "," + this.unit.level
+            ].max_life;
+          return !res;
+        } else {
+          return false;
+        }
       }
     },
     liftImg() {
@@ -76,7 +85,10 @@ export default {
         ".png");
     },
     doneImg() {
-      return this.$appHelper.getUnitDoneImg(this.unit.type_id, this.color ? this.color : this.unit.color);
+      return this.$appHelper.getUnitDoneImg(
+        this.unit.type_id,
+        this.color ? this.color : this.unit.color
+      );
     },
 
     unitImg2() {

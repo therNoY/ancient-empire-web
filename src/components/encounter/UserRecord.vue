@@ -1,77 +1,93 @@
 <template>
-  <!-- 遭遇战 -->
-  <ae-base-dialog title="遭遇战" v-model="showEncounterDialog" @close="close">
-    <user-map-select
-      ref="userMapSelect"
-      style="padding-top: 5%; padding-bottom: 5%; margin-left: 5%"
-      v-model="selectMap"
-      label="选择遭遇战地图"
-    ></user-map-select>
-    <div>
-      <ae-button-list
-        :buttonList="buttonList"
-        :clickAction="[startStandGame, previewMap]"
-      ></ae-button-list>
-    </div>
-  </ae-base-dialog>
+  <div>
+    <ae-complex-dialog
+      ref="aeDialog"
+      v-model="showModel"
+      :showItem="showItem"
+      :showTitle="showTitle"
+      title="选择存档"
+      :initQueryDataGrid="queryDataFunction"
+      :footerButtons="footerButtons"
+      showSearch
+      :width="40"
+      page
+    >
+    </ae-complex-dialog>
+    <ae-map-preview
+      v-model="showPreview"
+      :mapId="mapId"
+      isRecord
+    ></ae-map-preview>
+  </div>
 </template>
 
 <script>
 import {
-  InitEncounterMap,
-  GetUserTemp,
+  GetUserRecordList,
+  RecordInit,
   GetUnitLevelByTemp,
-  MapInit,
+  GetUserTemp,
+  DelUserRecord,
 } from "@/api";
-import AeButtonList from "../frame/AeButtonList.vue";
-import UserMapSelect from "../map_base/UserMapSelect";
-
+import dialogShow from "@/mixins/frame/dialogShow.js";
+import AeMapPreview from "../map_manger/AeMapPreview.vue";
 export default {
-  components: {
-    UserMapSelect,
-    AeButtonList,
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  components: { AeMapPreview },
+  mixins: [dialogShow],
+  props: {},
   data() {
     return {
-      showEncounterDialog: false,
-      selectMap: "",
-      buttonList: ["开始", "预览"],
+      queryDataFunction: null,
+      footerButtons: [
+        { name: "继续", action: this.continueRecord },
+        { name: "预览", action: this.preview },
+        { name: "删除", action: this.delUserRecord },
+      ],
+      showTitle: ["名称", "创建时间"],
+      showItem: ["record_name", "create_time"],
+      showPreview: false,
+      mapId: null,
     };
   },
   created() {
-    window.EncounterVue = this;
+    this.queryDataFunction = GetUserRecordList;
+    window.UserRecordVue = this;
   },
   methods: {
-    previewMap() {
-      if (this.selectMap) {
-        this.$refs.userMapSelect.clickPreivewChooseMap();
-      }
+    preview() {
+      let record = this.$refs.aeDialog.getDataGridSelect();
+      this.mapId = record.uuid;
+      this.showPreview = true;
     },
-    close() {
-      this.$emit("input", false);
+    delUserRecord() {
+      this.$appHelper.showTip("确定要删除么？", () => {
+        let record = this.$refs.aeDialog.getDataGridSelect();
+        this.$appHelper.setLoading();
+        DelUserRecord(record.uuid)
+          .then((resp) => {
+            this.$appHelper.setLoading();
+            this.$message.info("删除成功");
+            this.$refs.aeDialog.flushData();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$appHelper.setLoading();
+          });
+      });
     },
-
     /**
-     * 开始一局单机游戏
+     * 继续一局单机游戏
      * 1.创建ws连接,
      * 2.后台根据地图和游戏类型生成一个游戏上下文,
      * 3.可以开始游戏
      */
-    startStandGame() {
-      if (!this.selectMap) {
-        return;
-      }
+    continueRecord() {
+      let record = this.$refs.aeDialog.getDataGridSelect();
       this.$appHelper.setLoading();
       console.log("开始一个遭遇战的单机游戏");
-      let record = this.selectMap;
-      record.game_type = "encounter";
-      MapInit(record)
+      let args = {};
+      args.uuid = record.uuid;
+      RecordInit(args)
         .then((resp) => {
           if (resp.res_code == 0) {
             this.$store.commit("setGame", resp.res_val);
@@ -110,29 +126,6 @@ export default {
           this.$appHelper.setLoading();
         });
     },
-    // 初始化军队
-    setMap() {
-      this.initArmys = [];
-      let args = {};
-      args.uuid = this.currentMap.map_id;
-      InitEncounterMap(args).then((resp) => {
-        if (resp.res_code == 0) {
-          this.initSettingDialog = true;
-          let colors = resp.res_val;
-          for (let index = 0; index < colors.length; index++) {
-            const color = colors[index];
-            let army = {};
-            army.color = color;
-            army.order = index + 1;
-            army.camp = index + 1;
-            army.type = "user";
-            this.initArmys.push(army);
-          }
-        } else {
-          this.$message.error(resp.res_mes);
-        }
-      });
-    },
 
     async getUnitLevelByTemp(tempId) {
       const resp = await GetUnitLevelByTemp(tempId);
@@ -143,11 +136,6 @@ export default {
         this.$message.error(resp.res_mes);
         return null;
       }
-    },
-  },
-  watch: {
-    value() {
-      this.showEncounterDialog = this.value;
     },
   },
 };

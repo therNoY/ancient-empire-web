@@ -4,7 +4,6 @@
       v-model="show"
       :title="title"
       width="35"
-      :showCloseTip="false"
     >
       <el-form v-model="comment">
         <el-form-item label="打分">

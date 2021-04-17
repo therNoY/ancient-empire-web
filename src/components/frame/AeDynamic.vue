@@ -1,6 +1,5 @@
 
 <script>
-import PreviewUnitList from "../map_base/PreviewUnitList.vue";
 export default {
   props: {
     component: {

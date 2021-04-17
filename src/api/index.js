@@ -70,6 +70,11 @@ export const ChangePwd = (args) => request('/api/user/changePwd', args, "POST");
  * @returns 
  */
 export const ChangeUserInfo = (args) => request('/api/user', args, "PUT");
+/**
+ * 修改下次新的地图初始化
+ * @param {*} args 
+ * @returns 
+ */
 export const ChangeUserSetting = (args) => request('/api/user/useSetting', args, "PUT");
 
 // 用户地图有关
@@ -77,7 +82,7 @@ export const ChangeUserSetting = (args) => request('/api/user/useSetting', args,
  * 获取草稿地图
  * @returns 
  */
-export const GetInitUserMap = () => request('/api/userMap/draft', '', "GET");
+export const GetInitUserMap = (args) => request('/api/userMap/draft', args, "POST");
 /**
  * 保存临时地图
  * @param {*} args 
@@ -135,25 +140,37 @@ export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
 // 初始化map 信息
 export const InitEncounterMap = (args) => request("/encounter/initSetting", args, "GET");
 /**
- * 根据历史开始游戏
+ * 根据map开始游戏
  * @param {*} args 
  * @returns 
  */
- export const MapInit = (args) => request("/api/map/init", args, "POST");
+export const MapInit = (args) => request("/api/map/init", args, "POST");
 /**
- * 根据历史开始游戏
+ * 根据存档开始游戏
  * @param {*} args 
  * @returns 
  */
-export const RecordInit = (args) => request("/api/record/init", args, "POST");
+export const RecordInit = (args) => request("/api/record/continue", args, "POST");
 /**
- * 根据历史开始游戏
+ * 保存记录
+ * @param {*} args 
+ * @returns 
+ */
+export const RecordSaveAs = (args) => request("/api/record/saveAs", args, "POST");
+/**
+ * 根据房间号开始游戏
  * @param {*} args 
  * @returns 
  */
  export const RoomInit = (args) => request("/api/room/init", args, "POST");
 // 根据Id获取存档
 export const GetRecordById = (id) => request("/record/" + id, '', "GET");
+/**
+ * 根据Id删除记录
+ * @param {*} id 
+ * @returns 
+ */
+export const DelUserRecord = (id) => request("/api/record/" + id, '', "DELETE");
 
 // 获取一个单位的详细信息
 export const GetUnitInfo = (args) => request('/unitInfo', args, "GET");
@@ -219,7 +236,7 @@ export const SaveUserRecord = (args) => request('/unitInfo/list', args, "GET");
  * 获取用户记录使用分页
  * @param {*} args 
  */
-export const getUserRecordList = (args) => request('/api/userRecord/list', args, "POST")
+export const GetUserRecordList = (args) => request('/api/record/list', args, "POST")
 
 export const SendMessage = (args) => request("/api/message/send", args, "POST");
 

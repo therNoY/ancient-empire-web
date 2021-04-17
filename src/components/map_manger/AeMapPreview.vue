@@ -5,7 +5,6 @@
     :value="value"
     id="aeMapPreview"
     @close="close"
-    :showCloseTip="false"
     :width="$appHelper.getMapSize(currentMap.column)"
   >
     <el-container :style="containerStyle">
@@ -18,11 +17,11 @@
             :column="currentMap.column"
           ></region-view-list>
           <tomb-view v-if="currentMap.tombs" :tombs="currentMap.tombs" />
+          <unit-view-list :units="currentMap.units"></unit-view-list>
           <point-view
             v-if="currentMap.currPoint"
             :point="currentMap.currPoint"
           ></point-view>
-          <unit-view-list :units="currentMap.units"></unit-view-list>
         </div>
       </el-main>
     </el-container>
@@ -52,9 +51,9 @@ export default {
       // 地图ID
       default: "",
     },
-    armyConfigList:{
+    armyConfigList: {
       type: Array,
-			default:()=>[]
+      default: () => [],
     },
     map: {
       // 直接传地图进来
@@ -62,6 +61,7 @@ export default {
     },
     isRecord: {
       // 是否是存档 默认不是
+      type: Boolean,
       default: false,
     },
     value: {
@@ -110,7 +110,27 @@ export default {
           GetRecordById(this.mapId)
             .then((resp) => {
               if (resp && resp.res_code == 0) {
-                this.currentMap = resp.res_val;
+                this.currentMap = {};
+                this.currentMap.regions =
+                  resp.res_val.game_map.regions;
+                this.currentMap.tombs = resp.res_val.tomb_list;
+                this.currentMap.row = resp.res_val.game_map.row;
+                this.currentMap.column =
+                  resp.res_val.game_map.column;
+                this.currentMap.map_name = resp.res_val.record_name;
+                this.currentMap.currPoint = resp.res_val.curr_point;
+                
+                let army_list = resp.res_val.army_list;
+                this.currentMap.units = [];
+                for (let army of army_list) {
+                  army.units.forEach((unit) => {
+                    unit["color"] = army["color"];
+                    unit["id"] = unit["type_id"];
+                  });
+                  this.currentMap.units = this.currentMap.units.concat(
+                    army.units
+                  );
+                }
               }
               this.loading = this.$appHelper.setLoading();
             })
@@ -122,7 +142,8 @@ export default {
           let args = {};
           args.map_id = this.mapId;
           args.army_config_list = this.armyConfigList;
-          GetUserMapWithConfig(args).then((resp) => {
+          GetUserMapWithConfig(args)
+            .then((resp) => {
               if (resp && resp.res_code == 0) {
                 this.currentMap = resp.res_val;
               }

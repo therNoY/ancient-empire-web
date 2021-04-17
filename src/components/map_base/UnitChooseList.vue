@@ -11,7 +11,8 @@
         <div
           class="selectOneUnit"
           @click="clickUnit(unit)"
-          v-for="unit in unit_list"
+          v-for="(unit,index) in unit_list"
+          :key="index"
         >
           <el-tooltip
             :content="unit.description"

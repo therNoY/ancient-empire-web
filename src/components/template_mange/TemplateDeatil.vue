@@ -2,7 +2,6 @@
   <div id="template_detail">
     <ae-base-dialog
       v-model="showModel"
-      :showCloseTip="false"
       :title="templateDeatil.template_name"
       :width="45"
     >
@@ -190,12 +189,8 @@ import dialogShow from "../../mixins/frame/dialogShow.js";
 import AeButtonList from "../frame/AeButtonList.vue";
 import AeTip from "../frame/AeTip.vue";
 import {
-  GetUserTemplate,
   SaveTemplateInfo,
-  GetUserDraftTemplate,
-  GetUserAttentionTemp,
   RemoveUserTemplate,
-  GetDownloadAbleTemplate,
   DownloadTemplate,
   RemoveUserTemplateAttention,
 } from "@/api";
@@ -329,6 +324,9 @@ export default {
             action: () => this.$refs.startComment.showComment(),
           },
           { name: "取 消", action: () => this.$emit("input", false) },
+        ];
+      } else {
+        return [
         ];
       }
     },

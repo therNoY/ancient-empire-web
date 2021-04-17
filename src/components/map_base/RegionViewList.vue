@@ -7,6 +7,7 @@
       :key="'REGION_' + index"
       :src="$appHelper.getRegionImg(region.type, region.color)"
       @click="clickRegion(index)"
+      :title="getRegionTitle(index)"
     />
 
     <!-- 城堡的地图 -->
@@ -26,10 +27,27 @@
 
 <script>
 export default {
-  props: ["regions", "castleTitles", "row", "column"],
+  props: {
+    regions: {},
+    castleTitles: {},
+    row: {},
+    column: {},
+    showTitle: { type: Boolean, default: false },
+  },
   methods: {
     clickRegion(index) {
       this.$emit("clickRegion", index);
+    },
+    getRegionTitle(index) {
+      if (this.showTitle) {
+        return (
+          Math.floor(index / this.column + 1) +
+          "行" +
+          ((index + 1) % this.column == 0 ? this.column : (index + 1) % this.column) +
+          "列"
+        );
+      }
+      return null;
     },
   },
   computed: {
@@ -41,7 +59,7 @@ export default {
       // 获取所有的城堡index 然后设置绝对定位设置城堡的头部
       for (let index = 0; index < this.regions.length; index++) {
         region = this.regions[index];
-        if ('castle' == region.type) {
+        if ("castle" == region.type) {
           let castleTitle = {};
           if ((index + 1) % row == 0) {
             castleTitle.row = Number.parseInt((index + 1) / column - 1);

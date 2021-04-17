@@ -31,23 +31,73 @@
       </el-tooltip>
     </div>
     <div class="bar_button">
-      <el-button size="mini" :type="getButtonType">主菜单</el-button>
-      <el-button size="mini" :type="getButtonType">小地图</el-button>
-      <el-button size="mini" :type="getButtonType">保存游戏</el-button>
+      <el-button size="mini" :type="getButtonType" @click="goHome"
+        >主菜单</el-button
+      >
+      <!-- <el-button size="mini" :type="getButtonType">小地图</el-button> -->
+      <el-button size="mini" v-if="type == 'encounter'" :type="getButtonType" @click="saveRecord"
+        >保存游戏</el-button
+      >
       <el-button size="mini" :type="getButtonType" @click="roundEnd"
         >结束回合</el-button
       >
     </div>
+
+    <!--保存地图-->
+    <ae-base-dialog title="保存记录" v-model="saveRecordDialog" :width="30">
+      <div style="padding: 2%">
+        <ae-input
+          v-model="saveRecordName"
+          label="记录名字"
+          placeholder="请输入要保存的记录的名字"
+        ></ae-input>
+      </div>
+
+      <ae-button
+        style="margin-left: 65%; margin-top: 5%"
+        :width="65"
+        @onClick="saveDraftRecord"
+        >确 定</ae-button
+      >
+    </ae-base-dialog>
   </div>
 </template>
 
 <script>
 import eventype from "../../../manger/eventType";
+import {RecordSaveAs} from "@/api"
 export default {
-  props: ["curr_color"],
+  props: ["curr_color", "gameId", "type"],
+  data(){
+    return{
+      saveRecordDialog:false,
+      saveRecordName:null,
+    }
+  },
   methods: {
     roundEnd() {
       this.$appHelper.sendEvent(eventype.ROUND_END);
+    },
+    goHome() {
+      this.$appHelper.showTip("确定要返回首页么? 游戏将会断开", () => {
+        this.$router.push("/");
+      });
+    },
+    saveRecord() {
+      this.saveRecordDialog = true;
+    },
+    saveDraftRecord(){
+      this.$appHelper.setLoading();
+      let args = {};
+      args.uuid = this.gameId;
+      args.name = this.saveRecordName;
+      RecordSaveAs(args).then(resp=>{
+        this.$message.info("保存成功")
+        this.$appHelper.setLoading();
+        this.saveRecordDialog = false;
+      }).catch(error=>{
+        this.$appHelper.setLoading();
+      });
     },
   },
   computed: {

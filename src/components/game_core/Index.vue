@@ -31,7 +31,7 @@
           </div>
         </el-main>
       </el-container>
-      <army-mes class="army_mes" :curr_color="game.curr_color" />
+      <army-mes class="army_mes" :type="game.type" :gameId="game.uuid" :curr_color="game.curr_color" />
     </div>
 
     <region-mes
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { GetRecordById, SaveUserRecord } from "@/api";
 import RegionViewList from "../map_base/RegionViewList";
 import ArmyView from "../map_base/ArmyView.vue";
 import UnitMes from "./map_mes/UnitMes.vue";
@@ -181,6 +180,9 @@ export default {
     this.startWorker();
     window.cVue = this;
     window.store = cVue.$store;
+  },
+  destroyed(){
+    this.$store.dispatch("levelGame");
   },
 };
 </script>

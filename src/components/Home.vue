@@ -8,7 +8,7 @@
       <button class="home_button" @click="showEncounter= true">遭遇战</button>
       <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
       <button class="home_button" @click="showUserRecord = true">读取游戏</button>
-      <button class="home_button" @click="router('setting')">我的设置</button>
+      <!-- <button class="home_button" @click="router('setting')">我的设置</button> -->
       <button class="home_button" @click="showUnitMange = true">单位管理</button>
       <button class="home_button" @click="showTemplatManger = true">模板管理</button>
       <button class="home_button" @click="router('mapEdit')">地图管理</button>
@@ -38,14 +38,10 @@
     <unit-mes-manger v-model="showUnitMange"></unit-mes-manger>
     <!--用户记录-->
     <user-record v-model="showUserRecord"></user-record>
-    <!---地图管理-->
-    <map-edit v-model="showMapEdit"></map-edit>
   </div>
 </template>
 
 <script>
-import myDialog from "./MyDialog";
-import register from "./Register";
 import UserInfo from "./UserInfo.vue";
 import RoomIndex from './net/room/RoomIndex.vue';
 import Encounter from './encounter/Encounter.vue';
@@ -56,8 +52,6 @@ import MapEdit from './map_manger/MapEdit.vue';
 
 export default {
   components: {
-    myDialog,
-    register,
     UserInfo,
     RoomIndex,
     Encounter,

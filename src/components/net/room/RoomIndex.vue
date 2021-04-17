@@ -137,7 +137,7 @@ export default {
   methods: {
     onDialogCreate() {
       console.log("页面创建");
-      this.flushRoom();
+      // this.flushRoom();
     },
     closePreview() {},
     onDialogDestroy() {

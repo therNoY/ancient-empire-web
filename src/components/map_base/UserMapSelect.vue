@@ -6,7 +6,7 @@
       v-model="showModel"
       :showItem="showItem"
       title="选择地图"
-      :initQueryDataGrid="()=>GetEncounterMap"
+      :initQueryDataGrid="initQueryDataFunction"
       :titleSwitchSelect="titleSwitchSelect"
       :footerButtons="buttonList"
       :width="40"
@@ -37,7 +37,7 @@
           :data="initArmys"
           :cell-style="tableCellStyle"
           :header-cell-style="tableHeaderColor"
-          style="width: 100%;background-color: #5a5c59"
+          style="width: 100%;background-color: #5a5c59;"
         >
           <el-table-column label="军队" width="50px">
             <template slot-scope="army">
@@ -188,6 +188,7 @@ export default {
         },
       ],
       initMapConfig: {},
+      initQueryDataFunction:null,
     };
   },
   methods: {
@@ -275,6 +276,7 @@ export default {
     },
   },
   created() {
+    this.initQueryDataFunction = GetEncounterMap;
     window.UserMapSelectVue = this;
   },
   computed: {
@@ -295,6 +297,7 @@ export default {
     float: left;
     width: 30%;
     padding: 2%;
+    color: white;
     text-decoration: underline;
     cursor: pointer;
   }
@@ -303,6 +306,7 @@ export default {
     padding-top: 2%;
     padding-bottom: 2%;
     float: left;
+    color: white;
     span {
       font-size: 14px;
     }
