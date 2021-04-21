@@ -4,7 +4,7 @@
     <img class="logo" src="../assets/images/assist/logo.png" alt />
     <div class="buttons">
       <button class="home_button" @click="clikUserInfo">玩家</button>
-      <button class="home_button" @click="get">战役</button>
+      <button class="home_button" @click="showChapter = true">战役</button>
       <button class="home_button" @click="showEncounter= true">遭遇战</button>
       <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
       <button class="home_button" @click="showUserRecord = true">读取游戏</button>
@@ -38,6 +38,9 @@
     <unit-mes-manger v-model="showUnitMange"></unit-mes-manger>
     <!--用户记录-->
     <user-record v-model="showUserRecord"></user-record>
+    
+    <!--章节选择-->
+    <chapter-select v-model="showChapter"></chapter-select>
   </div>
 </template>
 
@@ -49,6 +52,7 @@ import UserRecord from './encounter/UserRecord.vue';
 import TemplateManger from "./template_mange/TemplateManger.vue"
 import UnitMesManger from "./template_mange/UnitMesManger.vue"
 import MapEdit from './map_manger/MapEdit.vue';
+import ChapterSelect from './encounter/ChapterSelect.vue';
 
 export default {
   components: {
@@ -58,7 +62,8 @@ export default {
     UserRecord,
     TemplateManger,
     UnitMesManger,
-    MapEdit
+    MapEdit,
+    ChapterSelect
   },
   data() {
     return {
@@ -73,6 +78,7 @@ export default {
       showTemplatManger:false,
       showUnitMange:false,
       showMapEdit:false,
+      showChapter:false,
     };
   },
   methods: {

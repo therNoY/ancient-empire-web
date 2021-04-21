@@ -13,7 +13,16 @@ var eventBus = {
    */
   register: {},
 
+  /**
+   * 组件注册事件通信
+   * @param {*} component 组件
+   * @param {*} queue 监听队列
+   * @param {*} callBack 回调方法 为空取和队列同名的调用
+   */
   regist: function (component, queue, callBack) {
+    if (!callBack) {
+      callBack = queue;
+    }
     let componentObj = {
       component: component,
       callBack: callBack,

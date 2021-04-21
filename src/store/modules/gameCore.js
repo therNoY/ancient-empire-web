@@ -1,6 +1,7 @@
 import { gameCoreUrl } from '@/api/env'
 import { Message } from 'element-ui'
-import commendDispatcher from '../../manger/commendDispather.js'
+import commendDispatcher from '../../manger/commandDispather.js'
+import chapterDialogDispather from '../../manger/chapterDialogDispather.js'
 
 // 前端游戏的核心控制器
 const gameCore = {
@@ -93,7 +94,11 @@ const gameCore = {
           if (data instanceof Array && data.length > 0) {
             commendDispatcher.dispatchOrder(data);
           } else {
-            commendDispatcher.dispatch(data);
+            if (data.game_commend_enum) {
+              commendDispatcher.dispatch(data);
+            } else if (data.dialog_type) {
+              chapterDialogDispather.dispatch(data);
+            }
           }
         };
 

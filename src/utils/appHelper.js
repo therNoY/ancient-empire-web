@@ -31,10 +31,11 @@ var appHelper = {
 
   },
 
-  showTip: function (message, fun) {
+  showTip: function (message, fun, buttonList) {
     let mes = {
       message: message,
       callback: fun,
+      buttonList: buttonList,
     }
     eventBus.publish("showTip", mes)
   },

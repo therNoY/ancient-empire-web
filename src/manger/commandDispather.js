@@ -1,6 +1,6 @@
 
 import store from "../store";
-import commendType from "./commendType"
+import commendType from "./commandType"
 import { imgUrl } from "../api/env"
 import { Message } from 'element-ui'
 /**
@@ -11,10 +11,10 @@ var moveHelper = {
   /**
    * 移动单位
    */
-  move(index, moveLine, moveFinsh) {
+  move(armyIndex = game.curr_army_index, index, moveLine, moveFinsh) {
     store.commit("setMapState", 1);
     let game = store.getters.game;
-    let currUnit = game.army_list[game.curr_army_index].units[index];
+    let currUnit = game.army_list[armyIndex].units[index];
     let sumTime = 0; // 用于记录定时器需要延迟的时间 越往后越慢
     for (let i = 0; i < moveLine.length - 1; i++) {
       // 这里减去2 最后一个移动点不需要计算
@@ -27,6 +27,7 @@ var moveHelper = {
         if (i == moveLine.length - 2) {
           setTimeout(() => {
             store.commit("setMoveLength", 0);
+            store.commit("setMapState", 0);
             moveFinsh();
           }, moveLine[i].length * 250)
         }
@@ -253,12 +254,17 @@ var commendDispatcher = {
       }
       return;
     }
+    if (gameCommend.delay) {
+      setTimeout(() => {
+        this.handleCommend(gameCommend, callback);
+      }, gameCommend.delay);
+    } else {
+      this.handleCommend(gameCommend, callback);
+    }
+    
+  },
 
-    let game_commend_enum = gameCommend.game_commend_enum;
-    let aim_site = gameCommend.aim_site;
-    let unit_index = gameCommend.unit_index;
-    let ext_mes = gameCommend.ext_mes;
-
+  handleCommend({ game_commend_enum, aim_site, unit_index, ext_mes }, callback) {
     switch (game_commend_enum) {
       // ---------------------基础信息改变事件------------------------
       case commendType.CHANGE_CURR_UNIT:
@@ -355,7 +361,7 @@ var commendDispatcher = {
         break;
       case commendType.MOVE_UNIT:
         console.log("单位移动", unit_index);
-        moveHelper.move(unit_index, ext_mes.move_line, () => {
+        moveHelper.move(ext_mes.army_index, unit_index, ext_mes.move_line, () => {
           console.log("移动完毕 展示行动", ext_mes.actions);
           actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
           if (callback) {
@@ -382,12 +388,12 @@ var commendDispatcher = {
         store.commit("setAttachPoint", {});
         actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
         break;
-        case commendType.DIS_SHOW_ACTION:
-          store.commit("setAction", []);
-          if (callback) {
-            this.dispatch(callback.call(), callback);
-          }
-          break;
+      case commendType.DIS_SHOW_ACTION:
+        store.commit("setAction", []);
+        if (callback) {
+          this.dispatch(callback.call(), callback);
+        }
+        break;
       case commendType.SHOW_ATTACH_POINT:
         console.log("展示攻击的点");
         store.commit("setAttachPoint", aim_site);
@@ -485,10 +491,10 @@ var commendDispatcher = {
         debugger
         store.commit("setLevelUpInfo", ext_mes.level_up_info);
         store.commit("setLevelUpSite", ext_mes.site);
-        setTimeout(()=>{
+        setTimeout(() => {
           ext_mes.site.row = ext_mes.site.row - 0.5;
           store.commit("setLevelUpSite", ext_mes.site);
-          setTimeout(()=>{
+          setTimeout(() => {
             store.commit("setLevelUpInfo", null);
             store.commit("setLevelUpSite", null);
           }, 500);

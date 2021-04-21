@@ -26,7 +26,7 @@
           <img
             class="region"
             v-for="item in 2"
-            :key="item"
+            :key="item + '_1'"
             src="../../../assets/images/Region/flat.png"
           />
           <img
@@ -36,7 +36,7 @@
           <img
             class="region"
             v-for="item in 4"
-            :key="item"
+            :key="item + '_2'"
             src="../../../assets/images/Region/flat.png"
           />
         </div>

@@ -26,11 +26,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    buttonList: {
+      type: Array,
+      default: () => ["确定", "取消"],
+    },
   },
   data() {
-    return {
-      buttonList: ["确定", "取消"],
-    };
+    return {};
   },
   methods: {
     onClick(index) {

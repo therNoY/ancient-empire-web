@@ -2,7 +2,7 @@
   <div id="app">
     <router-view />
     <ae-loading></ae-loading>
-    <ae-tip v-model="showGlableTip" :closeTip="closeTip" @ok="tipOk"></ae-tip>
+    <ae-tip v-model="showGlableTip" :buttonList="buttonList" :closeTip="closeTip" @ok="tipOk"></ae-tip>
     <!-- <ae-message></ae-message> -->
   </div>
 </template>
@@ -19,10 +19,12 @@ export default {
       showGlableTip: false,
       callback: null,
       closeTip: null,
+      buttonList:undefined,
     };
   },
   methods: {
-    showTip({ message, callback, invoke }) {
+    showTip({ message, callback, buttonList }) {
+      this.buttonList = buttonList,
       this.showGlableTip = true;
       this.closeTip = message;
       this.callback = callback;

@@ -18,20 +18,31 @@
               @clickRegion="clickRegion"
             />
             <attach-view />
-            <tomb-view :tombs="tombs"/>
+            <tomb-view :tombs="tombs" />
             <move-area :point="game.curr_point" />
-            <army-view @unitOnClick="clickUnit" :armys="game.army_list" :singo="singo" />
+            <army-view
+              @unitOnClick="clickUnit"
+              :armys="game.army_list"
+              :singo="singo"
+            />
             <point-view :point="game.curr_point" :singo="singo" />
             <action-view />
             <left-change />
-            <animate-view  />
-            <up-show-animate v-model="$store.getters.actionState.levelUpInfo"
-            :site="$store.getters.actionState.levelUpSite"
+            <animate-view />
+            <up-show-animate
+              v-model="$store.getters.actionState.levelUpInfo"
+              :site="$store.getters.actionState.levelUpSite"
             ></up-show-animate>
+            <game-dialog></game-dialog>
           </div>
         </el-main>
       </el-container>
-      <army-mes class="army_mes" :type="game.type" :gameId="game.uuid" :curr_color="game.curr_color" />
+      <army-mes
+        class="army_mes"
+        :type="game.type"
+        :gameId="game.uuid"
+        :curr_color="game.curr_color"
+      />
     </div>
 
     <region-mes
@@ -58,7 +69,8 @@ import TombView from "../map_base/TombView.vue";
 import BuyUnit from "./unit_map/BuyUnit.vue";
 import ArmyMes from "./map_mes/ArmyMes.vue";
 import eventype from "../../manger/eventType";
-import UpShowAnimate from '../map_base/UpShowAnimate.vue';
+import UpShowAnimate from "../map_base/UpShowAnimate.vue";
+import GameDialog from "../map_base/GameDialog.vue";
 export default {
   components: {
     RegionViewList,
@@ -75,6 +87,7 @@ export default {
     BuyUnit,
     ArmyMes,
     UpShowAnimate,
+    GameDialog,
   },
   data() {
     return {
@@ -102,9 +115,26 @@ export default {
         };
       }
     },
-    tombs(){
-      return this.$store.getters.game.tomb_list; 
-    }
+    diaLogStyle() {
+      let mapCount = document.body.clientWidth * 0.65;
+      let w = this.game.game_map.column * 24;
+      if (mapCount > w) {
+        return {
+          float: "left",
+          marginLeft: (mapCount - w) / 2 + "px",
+          width: w + "px",
+          height: this.$appHelper.getMapSize(this.game.game_map.row),
+        };
+      } else {
+        return {
+          width: w + "px",
+          height: this.$appHelper.getMapSize(this.game.game_map.row),
+        };
+      }
+    },
+    tombs() {
+      return this.$store.getters.game.tomb_list;
+    },
   },
   methods: {
     // 开启一个后台进程 计时器
@@ -149,10 +179,7 @@ export default {
     },
     clickUnit(unit) {
       if (this.$appHelper.isPlayer(this)) {
-        if (
-          this.$store.getters.game.curr_color == unit.color &&
-          !unit.done
-        ) {
+        if (this.$store.getters.game.curr_color == unit.color && !unit.done) {
           // 点击了自己的可以行动的单位
           this.$appHelper.sendEvent(eventype.CLICK_ACTIVE_UNIT, {
             row: Math.round(unit.row),
@@ -181,7 +208,7 @@ export default {
     window.cVue = this;
     window.store = cVue.$store;
   },
-  destroyed(){
+  destroyed() {
     this.$store.dispatch("levelGame");
   },
 };

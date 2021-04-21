@@ -232,6 +232,13 @@ export const GetUnitInfoList = (args) => request('/unitInfo/list', args, "GET");
 
 // 保存游戏
 export const SaveUserRecord = (args) => request('/unitInfo/list', args, "GET");
+
+/**
+ * 获取故事模式
+ * @param {*} args 
+ * @returns 
+ */
+export const GetStoreList = (args) => request('/map/store/list', args, "GET");
 /**
  * 获取用户记录使用分页
  * @param {*} args 
