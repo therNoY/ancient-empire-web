@@ -24,7 +24,7 @@ export default {
   methods:{
     // 鼠标点击坟墓
     operationTomb(tomb) {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_TOMB, tomb);
       }

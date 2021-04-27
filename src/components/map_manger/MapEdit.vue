@@ -24,7 +24,7 @@
           class="un_select_unit"
           v-else
           :src="$appHelper.getUnitImg(unit.id, color)"
-          @click="getUnit(unit)"
+          @click="getRegionTitle(unit)"
         />
       </div>
       <div v-if="selectUnit && selectUnit.id" class="select_desc">
@@ -47,6 +47,7 @@
                     unit.color
                   )
                 "
+                :title="getUnitTitle(unit)"
                 :style="{
                   top: $appHelper.getUnitPosition(unit.row),
                   left: $appHelper.getUnitPosition(unit.column),
@@ -154,10 +155,12 @@
       ref="myMap"
       v-model="showMapVisible"
       :showItem="showItem"
+      showSearch
       title="我的地图"
       :initQueryDataGrid="queryFunction"
       :footerButtons="myMapEditButtonList"
       :width="40"
+      page
     >
     </ae-complex-dialog>
 
@@ -181,6 +184,7 @@ import {
   SaveMap,
   ChangeUserSetting,
   GetUserMapById,
+  GetUserTemplateBindUnit,
 } from "@/api";
 import RegionViewList from "../map_base/RegionViewList";
 import MapPreview from "./MapPreview.vue";
@@ -237,6 +241,11 @@ export default {
     };
   },
   methods: {
+    // 查看单位的说明
+    getUnitTitle(unit){
+      console.log(unit);
+      return unit.row + "行" + unit.column+"列"; 
+    },
     previewMap() {
       this.currMap = this.$refs.myMap.getDataGridSelect();
       this.previewVisible = true;
@@ -397,7 +406,7 @@ export default {
 
         SaveMap(args).then((resp) => {
           if (resp.res_code == 0) {
-            this.$message.success("保存成功");
+            this.$message.info("保存成功");
             this.saveMapDialog = false;
           } else {
             this.$message.error(resp.res_mes);
@@ -455,6 +464,13 @@ export default {
           this.unitList = userMap.units;
           this.editMapModel = "editMap";
           this.showMapVisible = false;
+          if (resp.res_val.template_id) {
+            let args = {};
+            args.template_id = resp.res_val.template_id
+            GetUserTemplateBindUnit(args).then(resp=>{
+              this.initMapInfo.unit_mes_list = resp.res_val;
+            })
+          }
         }
       });
       this.maps = this.currMap.regions;

@@ -50,6 +50,9 @@ export default {
       return null;
     },
   },
+  created(){
+    window.regionView = this;
+  },
   computed: {
     mapCastleTitle() {
       let sites = [];
@@ -61,13 +64,8 @@ export default {
         region = this.regions[index];
         if ("castle" == region.type) {
           let castleTitle = {};
-          if ((index + 1) % row == 0) {
-            castleTitle.row = Number.parseInt((index + 1) / column - 1);
-            castleTitle.column = column;
-          } else {
-            castleTitle.row = Number.parseInt((index + 1) / column);
-            castleTitle.column = (index + 1) % column;
-          }
+          castleTitle.row = Number.parseInt((index) / column);
+          castleTitle.column = (index + 1) % column == 0 ? column : (index + 1) % column;
           sites.push(castleTitle);
         }
       }

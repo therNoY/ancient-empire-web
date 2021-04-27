@@ -29,6 +29,8 @@ const store = {
           state.animates.splice(storeAnims.index, 0, storeAnims);
         } else {
           state.animates[storeAnims.index].animImg = storeAnims.animImg;
+          state.animates[storeAnims.index].row = storeAnims.row;
+          state.animates[storeAnims.index].column = storeAnims.column;
         }
       } else {
         state.animates.splice(storeAnims.index, 1);
@@ -68,13 +70,20 @@ const store = {
               } else {
                 const anim = animate.anim_list[k];
                 setTimeout(() => {
-                  let storeAnims = {};
-                  storeAnims.animImg = anim;
-                  storeAnims.row = animate.row;
-                  storeAnims.column = animate.column;
+                  let storeAnims = anim;
+                  storeAnims.animImg = anim.animImg;
+                  storeAnims.row = anim.row;
+                  storeAnims.column = anim.column;
+                  if (!storeAnims.row && animate.row) {
+                    storeAnims.row = animate.row;
+                  }
+                  if (!storeAnims.column && animate.column) {
+                    storeAnims.column = animate.column;
+                  }
                   storeAnims.index = n;
                   storeAnims.imageIndex = k;
-                  store.commit("setAnimates", storeAnims);
+                  console.log(JSON.stringify(storeAnims));
+                  store.commit("setAnimates", JSON.parse(JSON.stringify(storeAnims)));
                   if (animate.callback instanceof Array && animate.callback[k] instanceof Function) {
                     animate.callback[k]();
                   }

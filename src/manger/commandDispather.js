@@ -1,8 +1,9 @@
 
 import store from "../store";
 import commendType from "./commandType"
+import eventype from "./eventType"
+import appHelper from "../utils/appHelper"
 import { imgUrl } from "../api/env"
-import { Message } from 'element-ui'
 /**
  * 移动
  */
@@ -44,7 +45,7 @@ var actionHelper = {
   /**
    * 设置图标展示
    */
-  setActionShow(site, actions) {
+  setActionShow(site, actions, showOk) {
     let actionShow1 = [];
     let currPoint = site;
     for (const action of actions) {
@@ -103,6 +104,7 @@ var actionHelper = {
         action4.column += 1;
       }
       store.commit("setMapState", 0);
+      showOk();
     }, 50);
   }
 }
@@ -166,8 +168,15 @@ var animateHelper = {
   showAnim(anim, frameCallBack, callback, timer) {
     let animates = {};
     let anim_list = [];
-    for (const animImg of anim.anim_list) {
-      anim_list.push(imgUrl + "temp/" + animImg);
+    for (const animObj of anim.anim_list) {
+      if (animObj instanceof String) {
+        // 固定动画
+        anim_list.push(imgUrl + "temp/" + animObj);
+      } else {
+        // 可移动动画
+        anim_list.push({animImg:imgUrl + "temp/" + animObj.anim_img, row:animObj.row, column:animObj.column});
+      }
+      
     }
     // 设置回调函数
     let callBackFunction = [];
@@ -190,10 +199,10 @@ var animateHelper = {
             if (callback) {
               if (typeof timer == 'number') {
                 setTimeout(() => {
-                  commendDispatcher.dispatch(callback.call(), callback);
+                  commendDispatcher.dispatch(callback.next(), callback);
                 }, timer);
               } else {
-                commendDispatcher.dispatch(callback.call(), callback);
+                commendDispatcher.dispatch(callback.next(), callback);
               }
             }
           });
@@ -203,10 +212,10 @@ var animateHelper = {
             if (callback) {
               if (typeof timer == 'number') {
                 setTimeout(() => {
-                  commendDispatcher.dispatch(callback.call(), callback);
+                  commendDispatcher.dispatch(callback.next(), callback);
                 }, timer);
               } else {
-                commendDispatcher.dispatch(callback.call(), callback);
+                commendDispatcher.dispatch(callback.next(), callback);
               }
             }
           });
@@ -232,28 +241,39 @@ function Callback(commandList, index = 0) {
   this.index = index;
 }
 
-Callback.prototype.call = function () {
+Callback.prototype.next = function () {
   if (this.commandList instanceof Array && this.index < this.commandList.length) {
     return this.commandList[this.index++];
   } else {
+    // 返回undefined 说明有序命令执行结束
+    console.log("有序命令执行结束");
     return undefined;
   }
 };
 
 var commendDispatcher = {
-  // 对后端发送命令的分发
+  /**
+   * 对后端发送命令的分发
+   * @param {*} gameCommend 命令
+   * @param {*} callback 命令执行完毕回调
+   * @returns 
+   */
   dispatch(gameCommend, callback) {
 
     if (gameCommend === undefined) {
+      // 有序命令执行结束
+      appHelper.sendEvent(eventype.COMMEND_EXEC_OVER);
       return;
     }
 
     if (gameCommend === null) {
+      // 如果有回调也要执行回调
       if (callback) {
-        this.dispatch(callback.call(), callback);
+        this.dispatch(callback.next(), callback);
       }
       return;
     }
+
     if (gameCommend.delay) {
       setTimeout(() => {
         this.handleCommend(gameCommend, callback);
@@ -286,7 +306,7 @@ var commendDispatcher = {
       case commendType.CHANG_REGION:
         store.commit("changeRegion", ext_mes);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.CHANGE_UNIT_STATUS:
@@ -313,20 +333,21 @@ var commendDispatcher = {
           }
         }
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.CHANGE_ARMY_INFO:
         game = store.getters.game;
         const army_statue = ext_mes.army_info;
         let currArmy = game.army_list[game.curr_army_index];
+        game.curr_player = currArmy.player;
         for (let key in army_statue) {
           if (currArmy.hasOwnProperty(key)) {
             currArmy[key] = army_statue[key];
           }
         }
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.CHANGE_RECORD_INFO:
@@ -338,7 +359,7 @@ var commendDispatcher = {
           }
         }
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       // -------------------单位移动系统--------------------------
@@ -363,10 +384,12 @@ var commendDispatcher = {
         console.log("单位移动", unit_index);
         moveHelper.move(ext_mes.army_index, unit_index, ext_mes.move_line, () => {
           console.log("移动完毕 展示行动", ext_mes.actions);
-          actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
-          if (callback) {
-            this.dispatch(callback.call(), callback);
-          }
+          actionHelper.setActionShow(ext_mes.site, ext_mes.actions, ()=>{
+            if (callback) {
+              this.dispatch(callback.next(), callback);
+            }
+          });
+          
         });
         break;
       case commendType.ROLLBACK_MOVE:
@@ -386,12 +409,16 @@ var commendDispatcher = {
         // 展示行动
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
-        actionHelper.setActionShow(ext_mes.site, ext_mes.actions);
+        actionHelper.setActionShow(ext_mes.site, ext_mes.actions, ()=>{
+          if (callback) {
+            this.dispatch(callback.next(), callback);
+          }
+        });
         break;
       case commendType.DIS_SHOW_ACTION:
         store.commit("setAction", []);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.SHOW_ATTACH_POINT:
@@ -402,7 +429,7 @@ var commendDispatcher = {
         store.commit("setAttachArea", []);
         store.commit("setAttachPoint", {});
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       // --------------------单位攻击系列事件----------------------
@@ -420,7 +447,7 @@ var commendDispatcher = {
           currUnit.column = column;
           store.commit("setMoveLength", 0);
           if (callback) {
-            this.dispatch(callback.call(), callback);
+            this.dispatch(callback.next(), callback);
           }
         }, 80);
         break;
@@ -428,7 +455,7 @@ var commendDispatcher = {
         // 掉血
         store.commit("setLeftChange", ext_mes.left_change);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.SHOW_ATTACH_ANIM:
@@ -441,7 +468,7 @@ var commendDispatcher = {
         let army = game.army_list[ext_mes.army_unit_index.army_index];
         army.units.splice(ext_mes.army_unit_index.unit_index, 1);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.SHOW_UNIT_DEAD:
@@ -451,40 +478,40 @@ var commendDispatcher = {
         game = store.getters.game;
         game.tomb_list.push(aim_site);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       // ---------------------召唤单位系列事件-------------------------
       case commendType.SHOW_SUMMON_ANIM:
         animateHelper.showAnim(ext_mes.anim, null, callback, 200);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.REMOVE_TOMB:
         let remvoeTomb = aim_site;
         store.commit("removeTomb", remvoeTomb);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.ADD_UNIT:
         store.commit("addUnit", ext_mes);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.SHOW_BUY_UNIT:
         store.commit("setBuyUnitDialog", true);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       //---------------------其他-------------------------
       case commendType.SHOW_GAME_NEWS:
         store.commit("addGameMessage", ext_mes.message);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
       case commendType.SHOW_LEVEL_UP:
@@ -500,7 +527,7 @@ var commendDispatcher = {
           }, 500);
         }, 200);
         if (callback) {
-          this.dispatch(callback.call(), callback);
+          this.dispatch(callback.next(), callback);
         }
         break;
     }

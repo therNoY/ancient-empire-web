@@ -4,7 +4,7 @@
       ref="aeDialog"
       v-model="showModel"
       :showItem="showItem"
-      title="选择存档"
+      title="选择战役"
       :initQueryDataGrid="queryDataFunction"
       :footerButtons="footerButtons"
       :width="40"

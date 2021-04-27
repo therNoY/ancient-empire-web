@@ -125,10 +125,9 @@ var appHelper = {
   },
 
   // 判断是否可以点击
-  isPlayer: function (that) {
-    console.log(that);
-    return (that.$store.getters.user.user_id == that.$store.getters.game.curr_player)
-      && that.$store.getters.mapState == 0;
+  mapCanClick: function () {
+    return (store.getters.user.user_id == store.getters.game.curr_player)
+      && store.getters.mapState == 0;
   },
 
 

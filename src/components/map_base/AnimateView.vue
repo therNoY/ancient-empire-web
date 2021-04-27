@@ -1,7 +1,7 @@
 <template>
   <!--展示特效-->
   <div>
-    <div v-for="animate in animates">
+    <div v-for="(animate,index) in animates" :key="index">
       <img
         v-if="animate"
         :src="animate.animImg"

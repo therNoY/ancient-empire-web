@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     clickAttachArea(site) {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         this.$appHelper.sendEvent(eventype.CLICK_ATTACH_AREA, site);
       }
     },

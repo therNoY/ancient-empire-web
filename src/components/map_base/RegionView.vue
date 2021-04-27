@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     clickRegion() {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_REGION, null, null, this.regionIndex);
       }

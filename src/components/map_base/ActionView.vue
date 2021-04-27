@@ -1,7 +1,7 @@
 <template>
   <div v-if="unitActions.length > 0">
     <!--展示单位可以进行行动 攻击 召唤 购买 修复-->
-    <div class="actionLogo" v-for="action in unitActions">
+    <div class="actionLogo" v-for="(action,index) in unitActions" :key="index">
       <img
         :src="$appHelper.getActionImg(action.action)"
         @click="doAction(action.action)"
@@ -20,7 +20,7 @@ export default {
   methods: {
     // 展示单位将要进行的行动
     doAction(name) {
-      if (!this.$appHelper.isPlayer(this)) {
+      if (!this.$appHelper.mapCanClick()) {
         return;
       }
       if (name == "attack") {

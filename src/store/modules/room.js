@@ -68,7 +68,7 @@ const roomNet = {
     },
 
     // 测试是否连接
-    testConnect({ state }) {
+    testRoomConnect({ state }) {
       /**
        * ebSocket的 readyState 属性用来定义连接状态，该属性的值有下面几种：
         * 0 ：对应常量CONNECTING (numeric value 0)，

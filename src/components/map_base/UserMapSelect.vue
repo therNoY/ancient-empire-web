@@ -10,6 +10,7 @@
       :titleSwitchSelect="titleSwitchSelect"
       :footerButtons="buttonList"
       :width="40"
+      page
     >
     </ae-complex-dialog>
     <ae-button

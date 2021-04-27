@@ -144,12 +144,12 @@ export default {
     },
     clickRegion(index) {
       // 点击了其他的单位 或者已经行动过了
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         this.$appHelper.sendEvent(eventype.CLICK_REGION, null, null, index);
       }
     },
     clickUnit(unit) {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         if (
           this.$store.getters.game.curr_color == unit.color &&
           !unit.done

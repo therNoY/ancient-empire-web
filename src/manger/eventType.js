@@ -131,6 +131,10 @@ var eventype = {
    */
   ROUND_END: "ROUND_END",
 
+  /**
+   * 有序命令执行结束
+   */
+  COMMEND_EXEC_OVER: "COMMEND_EXEC_OVER",
 }
 
 

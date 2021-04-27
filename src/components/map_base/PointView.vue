@@ -74,21 +74,21 @@ export default {
   methods: {
     // 点击指针
     clickPoint() {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_POINT);
       }
     },
     // 点击目的地指针
     goAimPoint() {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_AIM_POINT);
       }
     },
     // 点击选择指针
     clickChoosePoint() {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(
           eventype.CLICK_CHOOSE_POINT,

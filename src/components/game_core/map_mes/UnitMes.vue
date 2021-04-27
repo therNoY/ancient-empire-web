@@ -16,6 +16,7 @@
         <img
           class="region"
           v-for="item in 9"
+          :key="'bk' + item"
           src="../../../assets/images/Region/grove.png"
         />
         <unit-view
@@ -94,7 +95,8 @@
       <span>能力列表</span>
       <div
         @click="unitInfoDialog = true"
-        v-for="abilitie in unitInfo.abilities"
+        v-for="(abilitie,index) in unitInfo.abilities"
+        :key="'ab'+index"
       >
         {{ abilitie.name }}
       </div>

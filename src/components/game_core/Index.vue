@@ -157,15 +157,8 @@ export default {
     },
     // 检测游戏是否可以开始
     checkGame() {
-      let isOk = true;
       // gameWS正常连接
-      // isOk = this.$store.dispatch("testConnect");
-      if (!isOk) {
-        return isOk;
-      }
-      // store.game 存在
-
-      return isOk;
+      return this.$store.dispatch("testGameConnect");
     },
     // 点击购买单位
     buyUnit() {
@@ -173,12 +166,12 @@ export default {
     },
     clickRegion(index) {
       // 点击了其他的单位 或者已经行动过了
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         this.$appHelper.sendEvent(eventype.CLICK_REGION, null, null, index);
       }
     },
     clickUnit(unit) {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         if (this.$store.getters.game.curr_color == unit.color && !unit.done) {
           // 点击了自己的可以行动的单位
           this.$appHelper.sendEvent(eventype.CLICK_ACTIVE_UNIT, {
@@ -197,16 +190,20 @@ export default {
   },
   created() {
     // 检测webscoket连接
-    let status = this.checkGame();
-    if (!status) {
-      this.$router.push("/");
-      return;
-    }
-    this.game = this.$store.getters.game;
-    this.$appHelper.setWidthBack();
-    this.startWorker();
-    window.cVue = this;
-    window.store = cVue.$store;
+    this.checkGame()
+      .then((resp) => {
+        if (resp) {
+          this.game = this.$store.getters.game;
+          this.$appHelper.setWidthBack();
+          this.startWorker();
+          window.GameIndexVue = this;
+        } else {
+          this.$router.push("/");
+        }
+      })
+      .catch((error) => {
+        this.$router.push("/");
+      });
   },
   destroyed() {
     this.$store.dispatch("levelGame");

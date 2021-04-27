@@ -116,12 +116,14 @@ const gameCore = {
     },
 
     levelGame({ state }) {
-      state.socket.close();
+      if (state.socket) {
+        state.socket.close();
+      }
       this.commit("setSocket", null);
     },
 
     // 测试是否连接
-    testConnect({ state }) {
+    testGameConnect({ state }) {
       /**
        * ebSocket的 readyState 属性用来定义连接状态，该属性的值有下面几种：
         * 0 ：对应常量CONNECTING (numeric value 0)，
@@ -133,7 +135,10 @@ const gameCore = {
         3 : 对应常量CLOSED (numeric value 3)
         连接已经关闭或者根本没有建立。The connection has been closed or could not be opened.
        */
-      return state.socket.readyState == 1;
+      if (state.socket && state.socket.readyState == 1) {
+        return true;
+      }
+      return false;
     }
 
   }

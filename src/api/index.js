@@ -105,12 +105,12 @@ export const SimpleDrawing = (args) => request('/api/userMap/simpleDrawing', arg
  * 获取用户创建的地图
  * @returns 
  */
-export const GetUserMapList = () => request('/api/userMap/list', '', "GET");
+export const GetUserMapList = (args) => request('/api/userMap/list', args, "POST");
 /**
  * 获取用户下载的地图
  * @returns 
  */
-export const GetUserDownloadMap = () => request('/api/userMap/download/list', '', "GET");
+export const GetUserDownloadMap = (args) => request('/api/userMap/download/list', args, "POST");
 /**
  * 获取世界地图
  * @returns 
@@ -175,10 +175,10 @@ export const DelUserRecord = (id) => request("/api/record/" + id, '', "DELETE");
 // 获取一个单位的详细信息
 export const GetUnitInfo = (args) => request('/unitInfo', args, "GET");
 /**
- * 获取用户模板单位
+ * 获取用户模板绑定单位
  * @param {*} args 
  */
-export const GetAllUserUnit = (args) => request('/api/userTemp/unitList', args, "POST");
+export const GetUserTemplateBindUnit = (args) => request('/api/userTemp/unitList', args, "POST");
 /**
  * 保存模板信息
  * @param {*} args 

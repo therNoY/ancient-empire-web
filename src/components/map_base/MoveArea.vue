@@ -89,7 +89,7 @@ export default {
   methods: {
     // 展示移动路线
     showMoveLine(row, column) {
-      if (this.$appHelper.isPlayer(this)) {
+      if (this.$appHelper.mapCanClick()) {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_MOVE_AREA, {
           row: row,

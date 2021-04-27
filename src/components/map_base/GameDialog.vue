@@ -1,20 +1,23 @@
 <template>
   <div>
-    <div v-if="winCondition" class="showConditionStyle" @click="$appHelper.sendEvent('CLICK_TOP')">
+    <div
+      v-if="winCondition"
+      class="showConditionStyle"
+      @click="$appHelper.sendEvent('CLICK_TOP')"
+    >
       <div class="showConditionTitle">游戏目标</div>
       <div class="showConditionContent">
-        {{message}}
+        {{ message }}
       </div>
     </div>
-    <div v-if="dialog" @click="$appHelper.sendEvent('CLICK_TOP');">
-      <div  class="showDialogStyle">
-      <div class="showDialogTitle">{{message}}</div>
-      <div class="showDialogContent">
-        <img :src="img" alt />
+    <div v-if="dialog" @click="$appHelper.sendEvent('CLICK_TOP')">
+      <div class="showDialogStyle">
+        <div class="showDialogTitle">{{ message }}</div>
+        <div class="showDialogContent">
+          <img v-if="img" :src="img" alt />
+        </div>
       </div>
     </div>
-    </div>
-    
   </div>
 </template>
 
@@ -42,21 +45,34 @@ export default {
     showDialog(data) {
       console.log("展示对话框", data);
       this.dialog = true;
-      this.img = require("../../assets/images/dialog/" +
-        data.dialog_type +
-        ".png");
+      try {
+        this.img = require("../../assets/images/dialog/" +
+          data.dialog_type +
+          ".png");
+      } catch (ignored) {
+        this.img = null;
+      }
+
       this.message = data.message;
     },
     gameWin(message) {
-      this.$appHelper.showTip(message, () => {
-        this.$router.push("/");
-      }, ["返回主页", "继续游戏"]);
+      this.$appHelper.showTip(
+        message,
+        () => {
+          this.$router.push("/");
+        },
+        ["返回主页", "继续游戏"]
+      );
     },
     gameOver(message) {
-      this.$appHelper.showTip(message, () => {
-        this.$router.push("/");
-      }, ["返回主页"]);
-    }
+      this.$appHelper.showTip(
+        message,
+        () => {
+          this.$router.push("/");
+        },
+        ["返回主页"]
+      );
+    },
   },
   created() {
     window.GameDialogVue = this;
