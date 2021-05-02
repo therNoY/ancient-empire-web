@@ -33,15 +33,69 @@ export const GetUnitLevelInfoById = (id) => request('/api/unitLevel/' + id, '', 
  */
 export const GetUnitLevelByTemp = (args) => request('/api/unitLevel/list/' + args, '', "GET");
 /**
- * 获取单位分页数据
+ * 获取用户创建的单位分页数据
  * @param {} args 
  */
-export const GetUnitMesList = (args) => request('/api/unitMes/list', args, "POST");
+export const GetUserCreateUnitMes = (args) => request('/api/unitMes/user/list', args, "POST");
 /**
- * 获取全部单位信息
+ * 根据Id获取单位信息
+ * @param {*} id 
+ * @returns 
+ */
+export const GetUnitMesById = (id) => request('/api/unitMes/' + id, "", "GET");
+/**
+ * 获取用户可以使用的所有单位信息
  * @param {*} args 
  */
-export const GetAllUserUnitMes = (args) => request('/api/unitMes/all', args, "POST");
+export const GetAllUserEnableUnitMes = (args) => request('/api/unitMes/enable/all', args, "POST");
+/**
+ * 获取用户下载的单位
+ * @param {*} args 
+ * @returns 
+ */
+export const GetUserDownloadUnitList = (args) => request('/api/unitMes/user/download', args, "POST");
+/**
+ * 获取可下载的单位
+ * @param {*} args 
+ * @returns 
+ */
+export const GetCanDownloadUnit = (args) => request('/api/unitMes/downloadAble/list', args, "POST");
+
+/**
+ * 删除下载的单位
+ * @param {*} args 
+ * @returns 
+ */
+export const DeletDownLoadUnit = (args) => request('/api/unitMes/download', args, "DELETE");
+
+/**
+ * 下载单位
+ * @param {*} args 
+ * @returns 
+ */
+export const DownLoadUnit = (args) => request('/api/unitMes/download', args, "PUT");
+
+/**
+ * 删除创建的单位
+ * @param {*} args 
+ * @returns 
+ */
+export const DeleteCreateUnit = (args) => request('/api/unitMes', args, "DELETE");
+
+/**
+ * 更新版本
+ * @param {*} args 
+ * @returns 
+ */
+export const UpdateUnitVersion = (args) => request('/api/unitMes/version/update', args, "POST");
+/**
+ * 回退
+ * @param {*} args 
+ * @returns 
+ */
+export const RevertUnitVersion = (args) => request('/api/unitMes/version/revert', args, "POST");
+
+
 /**
  * 获取单位的能力信息
  * @param {*} id 
@@ -67,6 +121,7 @@ export const ChangePwd = (args) => request('/api/user/changePwd', args, "POST");
 /**
  * 修改用户info
  * @param {*} args 
+ * 
  * @returns 
  */
 export const ChangeUserInfo = (args) => request('/api/user', args, "PUT");
@@ -134,7 +189,7 @@ export const DelUserMap = (id) => request('/api/userMap/' + id, '', "DELETE");
 /**
  * 获取遭遇地图
  */
-export const GetEncounterMap = () => request("/encounterMap", '', "GET");
+export const GetEncounterMap = (args) => request("/encounterMap", args, "POST");
 export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
 
 // 初始化map 信息

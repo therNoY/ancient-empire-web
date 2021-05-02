@@ -6,6 +6,7 @@
       class="ae-switch-select-right-button"
       :width="100"
       :height="23"
+      :disabled="!editAble"
       @onClick="getRightItem"
     >
       &lt;
@@ -15,6 +16,7 @@
       class="ae-switch-select-left-button"
       :width="100"
       :height="23"
+      :disabled="!editAble"
       @onClick="getLeftItem"
     >
       &gt;
@@ -31,7 +33,10 @@ export default {
     items: {
       type: Array,
     },
-    form: {},
+    editAble: {
+      type: Boolean,
+      default: true,
+    },
     label: {
       type: String,
     },
@@ -108,6 +113,7 @@ export default {
     width: 20%;
     font-size: 14px;
     padding-top: 1%;
+    color: aliceblue;
   }
   .ae-switch-select-right-button {
     width: 10%;
@@ -118,7 +124,7 @@ export default {
     font-size: 14px;
     padding-top: 1%;
     float: left;
-    color: blanchedalmond;
+    color: rgb(255, 255, 255);
   }
   .ae-switch-select-left-button {
     width: 10%;

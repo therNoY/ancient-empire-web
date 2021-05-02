@@ -1,6 +1,6 @@
 <template>
   <div class="ae-page">
-    <div class="ae-page-left-button" @click="pageDes">&lt;</div>
+    <b class="ae-page-left-button" @click="pageDes">&lt;</b>
     <div
       class="ae-page-num"
       v-for="(pageNum, key) of getPageCount"
@@ -10,7 +10,7 @@
     >
       {{ pageNum }}
     </div>
-    <div class="ae-page-right-button" @click="pageAdd">&gt;</div>
+    <b class="ae-page-right-button" @click="pageAdd">&gt;</b>
   </div>
 </template>
 
@@ -21,10 +21,10 @@ export default {
       type: Number,
       default: 0,
     },
-    pageSize:{
+    pageSize: {
       type: Number,
       default: 10,
-    }
+    },
   },
   data() {
     return {
@@ -35,7 +35,10 @@ export default {
     widthStyle(index) {
       if (index && index == this.pageNow) {
         return {
-          color: "#5a5c59",
+          fontWeight: "bold",
+          fontSize: "16px",
+          webkitTextStroke: "0.8px rgb(75, 75, 75)",
+          color: "#white",
         };
       }
     },

@@ -2,11 +2,21 @@
   单位单选组件
 -->
 <template>
-  <div>
-    <click-point :disabled="!edit_able" v-if="value"  @clickPoint="deleteUnit">
-      <unit class="unit" :unit_id="value" :color="color"></unit>
-    </click-point>
-    <el-button style="margin-left: 10px" @click="chooseOtherUnit" icon="el-icon-edit-outline" circle></el-button>
+  <div class="unit-radio">
+    <ae-button
+      class="unit-radio-button"
+      :width="80"
+      @onClick="chooseOtherUnit"
+      :disabled="!editAble"
+      >选择单位</ae-button
+    >
+
+    <div class="unit">
+      <click-point :disabled="!editAble" v-if="value" @clickPoint="deleteUnit">
+        <unit :unit_id="value" :color="color"></unit>
+      </click-point>
+    </div>
+
     <unit-choose-list
       ref="unitChooseList"
       dialog_title="选择其他单位"
@@ -17,25 +27,24 @@
 </template>
 
 <script>
-import ClickPoint from '../frame/ClickPoint.vue';
+import ClickPoint from "../frame/ClickPoint.vue";
 import Unit from "./Unit.vue";
 import UnitChooseList from "./UnitChooseList.vue";
 export default {
   components: { Unit, UnitChooseList, ClickPoint },
   props: {
     value: {},
-    template_id: {},
     color: {
       type: String,
       default: "blue",
     },
-    edit_able: {
+    editAble: {
       type: Boolean,
       default: true,
     },
-    unitList:{
-      type:Array,
-    }
+    unitList: {
+      type: Array,
+    },
   },
   data() {
     return {
@@ -49,12 +58,12 @@ export default {
     },
     changeUnit(unit) {
       this.$refs.unitChooseList.show = false;
-      this.$emit('input', unit.id)
+      this.$emit("input", unit.id);
       this.$emit("changeUnit", unit.id);
     },
-    deleteUnit(){
-       this.$emit('input', null)
-    }
+    deleteUnit() {
+      this.$emit("input", null);
+    },
   },
   created() {
     window.UnitRadioVue = this;
@@ -63,9 +72,18 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.unit {
+.unit-radio {
+  width: 100%;
   float: left;
-  margin-top: 3px;
-  background-color: rgba(255, 255, 255, 0);
-};
+  text-align: center;
+  .unit {
+    float: left;
+    padding-top: 10px;
+  }
+  .unit-radio-button {
+    float: left;
+    height: 100%;
+    width: 20%;
+  }
+}
 </style>

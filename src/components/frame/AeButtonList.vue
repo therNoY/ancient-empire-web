@@ -29,33 +29,50 @@
 <script>
 export default {
   props: {
+    buttonConfig: {
+      type: Function,
+      default: null,
+    },
     buttonList: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     clickAction: {
       type: Array,
       default: () => [],
     },
-    factor:{
+    factor: {
       type: Number,
       default: 50,
-    }
+    },
   },
   methods: {
     onClick(index) {
       this.$emit("onClick", index);
-      if (this.clickAction && this.clickAction[index] && this.clickAction[index] instanceof Function) {
+      if (
+        this.clickAction &&
+        this.clickAction[index] &&
+        this.clickAction[index] instanceof Function
+      ) {
         this.clickAction[index]();
       }
     },
+  },
+  created() {
+    if (this.buttonConfig) {
+      let res = this.buttonConfig();
+      if (res instanceof Array) {
+        this.buttonList = res[0];
+        this.clickAction = res[1];
+      }
+    }
   },
   computed: {
     buttonWidth() {
       return this.factor / this.buttonList.length;
     },
-    flontLeft(){
-       return (100 - this.factor) / this.buttonList.length;
+    flontLeft() {
+      return (100 - this.factor) / this.buttonList.length;
     },
     buttonMarginLeft() {
       return 36 / this.buttonList.length;

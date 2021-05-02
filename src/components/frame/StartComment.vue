@@ -1,24 +1,19 @@
 <template>
   <div>
-    <ae-base-dialog
-      v-model="show"
-      :title="title"
-      width="35"
-    >
-      <el-form v-model="comment">
-        <el-form-item label="打分">
+    <ae-base-dialog v-model="show" :title="title" width="35">
+      <div class="start_comment">
+        <div class="start_comment_label">打分</div>
+        <div class="start_comment_item">
           <el-rate v-model="comment.start"></el-rate>
-        </el-form-item>
-        <el-form-item label="评论">
-          <el-input
-            style="float: left; width: 70%"
-            v-model="comment.comment"
-            size="mini"
-            type="textArea"
-            placeholder="请输入评论..."
-          ></el-input>
-        </el-form-item>
-      </el-form>
+        </div>
+      </div>
+      <div>
+        <ae-input
+          label="评论"
+          placeholder="请输入评论..."
+          v-model="comment.comment"
+        />
+      </div>
       <ae-button-list
         :buttonList="buttonList.map((a) => a.name)"
         :clickAction="buttonList.map((a) => a.action)"
@@ -36,11 +31,14 @@ export default {
       type: String,
       default: "评价",
     },
-    comment: {},
   },
   data() {
     return {
       show: false,
+      comment: {
+        comment: "",
+        start: 5,
+      },
       buttonList: [
         { name: "确 定", action: this.ok },
         { name: "取 消", action: () => (this.show = false) },
@@ -50,10 +48,11 @@ export default {
   methods: {
     showComment() {
       this.show = true;
+      this.comment.comment = "";
+      this.comment.start = 5;
     },
     ok() {
-      this.$emit("input", this.value);
-      this.$emit("ok", this.value);
+      this.$emit("ok", this.comment);
       this.show = false;
     },
   },
@@ -61,4 +60,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.start_comment {
+  padding: 2%;
+  .start_comment_item {
+    float: left;
+  }
+  .start_comment_label {
+    width: 20%;
+    float: left;
+    height: 20px;
+    font-size: 14px;
+    color: white;
+  }
+}
 </style>

@@ -5,38 +5,64 @@
  -->
 <template>
   <div>
-    <div v-for="(form, index) in formConfig" v-bind:key="index">
-      <div v-if="form.type == 'input'">
-        <ae-input
-          v-model="formData[form.key]"
-          :type="form.password ? 'password' : 'text'"
-          :label="form.des"
-          :default="form.default"
-          :width="70"
-          :editAble="edit"
-        ></ae-input>
+    <div
+      v-for="(form, index) in formConfig"
+      v-bind:key="index"
+      class="ae-form-item"
+    >
+      <div class="ae-form-lable">
+        {{ form.des }}
       </div>
-      <div v-else-if="form.type == 'switchSelect'">
-        <ae-switch-select
-          v-model="formData[form.key]"
-          :default="form.default"
-          :items="form.items"
-          :label="form.des"
-          :form="form"
-        ></ae-switch-select>
-      </div>
-      <div v-else-if="form.type == 'userMapSelect'">
-        <user-map-select v-model="formData[form.key]"></user-map-select>
+      <div class="ae-form-real-camp">
+        <div v-if="form.type == 'input'">
+          <ae-input
+            v-model="formData[form.key]"
+            :type="form.style"
+            :default="form.default"
+            :width="70"
+            :editAble="edit && !form.disabled"
+          ></ae-input>
+        </div>
+        <div v-else-if="form.type == 'switchSelect'">
+          <ae-switch-select
+            v-model="formData[form.key]"
+            :default="form.default"
+            :items="form.items"
+            :editAble="edit && !form.disabled"
+          ></ae-switch-select>
+        </div>
+        <div v-else-if="form.type == 'userMapSelect'">
+          <user-map-select v-model="formData[form.key]"></user-map-select>
+        </div>
+        <div v-else-if="form.type == 'rangeSelect'">
+          <ae-range-select
+            :minValue="formData[form.minKey]"
+            :maxValue="formData[form.maxKey]"
+            :minKey="form.minKey"
+            :maxKey="form.maxKey"
+            :editAble="edit && !form.disabled"
+            @minKeyChange="rangeMinKeyChange"
+            @maxKeyChange="rangeMaxKeyChange"
+          >
+          </ae-range-select>
+        </div>
+        <div v-else-if="form.type == 'unitRadio'">
+          <unit-radio
+            :editAble="edit && !form.disabled"
+            v-model="formData[form.key]"
+            :unitList="form.unitList"
+          ></unit-radio>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import UnitRadio from "../map_base/UnitRadio.vue";
 import UserMapSelect from "../map_base/UserMapSelect.vue";
-import AeSwitchSelect from "./AeSwitchSelect.vue";
 export default {
-  components: { AeSwitchSelect, UserMapSelect },
+  components: { UserMapSelect, UnitRadio },
   props: {
     formConfig: {
       type: Array,
@@ -49,31 +75,65 @@ export default {
       type: Object,
       default: null,
     },
+    closeBind: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       formData: {},
     };
   },
-  methods:{
-    getFormData(){
+  methods: {
+    getFormData() {
       for (let config of this.formConfig) {
+        if (config.type == "rangeSelect") {
+        }
         if (config.require && !this.formData[config.key]) {
           this.$message.info(config.des + "不能为空");
-          throw new Error("数据" + config.des +"不完整");
+          throw new Error("数据" + config.des + "不完整");
         }
       }
       return this.formData;
-    }
+    },
+    rangeMinKeyChange(value, key) {
+      this.formData[key] = value;
+    },
+    rangeMaxKeyChange(value, key) {
+      this.formData[key] = value;
+    },
   },
   created() {
     if (this.dataObj) {
-      this.formData = JSON.parse(JSON.stringify(this.dataObj));
+      if (this.closeBind) {
+        // 关闭双向绑定
+        this.formData = JSON.parse(JSON.stringify(this.dataObj));
+      } else {
+        this.formData = this.dataObj;
+      }
     }
     window.AeFormVue = this;
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss"  scoped>
+.ae-form-item {
+  width: 100%;
+  height: 40px;
+  .ae-form-lable {
+    width: 20%;
+    height: 25px;
+    float: left;
+    color: white;
+    font-size: 14px;
+    padding-top: 15px;
+  }
+  .ae-form-real-camp {
+    width: 80%;
+    float: left;
+    height: 43px;
+  }
+}
 </style>

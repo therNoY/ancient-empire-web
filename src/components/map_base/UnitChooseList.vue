@@ -1,11 +1,8 @@
 <template>
   <div>
-    <el-dialog
-      width="30%"
+    <ae-base-dialog
       :title="dialog_title"
-      :visible.sync="show"
-      append-to-body
-      id="unitChooseBody"
+      v-model="show"
     >
       <div style="float: left">
         <div
@@ -23,7 +20,7 @@
           </el-tooltip>
         </div>
       </div>
-    </el-dialog>
+    </ae-base-dialog>
   </div>
 </template>
 

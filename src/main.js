@@ -14,10 +14,12 @@ import eventBus from '../src/manger/EventBus'
 import JsonViewer from 'vue-json-viewer'
 
 import AeComplexDialog from "./components/frame/AeComplexDialog.vue";
+import AeSwitchSelect from "./components/frame/AeSwitchSelect.vue"
 import AeBaseDialog from "./components/frame/AeBaseDialog.vue"
 import AeButton from "./components/frame/AeButton";
 import AeTip from "./components/frame/AeTip.vue"
 import AeInput from "./components/frame/AeInput.vue"
+import AeRangeSelect from "./components/frame/AeRangeSelect.vue"
 
 import AeRadioButton from "./components/frame/AeRadioButton.vue"
 
@@ -40,6 +42,8 @@ Vue.component("AeButton", AeButton);
 Vue.component("AeRadioButton", AeRadioButton);
 Vue.component("AeTip", AeTip);
 Vue.component("AeInput", AeInput);
+Vue.component("AeSwitchSelect", AeSwitchSelect);
+Vue.component("AeRangeSelect", AeRangeSelect);
 
 
 

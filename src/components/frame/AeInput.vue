@@ -14,19 +14,17 @@
 <script>
 export default {
   props: {
-    editAble:{
-      type:Boolean,
-      default:true,
+    editAble: {
+      type: Boolean,
+      default: true,
     },
     type: {
       type: String,
       default: "text",
     },
     value: {
-      type: String,
     },
     default: {
-      type: String,
     },
     width: {
       type: Number,
@@ -105,7 +103,7 @@ input {
   font-size: 14px;
 }
 
-input:disabled{
+input:disabled {
   border-top: 2px #ffffff00 solid;
   border-left: 2px #ffffff00 solid;
   border-right: 2px #ffffff00 solid;

@@ -1,6 +1,6 @@
 import { imgUrl } from "../api/env"
 import store from "../store";
-import eventBus from "../manger/EventBus"
+import eventBus from "../manger/EventBus";
 
 var appHelper = {
 
@@ -77,11 +77,7 @@ var appHelper = {
   getMapSize: function (num) {
     return num * 24 + "px";
   },
-
-  getUnitImgRender: function (h, id, color = "blue") {
-    return h("img", { attrs: { src: this.getUnitImg(id,color)} });
-  },
-
+  
   /**
    * 返回单位的图片位置
    * @param {} typeId 单位Id
@@ -97,16 +93,12 @@ var appHelper = {
    * @param {*} img 
    */
   getTemplateImg: function (img) {
-    return imgUrl + "temp/" + img;
+    return imgUrl + "template/" + img;
   },
 
   // 返回单位的图片位置
   getUnitDoneImg: function (typeId, color) {
-    if (color) {
-      return imgUrl + "unit/done/" + color + "_" + typeId + ".png";
-    } else {
-      return imgUrl + "unit/done/" + typeId + ".png";
-    }
+    return imgUrl + "unit/" + color + "/" + typeId + "_3.png";
   },
 
   // 通过单位的行或者列返回单位的相对布局的位置
@@ -131,6 +123,14 @@ var appHelper = {
   },
 
 
+  /**
+   * 发送事件
+   * @param {*} event 
+   * @param {*} initiateSite 
+   * @param {*} aimSite 
+   * @param {*} regionIndex 
+   * @param {*} unitId 
+   */
   sendEvent: function (event, initiateSite = null, aimSite = null, regionIndex, unitId) {
     this.store.dispatch("sendEvent", {
       event: event, initiateSite, aimSite, regionIndex, unitId

@@ -21,6 +21,7 @@ export default {
       default: false,
     },
     templateId: {},
+    unitId: {},
   },
   data() {
     return {
@@ -57,9 +58,9 @@ export default {
   created() {
     if (this.templateId) {
       this.uploadUrl =
-        baseUrl + "/uploadTemplateImg?template_id=" + this.templateId;
+        baseUrl + "/upload/template/" + this.templateId;
     } else {
-      this.uploadUrl = baseUrl + "/uploadTemplateImg";
+      this.uploadUrl = baseUrl + "/upload/unit/" + this.unitId;
     }
   },
 };

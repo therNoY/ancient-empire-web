@@ -171,10 +171,10 @@ var animateHelper = {
     for (const animObj of anim.anim_list) {
       if (animObj instanceof String) {
         // 固定动画
-        anim_list.push(imgUrl + "temp/" + animObj);
+        anim_list.push(imgUrl + "template/" + animObj);
       } else {
         // 可移动动画
-        anim_list.push({animImg:imgUrl + "temp/" + animObj.anim_img, row:animObj.row, column:animObj.column});
+        anim_list.push({animImg:imgUrl + "template/" + animObj.anim_img, row:animObj.row, column:animObj.column});
       }
       
     }

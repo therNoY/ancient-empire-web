@@ -1,10 +1,15 @@
 <template>
-  <div style="width: 100%; height: 250px">
+  <div style="width: 100%">
     <div class="ae-data-grid">
       <table v-if="data && data.length > 0">
         <tr v-if="showTitle && showTitle.length > 0">
           <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
-            {{ key }}
+            <div v-if="(typeof key != 'function')">
+              {{ key }}
+            </div>
+            <div v-else>
+              <ae-dynamic :componentFunction="key" ></ae-dynamic>
+            </div>
           </td>
         </tr>
         <tr
@@ -131,7 +136,7 @@ export default {
     border-style: solid;
   }
 
-  table.hovertable tr {
+  table tr {
     cursor: pointer;
   }
 

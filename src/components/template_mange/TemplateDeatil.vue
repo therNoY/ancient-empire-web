@@ -135,8 +135,7 @@
                 <unit-radio
                   v-model="templateDeatil.derivative_id"
                   :unitList="templateDeatil.bind_uint_list"
-                  :edit_able="model == 'myTemp'"
-                  :template_id="templateDeatil.id"
+                  :editAble="model == 'myTemp'"
                 ></unit-radio>
               </el-form-item>
             </el-collapse-item>

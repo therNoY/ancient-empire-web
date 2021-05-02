@@ -8,7 +8,9 @@
       :footerButtons="footButtonList"
       :initQueryDataGrid="queryDataFunction"
       :showItem="showItem"
-      :showTitle="showTitle"A
+      :showTitle="showTitle"
+      :titleSwitchSelect="titleSwitchSelect"
+      @titleSwtichSelectChange="switchChange"
       :width="70"
       page
     >
@@ -24,47 +26,12 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="基础信息" name="baseInfo">
           <div class="input_mes">
-            <el-form ref="form" :model="unit" label-width="17%" size="mini">
-              <el-form-item label="名称">
-                <el-input v-model="unit.name"></el-input>
-              </el-form-item>
-              <el-form-item label="攻击类型">
-                <el-radio-group v-model="unit.attack_type">
-                  <ae-radio-button label="1">物理攻击</ae-radio-button>
-                  <ae-radio-button label="2">魔法攻击</ae-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="攻击范围">
-                <el-col :span="11">
-                  <el-input v-model="unit.min_attach_range"></el-input>
-                </el-col>
-                <el-col class="line" :span="2">&nbsp; -</el-col>
-                <el-col :span="11">
-                  <el-input v-model="unit.max_attach_range"></el-input>
-                </el-col>
-              </el-form-item>
-              <el-form-item label="人口">
-                <el-input v-model="unit.population" />
-              </el-form-item>
-              <el-form-item label="价格">
-                <el-input v-model="unit.price" />
-              </el-form-item>
-              <el-form-item label="是否可以购买">
-                <el-radio-group v-model="unit.tradeable">
-                  <ae-radio-button label="1">是</ae-radio-button>
-                  <ae-radio-button label="0">否</ae-radio-button>
-                </el-radio-group>
-              </el-form-item>
-              <el-form-item label="晋升单位">
-                <unit-radio
-                  v-model="unit.promotion"
-                  :unitList="allUnitList"
-                ></unit-radio>
-              </el-form-item>
-              <el-form-item label="描述">
-                <el-input type="textarea" v-model="unit.description"></el-input>
-              </el-form-item>
-            </el-form>
+            <ae-form
+              ref="unitBaseInfoForm"
+              :dataObj="unit"
+              :edit="showPageIndex == '1'"
+              :formConfig="unitBaseInfoFormConfig"
+            />
           </div>
         </el-tab-pane>
         <el-tab-pane label="绑定能力" name="unitAbility">
@@ -74,46 +41,24 @@
             valueKey="id"
             showTipKey="description"
             :dataList="allAbilityList"
+            :disabled="showPageIndex != '1'"
           />
         </el-tab-pane>
         <el-tab-pane label="等级面板" name="levelInfo">
-          <el-table
+          <ae-data-grid
+            ref="unitLevelDataGrid"
             :data="currUnitInfo.levelInfoData"
-            style="levelInfoStyle"
-            :cell-style="tableCellStyle"
-            :header-cell-style="tableHeaderColor"
+            :showTitle="unitLevelShowTitle"
+            :showItem="unitLevelShowItem"
           >
-            <el-table-column label="等级" prop="level"> </el-table-column>
-            <el-table-column label="最小攻击" prop="min_attack">
-            </el-table-column>
-            <el-table-column label="最大攻击" prop="max_attack">
-            </el-table-column>
-            <el-table-column label="物理防御" prop="physical_defense">
-            </el-table-column>
-            <el-table-column label="魔法防御" prop="magic_defense">
-            </el-table-column>
-            <el-table-column label="最大生命" prop="max_life">
-            </el-table-column>
-            <el-table-column label="移动力" prop="speed"> </el-table-column>
-            <el-table-column align="right">
-              <template slot="header">
-                <el-button size="mini" type="primary" @click="addNewLevel"
-                  >增加</el-button
-                >
-              </template>
-              <template slot-scope="scope">
-                <el-button size="mini" @click="editUnitLevelInfo(scope.$index)"
-                  >修改</el-button
-                >
-              </template>
-            </el-table-column>
-          </el-table>
+          </ae-data-grid>
         </el-tab-pane>
         <!-- <el-tab-pane label="动画管理" name="fourth"> 暂未开通 </el-tab-pane> -->
       </el-tabs>
-
-      <ae-button @onClick="dialogVisible = false">取 消</ae-button>
-      <ae-button @onClick="save">保 存</ae-button>
+      <ae-button-list
+        :buttonList="getButtonList"
+        :clickAction="getClickAction"
+      ></ae-button-list>
     </ae-base-dialog>
 
     <ae-base-dialog
@@ -121,53 +66,35 @@
       :width="40"
       v-model="editUnitLevelInfoDialog"
     >
-      <el-form
+      <ae-form
         ref="levelInfoForm"
         v-if="currentLevelInfo"
-        label-width="18%"
-        :model="currentLevelInfo"
-        size="mini"
-      >
-        <el-form-item label="等级" :rules="inputNumRule">
-          <el-input
-            v-model.number="currentLevelInfo.level"
-            :disabled="true"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="最小攻击" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.min_attack"></el-input>
-        </el-form-item>
-        <el-form-item label="最大攻击" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.max_attack"></el-input>
-        </el-form-item>
-        <el-form-item label="物理防御" :rules="inputNumRule">
-          <el-input
-            v-model.number="currentLevelInfo.physical_defense"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="魔法防御" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.magic_defense"></el-input>
-        </el-form-item>
-        <el-form-item label="最大生命" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.max_life"></el-input>
-        </el-form-item>
-        <el-form-item label="移动力" :rules="inputNumRule">
-          <el-input v-model.number="currentLevelInfo.speed"></el-input>
-        </el-form-item>
-      </el-form>
+        :dataObj="currentLevelInfo"
+        :edit="showPageIndex == '1'"
+        :formConfig="unitLevelInfoFormConfig"
+      />
       <ae-button @onClick="saveLevelInfo">确 定</ae-button>
     </ae-base-dialog>
+
+    <start-comment ref="startComment" @ok="handleDownload"></start-comment>
   </div>
 </template>
 
 <script>
 import {
-  GetUnitMesList,
+  GetUserCreateUnitMes,
   SaveUnitInfo,
-  GetAllUserUnitMes,
+  GetAllUserEnableUnitMes,
   GetUnitAbilityInfo,
   GetAllAbilityInfo,
   GetUnitLevelInfoById,
+  GetUserDownloadUnitList,
+  GetCanDownloadUnit,
+  DeletDownLoadUnit,
+  DeleteCreateUnit,
+  DownLoadUnit,
+  UpdateUnitVersion,
+  RevertUnitVersion,
 } from "@/api";
 import UnitRadio from "../map_base/UnitRadio.vue";
 import AeTransfer from "../frame/AeTransfer.vue";
@@ -176,6 +103,9 @@ import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import blackStyle from "../../mixins/style/blackStyle";
 import AeComplexDialog from "../frame/AeComplexDialog.vue";
 import AeButtonList from "../frame/AeButtonList.vue";
+import StartComment from "../frame/StartComment.vue";
+import AeForm from "../frame/AeForm.vue";
+import AeDataGrid from "../frame/AeDataGrid.vue";
 export default {
   mixins: [dialogShow, blackStyle],
   components: {
@@ -184,43 +114,171 @@ export default {
     AeBaseDialog,
     AeComplexDialog,
     AeButtonList,
+    StartComment,
+    AeForm,
+    AeDataGrid,
   },
   data() {
     return {
+      titleSwitchSelect: {
+        type: "switchSelect",
+        key: "queryType",
+        default: "1",
+        des: "",
+        items: [
+          { key: "1", value: "我的单位", query: GetUserCreateUnitMes },
+          { key: "2", value: "我的下载", query: GetUserDownloadUnitList },
+          { key: "3", value: "单位商城", query: GetCanDownloadUnit },
+        ],
+      },
+      allUnitList: [],
+      showPageIndex: "1",
       unit: {},
+      unitBaseInfoFormConfig: [
+        {
+          type: "input",
+          key: "name",
+          des: "名称",
+        },
+        {
+          type: "switchSelect",
+          key: "attack_type",
+          des: "攻击类型",
+          items: [
+            { key: "1", value: "物理攻击" },
+            { key: "2", value: "魔法攻击" },
+          ],
+        },
+        {
+          type: "rangeSelect",
+          minKey: "min_attach_range",
+          maxKey: "max_attach_range",
+          des: "攻击范围",
+        },
+        {
+          type: "input",
+          key: "population",
+          des: "人口",
+          style: "number",
+        },
+        {
+          type: "input",
+          key: "price",
+          des: "价格",
+          style: "number",
+        },
+        {
+          type: "switchSelect",
+          key: "tradeable",
+          des: "是否可以购买",
+          items: [
+            { key: "1", value: "是" },
+            { key: "0", value: "否" },
+          ],
+        },
+        {
+          type: "unitRadio",
+          key: "promotion",
+          des: "晋升单位",
+          unitList: this.allUnitList,
+        },
+        {
+          type: "input",
+          key: "description",
+          des: "描述",
+        },
+      ],
+      unitLevelInfoFormConfig: [
+        {
+          type: "input",
+          key: "level",
+          des: "等级",
+          style:"number",
+          disabled:true,
+          require:true
+        },{
+          type: "input",
+          key: "min_attack",
+          des: "最小攻击",
+          style:"number",
+          require:true
+        },{
+          type: "input",
+          key: "max_attack",
+          des: "最大攻击",
+          style:"number",
+          require:true
+        },{
+          type: "input",
+          key: "physical_defense",
+          des: "物理防御",
+          style:"number",
+          require:true
+        },{
+          type: "input",
+          key: "magic_defense",
+          des: "魔法防御",
+          style:"number",
+          require:true
+        },{
+          type: "input",
+          key: "max_life",
+          des: "最大生命",
+          style:"number",
+          require:true
+        },{
+          type: "input",
+          key: "speed",
+          des: "移动力",
+          style:"number",
+          require:true
+        }
+      ],
       dialogVisible: false,
       editUnitLevelInfoDialog: false,
       diaTitle: "新增单位",
       addLevel: false,
       activeName: "baseInfo",
-      allUnitList: [],
       allAbilityList: [],
       currUnitInfo: {
         baseInfo: {},
         abilityInfo: [],
         levelInfoData: [],
       },
-      footButtonList: [
-        { name: "编辑", action: this.handleEdit },
+      footButtonList1: [
+        { name: "详情", action: this.handleEdit },
         { name: "删除", action: this.handleDelete },
       ],
-      inputNumRule: [
-        { required: true, message: "不能为空" },
-        { type: "number", message: "必须是数字" },
+      footButtonList2: [
+        { name: "详情", action: this.handleEdit },
+        { name: "下载", action: this.downloadUnit },
       ],
+      footButtonList: null,
       currentLevelInfo: null,
       queryDataFunction: null,
-      showTitle: [
+      showItem: null,
+      showTitle: null,
+      queryShowTitle: [
         "单位",
         "名称",
         "攻击类型",
         "攻击范围",
-        "所占人口",
         "价格",
         "可以购买",
         "晋升",
+        "版本",
       ],
-      showItem: [
+      downShowTitle: [
+        "单位",
+        "名称",
+        "作者",
+        "可以购买",
+        "晋升",
+        "版本",
+        "评分",
+        "下载次数",
+      ],
+      queryShowItem: [
         (h, p) => {
           return h("img", { attrs: { src: this.$appHelper.getUnitImg(p.id) } });
         },
@@ -235,7 +293,6 @@ export default {
         (h, p) => {
           return h("div", {}, p.min_attach_range + "-" + p.max_attach_range);
         },
-        "population",
         "price",
         (h, p) => {
           if (p.tradeable) {
@@ -253,13 +310,163 @@ export default {
             return h("div", {}, "-");
           }
         },
+        (h, p) => {
+          if (p.max_version) {
+            return h(
+              "div",
+              {},
+              "V" + p.version + "(可更新至V" + p.max_version + ")"
+            );
+          } else if (p.status == "0") {
+            return h("div", {}, "V" + p.version + "(草稿版本)");
+          } else {
+            return h("div", {}, "V" + p.version + "(最新版本)");
+          }
+        },
+      ],
+      downloadShowItem: [
+        (h, p) => {
+          return h("img", { attrs: { src: this.$appHelper.getUnitImg(p.id) } });
+        },
+        "name",
+        "create_user_name",
+        (h, p) => {
+          if (p.tradeable) {
+            return h("div", {}, "是");
+          } else {
+            return h("div", {}, "否");
+          }
+        },
+        (h, p) => {
+          if (p.promotion) {
+            return h("img", {
+              attrs: { src: this.$appHelper.getUnitImg(p.promotion) },
+            });
+          } else {
+            return h("div", {}, "-");
+          }
+        },
+        (h, p) => {
+          if (p.max_version) {
+            return h(
+              "div",
+              {},
+              "V" + p.version + "(可更新至V" + p.max_version + ")"
+            );
+          } else if (p.status == "0") {
+            return h("div", {}, "V" + p.version + "(草稿版本)");
+          } else {
+            return h("div", {}, "V" + p.version + "(最新版本)");
+          }
+        },
+        "start_count",
+        "down_load_count",
+      ],
+      unitLevelShowTitle: [
+        "等级",
+        "最小攻击",
+        "最大攻击",
+        "物理防御",
+        "魔法防御",
+        "最大生命",
+        "移动力",
+        (h, p) => {
+          return h(
+            "aeButton",
+            {
+              props: { width: 80, size: 12 },
+              on: { onClick: this.addNewLevel },
+            },
+            "新增"
+          );
+        },
+      ],
+      unitLevelShowItem: [
+        "level",
+        "min_attack",
+        "max_attack",
+        "physical_defense",
+        "magic_defense",
+        "max_life",
+        "speed",
+        (h, p) => {
+          return h(
+            "aeButton",
+            {
+              props: { width: 80, size: 12 },
+              on: { onClick: () => this.editUnitLevelInfo(p) },
+            },
+            "修改"
+          );
+        },
       ],
     };
   },
   methods: {
-    save() {
+    downloadUnit() {
+      this.$refs.startComment.showComment();
+    },
+    reverVersion() {
+      let unit = this.$refs.mainDiaglog.getDataGridSelect();
+      if (unit.status == "0") {
+        console.log("回退单位草稿版本");
+        let args = {};
+        args.unit_id = unit.id;
+        this.$appHelper.setLoading();
+        RevertUnitVersion(args)
+          .then((resp) => {
+            if (resp.res_code == 0) {
+              this.$message.info("回退成功");
+              this.$refs.mainDiaglog.flushData();
+              this.dialogVisible = false;
+            }
+            this.$appHelper.setLoading();
+          })
+          .catch((error) => {
+            this.$appHelper.setLoading();
+          });
+      } else {
+        this.$message.info("当前单位是正式版本 无需回退");
+      }
+    },
+    updateVersion() {
+      let unit = this.$refs.mainDiaglog.getDataGridSelect();
       this.$appHelper.setLoading();
       let args = {};
+      args.unit_id = unit.id;
+      UpdateUnitVersion(args)
+        .then((resp) => {
+          if (resp.res_code == "0") {
+            this.$message.info("更新成功");
+            this.$refs.mainDiaglog.flushData();
+            this.dialogVisible = false;
+          } else {
+            this.$message.info(resp.res_mes);
+          }
+          this.$appHelper.setLoading();
+        })
+        .catch((error) => {
+          this.$appHelper.setLoading();
+        });
+    },
+    save(optType = 0) {
+      if (optType == "1") {
+        this.$appHelper.showTip("发布新版本会覆盖历史版本, 确定么？", () => {
+          this.saveUnitInfo(optType);
+        });
+      } else {
+        this.$appHelper.showTip(
+          "保存之后 不会修改最新版本 需要发布才能生效",
+          () => {
+            this.saveUnitInfo(optType);
+          }
+        );
+      }
+    },
+    saveUnitInfo(optType) {
+      this.$appHelper.setLoading();
+      let args = {};
+      args.opt_type = optType;
       args.base_info = this.unit;
       args.ability_info = this.currUnitInfo.abilityInfo;
       args.level_info_data = this.currUnitInfo.levelInfoData;
@@ -299,12 +506,67 @@ export default {
     },
     handleDelete() {
       let unit = this.$refs.mainDiaglog.getDataGridSelect();
-      console.log("删除" + unit);
+      if (this.showPageIndex == "2") {
+        this.$appHelper.showTip("确定要删除下载么?", () => {
+          let args = {};
+          args.id = unit.id;
+          this.$appHelper.setLoading();
+          DeletDownLoadUnit(args)
+            .then((resp) => {
+              if (resp.res_code == "0") {
+                this.$message.info("删除成功");
+                this.$refs.mainDiaglog.flushData();
+                this.dialogVisible = false;
+              }
+              this.$appHelper.setLoading();
+            })
+            .catch((error) => {
+              this.$appHelper.setLoading();
+            });
+        });
+      } else if (this.showPageIndex == "1") {
+        this.$appHelper.showTip("操做将会永久删除单位信息,确实么?", () => {
+          let args = {};
+          args.id = unit.id;
+          this.$appHelper.setLoading();
+          DeleteCreateUnit(args)
+            .then((resp) => {
+              if (resp.res_code == "0") {
+                this.$message.info("删除成功");
+                this.$refs.mainDiaglog.flushData();
+                this.dialogVisible = false;
+              }
+              this.$appHelper.setLoading();
+            })
+            .catch((error) => {
+              this.$appHelper.setLoading();
+            });
+        });
+      }
     },
-    editUnitLevelInfo(index) {
+    handleDownload(commend) {
+      let unit = this.$refs.mainDiaglog.getDataGridSelect();
+      let args = {};
+      args.unit_id = unit.id;
+      args = Object.assign(commend, args);
+      this.$appHelper.setLoading();
+      DownLoadUnit(args)
+        .then((resp) => {
+          if (resp.res_code == "0") {
+            this.$message.info("下载成功");
+            this.$refs.mainDiaglog.flushData();
+            this.dialogVisible = false;
+          }
+          this.$appHelper.setLoading();
+        })
+        .catch((error) => {
+          this.$appHelper.setLoading();
+        });
+    },
+    editUnitLevelInfo(unitLevelInfo) {
       this.addLevel = false;
       this.editUnitLevelInfoDialog = true;
-      this.currentLevelInfo = this.currUnitInfo.levelInfoData[index];
+      this.currentLevelInfo = unitLevelInfo;
     },
     addNewLevel() {
       this.addLevel = true;
@@ -321,9 +583,10 @@ export default {
       }
     },
     init() {
-      GetAllUserUnitMes().then((resp) => {
+      GetAllUserEnableUnitMes().then((resp) => {
         if (resp.res_code == 0) {
           this.allUnitList = resp.res_val;
+          this.unitBaseInfoFormConfig[6].unitList = resp.res_val;
         }
       });
       GetAllAbilityInfo().then((resp) => {
@@ -336,6 +599,18 @@ export default {
       this.unit = {};
       this.diaTitle = "新增单位";
       this.dialogVisible = true;
+    },
+    switchChange(value) {
+      this.showPageIndex = value;
+      if (value == "3") {
+        this.showTitle = this.downShowTitle;
+        this.showItem = this.downloadShowItem;
+        this.footButtonList = this.footButtonList2;
+      } else {
+        this.footButtonList = this.footButtonList1;
+        this.showTitle = this.queryShowTitle;
+        this.showItem = this.queryShowItem;
+      }
     },
   },
   computed: {
@@ -355,10 +630,31 @@ export default {
         }
       };
     },
+    getButtonList() {
+      if (this.showPageIndex == "1") {
+        return ["保存草稿", "发布版本", "回退"];
+      } else if (this.showPageIndex == "2") {
+        return ["更新版本", "删除下载"];
+      } else if (this.showPageIndex == "3") {
+        return ["下载单位"];
+      }
+    },
+    getClickAction() {
+      if (this.showPageIndex == "1") {
+        return [this.save, () => this.save(1), this.reverVersion];
+      } else if (this.showPageIndex == "2") {
+        return [this.updateVersion, this.handleDelete];
+      } else if (this.showPageIndex == "3") {
+        return [this.downloadUnit];
+      }
+    },
   },
   created() {
     // 初始化
-    this.queryDataFunction = GetUnitMesList;
+    this.footButtonList = this.footButtonList1;
+    this.showTitle = this.queryShowTitle;
+    this.showItem = this.queryShowItem;
+    this.queryDataFunction = GetUserCreateUnitMes;
     window.UnitMesMangerVue = this;
   },
 };
@@ -377,7 +673,6 @@ export default {
   float: left;
 }
 .input_mes {
-  background-color: #5a5c59;
   padding: 1%;
 }
 .el-form-item__content {

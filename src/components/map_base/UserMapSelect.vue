@@ -120,13 +120,11 @@ import {
   GetEncounterMap,
   GetUserMapList,
   GetUserDownloadMap,
-  GetWorldMapList,
   InitEncounterMap,
 } from "@/api";
 import MapPreview from "../map_manger/MapPreview.vue";
 import AeMapPreview from "../map_manger/AeMapPreview.vue";
 import AeBaseDialog from "../frame/AeBaseDialog.vue";
-import AeSwitchSelect from "../frame/AeSwitchSelect.vue";
 import AeButton from "../frame/AeButton.vue";
 import blackStyle from "../../mixins/style/blackStyle";
 export default {
@@ -135,7 +133,6 @@ export default {
     MapPreview,
     AeMapPreview,
     AeBaseDialog,
-    AeSwitchSelect,
     AeButton,
   },
   props: {
@@ -156,8 +153,7 @@ export default {
         items: [
           { key: "1", value: "系统地图",query:GetEncounterMap },
           { key: "2", value: "我的地图",query:GetUserMapList },
-          { key: "3", value: "下载地图",query:GetUserDownloadMap },
-          { key: "4", value: "世界地图",query:GetWorldMapList },
+          { key: "3", value: "我的下载",query:GetUserDownloadMap },
         ],
       },
       showItem: ["map_name"],

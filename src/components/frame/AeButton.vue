@@ -1,6 +1,12 @@
 <template>
   <div class="ae-button-body">
-    <button :disabled="disabled" type="button" class="ae-button" :style="btnStyle" @click="click">
+    <button
+      :disabled="disabled"
+      type="button"
+      class="ae-button"
+      :style="btnStyle"
+      @click="click"
+    >
       <slot />
     </button>
   </div>
@@ -24,6 +30,10 @@ export default {
       type: Number,
       default: 10,
     },
+    marginTop: {
+      type: Number,
+      default: 5,
+    },
     size: {
       type: Number,
       default: 14,
@@ -40,12 +50,23 @@ export default {
   },
   computed: {
     btnStyle() {
-      return {
-        width: this.width + "%",
-        fontSize: this.size + "px",
-        height: this.height + "px",
-        marginLeft: this.marginLeft + "%",
-      };
+      if (this.disabled) {
+        return {
+          width: this.width + "%",
+          fontSize: this.size + "px",
+          height: this.height + "px",
+          marginLeft: this.marginLeft + "%",
+          cursor: "not-allowed",
+        };
+      } else {
+        return {
+          width: this.width + "%",
+          fontSize: this.size + "px",
+          height: this.height + "px",
+          marginLeft: this.marginLeft + "%",
+          cursor: "pointer",
+        };
+      }
     },
   },
 };

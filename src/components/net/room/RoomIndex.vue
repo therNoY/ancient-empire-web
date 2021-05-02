@@ -81,7 +81,6 @@ export default {
           type: "input",
           key: "room_name",
           des: "房间名字",
-          password: false,
           default: this.$store.getters.user.user_name + "的房间",
         },
         {

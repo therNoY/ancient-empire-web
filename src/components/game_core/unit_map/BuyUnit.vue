@@ -59,7 +59,10 @@
           <!--能力类表-->
           <div class="unit_ability">
             <b class="unit_ability_tit">能力:</b>
-            <div v-for="abilitie in buyUnitsInfo[selectIndex].abilities">
+            <div
+              v-for="(abilitie, index) in buyUnitsInfo[selectIndex].abilities"
+              :key="'ab' + index"
+            >
               {{ abilitie.name }}
             </div>
           </div>
@@ -70,11 +73,12 @@
           <div
             class="unit_show"
             v-for="(unitInfo, index) in buyUnitsInfo"
+            :key="'unit_info' + index"
             @click="selectIndex = index"
           >
             <img
               class="unit_img"
-              :src="$appHelper.getUnitImg(unitInfo.unit_mes.id, color)"
+              :src="$appHelper.getUnitImg(unitInfo.unit_mes.img_index, color)"
             />
             <img
               src="../../../assets/images/assist/show_unit.png"

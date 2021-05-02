@@ -24,7 +24,6 @@
 
 <script>
 import AeBaseDialog from "../frame/AeBaseDialog.vue";
-import AeSwitchSelect from "../frame/AeSwitchSelect.vue";
 import PreviewUnitList from "../map_base/PreviewUnitList.vue";
 import {
   GetUserTemplate,
@@ -46,7 +45,7 @@ const showBindUnitRender = function (h, params) {
 
 export default {
   mixins: [dialogShow],
-  components: { AeBaseDialog, AeSwitchSelect, TemplateDeatil },
+  components: { AeBaseDialog, TemplateDeatil },
   props: {
   },
   data() {

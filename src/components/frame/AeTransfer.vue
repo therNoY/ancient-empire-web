@@ -9,11 +9,12 @@
       </div>
       <div v-if="dataList.length > 0">
         <click-point
-          v-for="(item,index) in addAbleList"
+          v-for="(item, index) in addAbleList"
           :key="index"
           value="+"
           class="transfer_item"
-          @clickPoint="addValue(item,index)"
+          @clickPoint="addValue(item, index)"
+          :disabled="disabled"
         >
           <el-tooltip
             v-if="showTipKey"
@@ -23,7 +24,9 @@
           >
             <el-tag effect="dark">{{ showKey ? item[showKey] : item }}</el-tag>
           </el-tooltip>
-          <el-tag v-else effect="dark">{{ showKey ? item[showKey] : item }}</el-tag>
+          <el-tag v-else effect="dark">{{
+            showKey ? item[showKey] : item
+          }}</el-tag>
         </click-point>
       </div>
     </div>
@@ -32,16 +35,26 @@
         {{ valueTitle }}
       </div>
       <div v-if="value.length > 0">
-        <click-point v-for="(item,index) in value" class="transfer_item" :key="index" @clickPoint="removeValue(item,index)">
+        <click-point
+          v-for="(item, index) in value"
+          class="transfer_item"
+          :disabled="disabled"
+          :key="index"
+          @clickPoint="removeValue(item, index)"
+        >
           <el-tooltip
             v-if="showTipKey"
             :content="item[showTipKey]"
             placement="top"
             effect="light"
           >
-            <el-tag type="success" effect="dark">{{ showKey ? item[showKey] : item }}</el-tag>
+            <el-tag type="success" effect="dark">{{
+              showKey ? item[showKey] : item
+            }}</el-tag>
           </el-tooltip>
-          <el-tag v-else type="success" effect="dark">{{ showKey ? item[showKey] : item }}</el-tag>
+          <el-tag v-else type="success" effect="dark">{{
+            showKey ? item[showKey] : item
+          }}</el-tag>
         </click-point>
       </div>
     </div>
@@ -55,6 +68,10 @@ export default {
   props: {
     value: {
       type: Array,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     addAbleTitle: {
       type: String,
@@ -101,13 +118,13 @@ export default {
       });
     },
   },
-  methods:{
-    addValue(item, index){
+  methods: {
+    addValue(item, index) {
       this.value.push(item);
     },
-    removeValue(item, index){
+    removeValue(item, index) {
       this.value.splice(index, 1);
-    }
+    },
   },
   created() {
     window.TransferVue = this;

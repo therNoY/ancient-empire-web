@@ -23,7 +23,6 @@
         :default="titleSwitchSelect.default"
         :items="titleSwitchSelect.items"
         :label="titleSwitchSelect.des"
-        :form="titleSwitchSelect"
       ></ae-switch-select>
       <ae-input
         v-model="queryCondition"
@@ -67,13 +66,11 @@ import AeBaseDialog from "./AeBaseDialog.vue";
 import AeButtonList from "./AeButtonList.vue";
 import AeDataGrid from "./AeDataGrid.vue";
 import AeForm from "./AeForm.vue";
-import AeSwitchSelect from "./AeSwitchSelect.vue";
 export default {
   components: {
     AeButtonList,
     AeDataGrid,
     AeForm,
-    AeSwitchSelect,
     AeBaseDialog,
   },
   props: {
@@ -236,9 +233,15 @@ export default {
       }
     },
     bodySwitchStyle() {
+      if (this.showSearch) {
+        return {
+          width: "50%",
+        };
+      }
       return {
-        width: "80%",
-      };
+          width: "80%",
+        };
+      
     },
     bodyTitleSearchStyle() {
       if (this.titleButtons && this.titleButtons.length > 0) {
