@@ -2,7 +2,7 @@
   <div>
     <div class="ae-base-dialog-container" style="z-index: 9999" v-if="value">
       <div class="ae-base-dialog-popup" style="width: 25%">
-        <div class="ae-close-tip">{{ closeTip }}</div>
+        <div class="ae-close-tip" v-html="closeTip"></div>
         <ae-button-list
           :buttonList="buttonList"
           @onClick="onClick"

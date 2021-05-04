@@ -22,43 +22,46 @@ export default {
     },
     templateId: {},
     unitId: {},
+    checkFunc:{
+      type:Function,
+      default:null,
+    }
   },
   data() {
     return {
       uploadUrl: null,
-      loading: false,
     };
   },
   methods: {
     beforeAvatarUpload(file) {
-      this.loading = this.$loading({
-        lock: true,
-        text: "上传中",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)",
-      });
-      console.log(file);
+      this.$emit("beforeUpload", file);
+      if (this.checkFunc) {
+        let res = this.checkFunc();
+        if (!res) {
+          return false;
+        }
+      }
+      this.$appHelper.setLoading();
     },
     uploadSuccess(res, file) {
-      this.loading.close();
+      this.$appHelper.setLoading();
       if (res.res_code == 0) {
         console.log("上传文件成功保存文件名", res.res_val);
-        this.$emit("success", res.res_val)
-      }else {
-        this.$message.error(res.res_mes)
-        this.$emit("error", res.res_val)
+        this.$emit("success", res.res_val);
+      } else {
+        this.$message.error(res.res_mes);
+        this.$emit("error", res.res_val);
       }
     },
     uploadError(files, fileList) {
-      this.loading.close();
+     this.$appHelper.setLoading();
       this.$message.error("系统异常,请联系游戏开发商");
-      this.$emit("error")
+      this.$emit("error");
     },
   },
   created() {
     if (this.templateId) {
-      this.uploadUrl =
-        baseUrl + "/upload/template/" + this.templateId;
+      this.uploadUrl = baseUrl + "/upload/template/" + this.templateId;
     } else {
       this.uploadUrl = baseUrl + "/upload/unit/" + this.unitId;
     }

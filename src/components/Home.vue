@@ -143,7 +143,6 @@ export default {
 <style lang="scss" scoped>
 .home {
   text-align: center;
-  
 }
 
 .logo {

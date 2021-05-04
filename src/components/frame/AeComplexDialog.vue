@@ -11,9 +11,10 @@
     <div class="ae-dialog-body-title">
       <ae-button-list
         v-if="titleButtons"
+        :size="14"
         :style="bodyTitleButtonStyle"
-        :buttonList="titleButtons.map(a=>a.name)"
-        :clickAction="titleButtons.map(a=>a.action)"
+        :buttonList="titleButtons.map((a) => a.name)"
+        :clickAction="titleButtons.map((a) => a.action)"
       ></ae-button-list>
       <ae-switch-select
         v-if="titleSwitchSelect"
@@ -29,7 +30,7 @@
         style="float: right"
         v-if="showSearch"
         :style="bodyTitleSearchStyle"
-        @onChange="flushData()"
+        @onChange="flushPageAndData()"
         placeholder=" 搜索"
       ></ae-input>
     </div>
@@ -54,8 +55,8 @@
     <div class="ae-dialog-popup-footer">
       <ae-button-list
         v-if="footerButtons"
-        :buttonList="footerButtons.map(a=>a.name)"
-        :clickAction="footerButtons.map(a=>a.action)"
+        :buttonList="footerButtons.map((a) => a.name)"
+        :clickAction="footerButtons.map((a) => a.action)"
       ></ae-button-list>
     </div>
   </ae-base-dialog>
@@ -144,6 +145,10 @@ export default {
     close() {
       this.$emit("input", false);
     },
+    flushPageAndData(pageStart = 1){
+      this.pageInfo.pageStart = pageStart;
+      this.flushData();
+    },
     flushData() {
       let queryInfo = {};
       queryInfo.condition = this.queryCondition;
@@ -179,7 +184,7 @@ export default {
           });
       });
     },
-    open(){
+    open() {
       console.log("初始化查询");
       if (!this.titleSwitchSelect) {
         this.flushData();
@@ -236,21 +241,24 @@ export default {
       if (this.showSearch) {
         return {
           width: "50%",
+          padding: "1%",
         };
       }
       return {
-          width: "80%",
-        };
-      
+        padding: "1%",
+        width: "80%",
+      };
     },
     bodyTitleSearchStyle() {
       if (this.titleButtons && this.titleButtons.length > 0) {
         return {
           width: "30%",
+          padding: "1%",
         };
       } else {
         return {
           width: "30%",
+          padding: "1%",
         };
       }
     },

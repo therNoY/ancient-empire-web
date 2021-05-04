@@ -5,6 +5,7 @@
       v-model="showModel"
       showSearch
       title="单位管理"
+      :titleButtons="titleButtonList"
       :footerButtons="footButtonList"
       :initQueryDataGrid="queryDataFunction"
       :showItem="showItem"
@@ -76,11 +77,22 @@
       <ae-button @onClick="saveLevelInfo">确 定</ae-button>
     </ae-base-dialog>
 
-    <start-comment ref="startComment" @ok="handleDownload"></start-comment>
+    <start-comment ref="startComment" @ok="handleDownload" />
+    <upload-unit-img
+      ref="uploadUnitImg"
+      v-model="showUplpadUnitImg"
+      @uploadOk="createUnit"
+    />
   </div>
 </template>
 
 <script>
+const createUnitTip =
+  "<h3>注意: 创建单位需要一定的像素画知识，或者有现成的图片。</h3>" +
+  "如果没有建议不要创建,可以通过单位商城下载作者或者大神开放的单位<br/>" +
+  "<h4>上传文件需要注意:</h4> 1.需要上传两张宽度和高度都是<b>24px</b>的图片, 游戏中两张照片相互切换, 达到动态效果<br/><br/>" +
+  "2.初始上传的单位为蓝色方基础单位, 会根据这个图片生成其他颜色单位";
+
 import {
   GetUserCreateUnitMes,
   SaveUnitInfo,
@@ -100,14 +112,14 @@ import UnitRadio from "../map_base/UnitRadio.vue";
 import AeTransfer from "../frame/AeTransfer.vue";
 import dialogShow from "../../mixins/frame/dialogShow.js";
 import AeBaseDialog from "../frame/AeBaseDialog.vue";
-import blackStyle from "../../mixins/style/blackStyle";
 import AeComplexDialog from "../frame/AeComplexDialog.vue";
 import AeButtonList from "../frame/AeButtonList.vue";
 import StartComment from "../frame/StartComment.vue";
 import AeForm from "../frame/AeForm.vue";
 import AeDataGrid from "../frame/AeDataGrid.vue";
+import UploadUnitImg from "../map_base/UploadUnitImg.vue";
 export default {
-  mixins: [dialogShow, blackStyle],
+  mixins: [dialogShow],
   components: {
     UnitRadio,
     AeTransfer,
@@ -117,6 +129,7 @@ export default {
     StartComment,
     AeForm,
     AeDataGrid,
+    UploadUnitImg,
   },
   data() {
     return {
@@ -131,6 +144,15 @@ export default {
           { key: "3", value: "单位商城", query: GetCanDownloadUnit },
         ],
       },
+      titleButtonList: [
+        {
+          name: "新增",
+          action: () =>
+            this.$appHelper.showTip(createUnitTip, () => {
+              this.showUplpadUnitImg = true;
+            }),
+        },
+      ],
       allUnitList: [],
       showPageIndex: "1",
       unit: {},
@@ -193,46 +215,52 @@ export default {
           type: "input",
           key: "level",
           des: "等级",
-          style:"number",
-          disabled:true,
-          require:true
-        },{
+          style: "number",
+          disabled: true,
+          require: true,
+        },
+        {
           type: "input",
           key: "min_attack",
           des: "最小攻击",
-          style:"number",
-          require:true
-        },{
+          style: "number",
+          require: true,
+        },
+        {
           type: "input",
           key: "max_attack",
           des: "最大攻击",
-          style:"number",
-          require:true
-        },{
+          style: "number",
+          require: true,
+        },
+        {
           type: "input",
           key: "physical_defense",
           des: "物理防御",
-          style:"number",
-          require:true
-        },{
+          style: "number",
+          require: true,
+        },
+        {
           type: "input",
           key: "magic_defense",
           des: "魔法防御",
-          style:"number",
-          require:true
-        },{
+          style: "number",
+          require: true,
+        },
+        {
           type: "input",
           key: "max_life",
           des: "最大生命",
-          style:"number",
-          require:true
-        },{
+          style: "number",
+          require: true,
+        },
+        {
           type: "input",
           key: "speed",
           des: "移动力",
-          style:"number",
-          require:true
-        }
+          style: "number",
+          require: true,
+        },
       ],
       dialogVisible: false,
       editUnitLevelInfoDialog: false,
@@ -400,9 +428,44 @@ export default {
           );
         },
       ],
+      showUplpadUnitImg: false,
+      newUploadImg: {},
     };
   },
   methods: {
+    createUnit(newImg) {
+      this.newUploadImg = newImg;
+      this.dialogVisible = true;
+      this.diaTitle = "新建单位";
+      this.unit = {};
+      this.currUnitInfo.baseInfo = {};
+      this.currUnitInfo.abilityInfo = [];
+      this.currUnitInfo.levelInfoData = [];
+      console.log("创建单位");
+    },
+    doCreateNewUnit(){
+      this.$appHelper.setLoading();
+      let args = {};
+      args.opt_type = "3";
+      args.new_upload_img = this.newUploadImg;
+      args.base_info = this.unit;
+      args.ability_info = this.currUnitInfo.abilityInfo;
+      args.level_info_data = this.currUnitInfo.levelInfoData;
+      SaveUnitInfo(args)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.dialogVisible = false;
+            this.$message.info("创建成功");
+          } else {
+            this.$message.error(resp.res_mes);
+          }
+          this.$appHelper.setLoading();
+        })
+        .catch(function () {
+          console.log(error);
+          this.$appHelper.setLoading();
+        });
+    },
     downloadUnit() {
       this.$refs.startComment.showComment();
     },
@@ -595,11 +658,6 @@ export default {
         }
       });
     },
-    addUnit() {
-      this.unit = {};
-      this.diaTitle = "新增单位";
-      this.dialogVisible = true;
-    },
     switchChange(value) {
       this.showPageIndex = value;
       if (value == "3") {
@@ -632,7 +690,11 @@ export default {
     },
     getButtonList() {
       if (this.showPageIndex == "1") {
-        return ["保存草稿", "发布版本", "回退"];
+        if (this.diaTitle == "编辑单位") {
+          return ["保存草稿", "发布版本", "回退"];
+        } else {
+          return ["创建", "返回"];
+        }
       } else if (this.showPageIndex == "2") {
         return ["更新版本", "删除下载"];
       } else if (this.showPageIndex == "3") {
@@ -641,7 +703,14 @@ export default {
     },
     getClickAction() {
       if (this.showPageIndex == "1") {
-        return [this.save, () => this.save(1), this.reverVersion];
+        if (this.diaTitle == "编辑单位") {
+          return [this.save, () => this.save(1), this.reverVersion];
+        } else {
+          return [
+            this.doCreateNewUnit,
+            () => (this.dialogVisible = false),
+          ];
+        }
       } else if (this.showPageIndex == "2") {
         return [this.updateVersion, this.handleDelete];
       } else if (this.showPageIndex == "3") {

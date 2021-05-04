@@ -95,6 +95,11 @@ export const UpdateUnitVersion = (args) => request('/api/unitMes/version/update'
  */
 export const RevertUnitVersion = (args) => request('/api/unitMes/version/revert', args, "POST");
 
+/**
+ * 创建单位图片
+ */
+export const CreateUnitImg = (args) => request('/api/unitMes/img/create', args, 'POST');
+
 
 /**
  * 获取单位的能力信息

@@ -107,4 +107,8 @@ input:-webkit-autofill {
 .el-form-item__label {
   color: aliceblue !important;
 }
+.el-upload{
+  text-align: left;
+  width: 100%;
+}
 </style>

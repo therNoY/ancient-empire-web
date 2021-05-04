@@ -8,6 +8,7 @@
     >
       <ae-button
         v-if="index == 0"
+        :size="size"
         :width="buttonWidth"
         @onClick="onClick(index)"
         :marginLeft="buttonMarginLeft / 2"
@@ -17,6 +18,7 @@
       <ae-button
         @onClick="onClick(index)"
         v-else
+        :size="size"
         :width="buttonWidth"
         :marginLeft="flontLeft"
       >
@@ -45,6 +47,10 @@ export default {
       type: Number,
       default: 50,
     },
+    size:{
+       type: Number,
+      default: 14,
+    }
   },
   methods: {
     onClick(index) {

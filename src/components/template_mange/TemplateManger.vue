@@ -10,7 +10,8 @@
       :titleSwitchSelect="titleSwitchSelect"
       :initQueryDataGrid="initQueryDataFunction"
       :footerButtons="footerButtonList"
-      :width="55"
+      :width="65"
+      showSearch
       @titleSwtichSelectChange="swtichSelectChange"
       page
     >

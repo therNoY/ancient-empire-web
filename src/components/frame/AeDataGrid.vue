@@ -4,11 +4,11 @@
       <table v-if="data && data.length > 0">
         <tr v-if="showTitle && showTitle.length > 0">
           <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
-            <div v-if="(typeof key != 'function')">
+            <div v-if="typeof key != 'function'">
               {{ key }}
             </div>
             <div v-else>
-              <ae-dynamic :componentFunction="key" ></ae-dynamic>
+              <ae-dynamic :componentFunction="key"></ae-dynamic>
             </div>
           </td>
         </tr>
@@ -19,7 +19,7 @@
           @click="clickItem(index)"
         >
           <td v-for="(key, keyIndx) in showKey" v-bind:key="keyIndx">
-            <div v-if="(typeof key != 'function')">
+            <div v-if="typeof key != 'function'">
               {{ item[key] }}
             </div>
             <div v-else>
@@ -29,15 +29,32 @@
         </tr>
       </table>
       <div v-else>
-        暂无
+        <table>
+          <tr v-if="showTitle && showTitle.length > 0">
+            <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
+              <div v-if="typeof key != 'function'">
+                {{ key }}
+              </div>
+              <div v-else>
+                <ae-dynamic :componentFunction="key"></ae-dynamic>
+              </div>
+            </td>
+          </tr>
+        </table>
+        {{暂无}}
       </div>
     </div>
-    <ae-page ref="aePage" v-if="page" :count="count" @onPageNowChange="onPageNowChange"></ae-page>
+    <ae-page
+      ref="aePage"
+      v-if="page"
+      :count="count"
+      @onPageNowChange="onPageNowChange"
+    ></ae-page>
   </div>
 </template>
 
 <script>
-import AeDynamic from './AeDynamic.vue';
+import AeDynamic from "./AeDynamic.vue";
 import AePage from "./AePage.vue";
 export default {
   components: { AePage, AeDynamic },
@@ -55,10 +72,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    count:{
+    count: {
       type: Number,
       default: 0,
-    }
+    },
   },
   data() {
     return {
