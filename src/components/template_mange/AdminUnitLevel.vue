@@ -107,7 +107,7 @@ export default {
         this.unitLevels = resp.res_val.data;
         this.pageCount = resp.res_val.page_count;
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
       }
     },
     handleEdit(index, unit) {
@@ -122,9 +122,9 @@ export default {
     async save() {
       const resp = await SaveUnitLevel(this.unit);
       if (resp.res_code == 0) {
-        this.$message.success("修改成功");
+        this.$appHelper.successMsg("修改成功");
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
       }
       this.dialogVisible = false;
     },

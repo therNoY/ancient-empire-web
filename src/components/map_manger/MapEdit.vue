@@ -336,7 +336,7 @@ export default {
       this.mapColumn = colum;
       this.mapRow = row;
       this.reSizeDialog = false;
-      this.$message.info("重置成功");
+      this.$appHelper.infoMsg("重置成功");
     },
     // 执行绘画逻辑
     doPainting() {
@@ -406,10 +406,10 @@ export default {
 
         SaveMap(args).then((resp) => {
           if (resp.res_code == 0) {
-            this.$message.info("保存成功");
+            this.$appHelper.infoMsg("保存成功");
             this.saveMapDialog = false;
           } else {
-            this.$message.error(resp.res_mes);
+            this.$appHelper.errorMsg(resp.res_mes);
           }
         });
       } else if (this.editMapModel == "draft") {
@@ -426,9 +426,9 @@ export default {
       args.column = this.mapColumn;
       SaveMap(args).then((resp) => {
         if (resp.res_code == 0) {
-          this.$message.info("保存成功");
+          this.$appHelper.infoMsg("保存成功");
         } else {
-          this.$message.error(resp.res_mes);
+          this.$appHelper.errorMsg(resp.res_mes);
         }
         this.saveMapDialog = false;
       });
@@ -440,10 +440,10 @@ export default {
       this.$appHelper.showTip("将会删除当前地图", () => {
         DelUserMap(uuid).then((resp) => {
           if (resp.res_code == 0) {
-            this.$message.info("删除成功");
+            this.$appHelper.infoMsg("删除成功");
             this.$refs.myMap.flushData();
           } else {
-            this.$message.error(resp.res_mes);
+            this.$appHelper.errorMsg(resp.res_mes);
           }
         });
       });
@@ -497,7 +497,7 @@ export default {
           this.mapColumn = this.initMapInfo.un_save_map.column;
           this.mapRow = this.initMapInfo.un_save_map.row;
         } else {
-          this.$message.error(resp.res_mes);
+          this.$appHelper.errorMsg(resp.res_mes);
         }
         this.$appHelper.setLoading();
       }).catch(err=>{

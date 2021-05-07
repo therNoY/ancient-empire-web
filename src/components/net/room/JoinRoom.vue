@@ -169,12 +169,12 @@ export default {
                       this.$appHelper.setLoading();
                     });
                 } else {
-                  this.$message.error(resp.res_mes);
+                  this.$appHelper.errorMsg(resp.res_mes);
                   this.$appHelper.setLoading();
                 }
               });
             } else {
-              this.$message.error(resp.res_mes);
+              this.$appHelper.errorMsg(resp.res_mes);
               this.$appHelper.setLoading();
             }
           })
@@ -191,7 +191,7 @@ export default {
         this.$store.commit("setUnitLevelInfo", resp.res_val);
         return resp.res_val;
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
         return null;
       }
     },
@@ -222,7 +222,7 @@ export default {
           this.$appHelper.setLoading();
           if (resp && resp.res_code == 0) {
           } else {
-            this.$message.info("加入失败");
+            this.$appHelper.infoMsg("加入失败");
           }
         })
         .catch((error) => {

@@ -179,16 +179,16 @@ export default {
     changePwd() {
       let args = this.$refs.changePwdForm.getFormData();
       if (args.new_password != args.sure_password) {
-        this.$message.info("确认密码不正确");
+        this.$appHelper.infoMsg("确认密码不正确");
         return;
       }
       this.$appHelper.setLoading();
       ChangePwd(args)
         .then((resp) => {
           if (resp.res_code == 0) {
-            this.$message.info("修改成功");
+            this.$appHelper.infoMsg("修改成功");
           } else {
-            this.$message.info(resp.res_mes);
+            this.$appHelper.infoMsg(resp.res_mes);
           }
           this.$appHelper.setLoading();
           this.showChangePwd = false;
@@ -214,7 +214,7 @@ export default {
       console.log(this.user);
       // 验证
       if (this.user.user_name == null || this.user.user_name == "") {
-        this.$message.info("用户名/邮箱 不能为空");
+        this.$appHelper.infoMsg("用户名/邮箱 不能为空");
         return;
       }
       this.$appHelper.setLoading();
@@ -229,12 +229,12 @@ export default {
           let token = resp.res_val.token;
           console.log(token);
           setToken(token);
-          this.$message.info("登录成功");
+          this.$appHelper.infoMsg("登录成功");
           this.showLogin = false;
           this.showChangePwd = false;
           this.$emit("input", false);
         } else {
-          this.$message.info(resp.res_mes);
+          this.$appHelper.infoMsg(resp.res_mes);
         }
         this.$appHelper.setLoading();
       });
@@ -242,7 +242,7 @@ export default {
     doRegister() {
       let args = this.$refs.registerForm.getFormData();
       if (args.password != args.re_password) {
-        this.$message.info("确认密码不正确");
+        this.$appHelper.infoMsg("确认密码不正确");
         return;
       }
       Register(args).then((resp) => {
@@ -250,7 +250,7 @@ export default {
           this.$message("确认邮件已发出 请确认查收");
           this.close();
         } else {
-          this.$message.error(resp.res_mes);
+          this.$appHelper.errorMsg(resp.res_mes);
         }
       });
     },

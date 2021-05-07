@@ -159,12 +159,12 @@ export default {
           this.roomOwner = selectMap.room_owner;
           this.setJoinRoomShow();
           this.showJoinRoom = true;
-          this.$message.info("加入成功");
+          this.$appHelper.infoMsg("加入成功");
           this.$appHelper.setLoading();
         })
         .catch((error) => {
           console.error(error);
-          this.$message.info("加入失败");
+          this.$appHelper.infoMsg("加入失败");
           this.$refs.mainDiaglog.flushData();
           this.$appHelper.setLoading();
         });
@@ -185,21 +185,21 @@ export default {
       let formData = this.$refs.addNewRoomDialog.getFormData();
       console.log(formData);
       if (!formData) {
-        this.$message.info("创建房间数据不完整");
+        this.$appHelper.infoMsg("创建房间数据不完整");
         return;
       }
       if (!formData) {
-        this.$message.info("创建房间数据不完整");
+        this.$appHelper.infoMsg("创建房间数据不完整");
         return;
       }
 
       if (!formData.room_name) {
-        this.$message.info("房间名字不能为空");
+        this.$appHelper.infoMsg("房间名字不能为空");
         return;
       }
 
       if (!formData.init_map) {
-        this.$message.info("必须选择地图");
+        this.$appHelper.infoMsg("必须选择地图");
         return;
       }
       let args = formData;
@@ -221,11 +221,11 @@ export default {
             initSetting.then((joinRoomPromise) => {
                 this.showJoinRoom = true;
                 console.log("joinRoomPromise result >>>", resp, joinRoomPromise);
-                this.$message.info("创建成功");
+                this.$appHelper.infoMsg("创建成功");
                 this.$appHelper.setLoading();
               })
               .catch((error) => {
-                this.$message.info("加入房间失败");
+                this.$appHelper.infoMsg("加入房间失败");
                 this.$appHelper.setLoading();
                 this.showJoinRoom = false;
               });

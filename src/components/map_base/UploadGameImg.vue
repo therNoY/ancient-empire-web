@@ -49,13 +49,13 @@ export default {
         console.log("上传文件成功保存文件名", res.res_val);
         this.$emit("success", res.res_val);
       } else {
-        this.$message.error(res.res_mes);
+        this.$appHelper.errorMsg(res.res_mes);
         this.$emit("error", res.res_val);
       }
     },
     uploadError(files, fileList) {
      this.$appHelper.setLoading();
-      this.$message.error("系统异常,请联系游戏开发商");
+      this.$appHelper.errorMsg("系统异常,请联系游戏开发商");
       this.$emit("error");
     },
   },

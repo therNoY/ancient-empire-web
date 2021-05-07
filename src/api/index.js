@@ -270,6 +270,22 @@ export const GetUserAttentionTemp = (args) => request("/api/userAttentionTemp/pa
  * @param {*} args 
  */
 export const GetUserDraftTemplate = (args) => request('/api/userTemp/draftTemplate', args, "GET");
+
+/**
+ * 更新版本信息
+ * @param {*} args 
+ * @returns 
+ */
+export const UpdateUserTempAttention = (args) => request('/api/userTempAttention/version/update', args, "POST");
+/**
+ * 回退模板草稿版本
+ * @param {*} args 
+ * @returns 
+ */
+export const RevertTemplateVersion = (args) => request('/api/userTempAttention/version/revert', args, "POST");
+
+
+
 /**
  * 获取用户的草稿模板
  * @param {*} args 

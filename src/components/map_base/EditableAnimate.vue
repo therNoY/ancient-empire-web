@@ -2,15 +2,26 @@
   循环展示动画的组件
 -->
 <template>
-  <div id="editAbleAnimate">
-    <img v-if="animImg" :src="animImg" />
-    <el-button
+  <div class="editAbleAnimate">
+    <ae-button
       class="editButton"
-      @click="changeImg"
-      icon="el-icon-edit-outline"
-      circle
-    ></el-button>
-    <el-dialog title="修改动画" width="30%" :visible.sync="show" append-to-body>
+      :height="25"
+      :size="0.5"
+      :width="70"
+      :disabled="disabled"
+      @onClick="changeImg"
+      >修改</ae-button
+    >
+    <img class="showImg" v-if="animImg" :src="animImg" />
+
+    <ae-base-dialog title="修改动画" v-model="show">
+      <upload-game-img
+        class="uploadAnimateImg"
+        :templateId="template_id"
+        @success="uploadSuccess"
+      >
+        <ae-button :width="90" :height="27">添加</ae-button>
+      </upload-game-img>
       <div
         class="item"
         v-for="(item, index) in animImgList"
@@ -26,16 +37,7 @@
           </click-point>
         </el-tooltip>
       </div>
-
-      <upload-game-img :templateId="template_id" @success="uploadSuccess">
-        <el-button
-          class="uploadButton"
-          icon="el-icon-upload"
-          type="primary"
-          circle
-        ></el-button>
-      </upload-game-img>
-    </el-dialog>
+    </ae-base-dialog>
   </div>
 </template>
 
@@ -56,7 +58,11 @@ export default {
       default: "修改动画图片",
     },
     template_id: {
-      default:1,
+      default: 1,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -89,10 +95,8 @@ export default {
     handleDragEnd(event, item, index) {
       if (this.swapStartIndex == index && this.swapEndIndex != null) {
         let list = this.animImgList;
-        let temp =list[this.swapStartIndex];
-        list[this.swapStartIndex] = list[
-          this.swapEndIndex
-        ];
+        let temp = list[this.swapStartIndex];
+        list[this.swapStartIndex] = list[this.swapEndIndex];
         list[this.swapEndIndex] = temp;
         this.$emit("input", list.join(","));
       }
@@ -101,7 +105,7 @@ export default {
     },
   },
   computed: {
-    animImgList(){
+    animImgList() {
       return this.value.split(",");
     },
     animImg() {
@@ -123,18 +127,29 @@ export default {
 </script>
 
 <style lang="scss" scope>
-.editButton {
-  margin-right: 10px;
-}
-.uploadButton {
+.editAbleAnimate {
   float: left;
-  margin-left: 20px;
-  width: 30px;
-  height: 30px;
+  width: 100%;
+  .editButton {
+    float: left;
+    padding-left: 1%;
+    margin-top: 2%;
+    width: 20%;
+  }
+  .showImg {
+    float: left;
+    margin-top: 3%;
+  }
+  .uploadAnimateImg {
+    float: left;
+    width: 10%;
+  }
 }
+
 .item {
   float: left;
-  margin-left: 20px;
+  margin-left: 3%;
+  margin-top: 1%;
   cursor: move;
 }
 </style>

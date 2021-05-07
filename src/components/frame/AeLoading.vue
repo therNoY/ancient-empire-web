@@ -9,10 +9,9 @@
 
 <script>
 import Unit from "../map_base/Unit.vue";
-import UnitView from "../map_base/UnitView.vue";
 
 export default {
-  components: { Unit, UnitView },
+  components: { Unit },
   data() {
     return {
       loading: false,

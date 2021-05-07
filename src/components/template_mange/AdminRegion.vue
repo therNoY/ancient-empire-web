@@ -107,7 +107,7 @@ export default {
         this.dialogVisible = false;
         this.init();
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
       }
     },
     currentChange(pageNow) {
@@ -128,7 +128,7 @@ export default {
         this.pageCount = resp.res_val.page_count;
         this.regionMes = resp.res_val.data;
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
       }
     },
     addRegion() {

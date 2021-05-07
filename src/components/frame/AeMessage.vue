@@ -1,83 +1,100 @@
 <template>
   <transition name="msg" appear>
-    <div
-      :class="['box-item', boxClass]"
-      v-if="info.show"
-      :style="{ top: info.top + 'px' }"
-    >
+    <div :class="['box-item']" v-if="show" :style="{ top: top + 'px' }">
+      <unit class="msg-unit" :unit_id="unitId" :color="unitColor"></unit>
       <div class="msg-container">
-        {{ info.msg }}
+        {{ mes }}
       </div>
-      <span>
-        <i class="iconfont icon-cc-close"></i>
-      </span>
     </div>
   </transition>
 </template>
 
 
 <script >
+import Unit from "../map_base/Unit.vue";
+
 export default {
+  components: { Unit },
+  props: {
+    show: {
+      type: Boolean,
+      default: true,
+    },
+    mes: {
+      type: String,
+      default: "",
+    },
+    type: {
+      type: String,
+      default: "info",
+    },
+    top: {
+      type: Number,
+      default: 60,
+    },
+  },
   data() {
     return {
-      info: {
-        show: true,
-        msg: "ddddddd",
-        type: "info",
-        top: "20",
-      },
+      unitId: 1,
     };
   },
   created() {
     window.AeMessage = this;
   },
+  watch:{
+    show(v){
+      if (v) {
+        this.unitId = Math.floor(1 + Math.random() * 11);
+      }
+    }
+  },
   computed: {
-    boxClass() {
-      const type = this.info.type;
-      return type ? `box-item-${type}` : "";
+    unitColor() {
+      const type = this.type;
+      let color = "blue";
+      if (type == "success") {
+        color = "green";
+      } else if (type == "warning") {
+        color = "black";
+      } else if (type == "error") {
+        color = "red";
+      }
+      return color;
     },
   },
 };
 </script>
 <style lang="scss" rel="stylesheet/scss" scoped>
 .box-item {
-  height: 10px;
+  height: 30px;
   position: fixed;
   min-width: 380px;
   // element-ui抄来的样式
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ebeef5;
   border-radius: 4px;
+  color: rgb(255, 255, 255);
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #edf2fcbe;
   transition: opacity 0.3s, transform 0.4s, top 0.4s;
-  padding: 15px 15px 15px 20px;
-  display: flex;
+  padding: 1%;
   align-items: center;
   justify-content: space-between;
-  &-success {
-    background-color: #f0f9ebb9;
-    border-color: #e1f3d8;
-  }
-  &-warning {
-    background-color: #fdf6ecc5;
-    border-color: #faecd8;
-  }
-  &-error {
-    background-color: #fef0f0c9;
-    border-color: #fde2e2;
-  }
+  background: #242a43;
+  box-shadow: 2px 2px 20px 1px;
+  overflow-y: 0%;
+  flex-direction: column;
+  border: 2px #afb7aa solid;
+  box-shadow: 0 2px 12px 0 rgba(255, 255, 255, 0.692);
 }
-
+.msg-unit {
+  float: left;
+}
 .msg-container {
-  display: flex;
+  float: left;
+  font-size: 1.3em;
+  -webkit-text-stroke: 0.5px #000000;
   align-items: center;
-  .iconfont {
-    margin-right: 5px;
-  }
+  margin-left: 5%;
 }
 
 .msg-enter-active {

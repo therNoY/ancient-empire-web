@@ -19,16 +19,32 @@ var appHelper = {
     return this.store.getters.gloadLoading;
   },
 
-  successMsg: function () {
-
+  infoMsg: function (mes) {
+    let message = {};
+    message.type = "info";
+    message.mes = mes;
+    eventBus.publish("showMessage", message)
   },
 
-  warningMsg: function () {
-
+  successMsg: function (mes) {
+    let message = {};
+    message.type = "sucess";
+    message.mes = mes;
+    eventBus.publish("showMessage", message)
   },
 
-  errorMsg: function () {
+  warningMsg: function (mes) {
+    let message = {};
+    message.type = "warning";
+    message.mes = mes;
+    eventBus.publish("showMessage", message)
+  },
 
+  errorMsg: function (mes) {
+    let message = {};
+    message.type = "error";
+    message.mes = mes;
+    eventBus.publish("showMessage", message)
   },
 
   showTip: function (message, fun, buttonList) {

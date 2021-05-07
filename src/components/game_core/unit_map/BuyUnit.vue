@@ -115,7 +115,7 @@ export default {
       console.log("现有金币" + currArmy.money);
       console.log("需要金币" + unitInfo.unit_mes.price);
       if (currArmy.money < unitInfo.unit_mes.price) {
-        this.$message.error("资金不足");
+        this.$appHelper.errorMsg("资金不足");
         return;
       }
       // 验证军队人口
@@ -125,7 +125,7 @@ export default {
         currArmy.pop + unitInfo.unit_mes.population >
         this.$store.getters.game.max_pop
       ) {
-        this.$message.error("人口达到上限");
+        this.$appHelper.errorMsg("人口达到上限");
         return;
       }
 

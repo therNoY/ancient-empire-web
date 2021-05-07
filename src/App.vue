@@ -1,9 +1,19 @@
 <template>
   <div id="app">
     <router-view />
-    <ae-loading></ae-loading>
-    <ae-tip v-model="showGlableTip" :buttonList="buttonList" :closeTip="closeTip" @ok="tipOk"></ae-tip>
-    <!-- <ae-message></ae-message> -->
+    <ae-loading style="z-index: 99999"></ae-loading>
+    <ae-tip
+      v-model="showGlableTip"
+      :buttonList="buttonList"
+      :closeTip="closeTip"
+      @ok="tipOk"
+    ></ae-tip>
+    <ae-message
+      :mes="mes"
+      :show="show"
+      :type="type"
+      style="z-index: 999999"
+    ></ae-message>
   </div>
 </template>
 
@@ -19,25 +29,38 @@ export default {
       showGlableTip: false,
       callback: null,
       closeTip: null,
-      buttonList:undefined,
+      mes: null,
+      show: false,
+      type: "info",
+      buttonList: undefined,
     };
   },
   methods: {
     showTip({ message, callback, buttonList }) {
-      this.buttonList = buttonList,
-      this.showGlableTip = true;
+      (this.buttonList = buttonList), (this.showGlableTip = true);
       this.closeTip = message;
       this.callback = callback;
     },
+    showMessage({ type, mes }) {
+      this.type = type;
+      this.mes = mes;
+      if (this.show) {
+        return;
+      }
+      this.show = true;
+      setTimeout(() => {
+        this.show = false;
+      }, 1000);
+    },
     tipOk() {
-      if (this.callback && this.callback instanceof Function
-      ) {
+      if (this.callback && this.callback instanceof Function) {
         this.callback();
       }
     },
   },
   created() {
-    this.$eventBus.regist(this, "showTip", "showTip");
+    this.$eventBus.regist(this, "showTip");
+    this.$eventBus.regist(this, "showMessage");
   },
 };
 </script>
@@ -101,13 +124,13 @@ input:-webkit-autofill {
 .el-table::before {
   z-index: -1;
 }
-.el-tabs__item{
+.el-tabs__item {
   color: white;
 }
 .el-form-item__label {
   color: aliceblue !important;
 }
-.el-upload{
+.el-upload {
   text-align: left;
   width: 100%;
 }

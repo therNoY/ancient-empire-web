@@ -92,7 +92,7 @@ export default {
       args.uuid = this.gameId;
       args.name = this.saveRecordName;
       RecordSaveAs(args).then(resp=>{
-        this.$message.info("保存成功")
+        this.$appHelper.infoMsg("保存成功")
         this.$appHelper.setLoading();
         this.saveRecordDialog = false;
       }).catch(error=>{

@@ -70,6 +70,7 @@ export default {
       if (!this.fixedDialog) {
         return {
           display: "flex",
+          backgroundColor: "rgba(167, 167, 167, 0.3)",
           left: 0,
           top: 0,
         };
@@ -114,6 +115,7 @@ export default {
   right: 0;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 .ae-base-dialog-popup {
   background: #242a43;

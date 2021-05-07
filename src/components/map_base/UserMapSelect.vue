@@ -243,7 +243,7 @@ export default {
             this.initArmys.push(army);
           }
         } else {
-          this.$message.error(resp.res_mes);
+          this.$appHelper.errorMsg(resp.res_mes);
         }
       });
     },

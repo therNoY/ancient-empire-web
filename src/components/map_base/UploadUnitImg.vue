@@ -90,7 +90,7 @@ export default {
     },
     checkSize() {
       if (this.uploadImg.length > 1) {
-        this.$message.info("单位图片只能传两个");
+        this.$appHelper.infoMsg("单位图片只能传两个");
         return false;
       }
       return true;
@@ -101,7 +101,7 @@ export default {
     previewUnit() {
       console.log("预览");
       if (this.uploadImg.length != 2) {
-        this.$message.info("单位图片需要两张");
+        this.$appHelper.infoMsg("单位图片需要两张");
         return false;
       }
       let args = {};
@@ -124,7 +124,7 @@ export default {
             this.$emit("input", false);
             this.$emit("uploadOk", this.previewUnitImg);
         } else {
-            this.$message.info("请先预览,看是否复合要求")
+            this.$appHelper.infoMsg("请先预览,看是否复合要求")
         }
     },
     uploadSuccess(fileName) {

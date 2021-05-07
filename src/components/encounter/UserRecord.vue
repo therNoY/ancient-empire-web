@@ -66,7 +66,7 @@ export default {
         DelUserRecord(record.uuid)
           .then((resp) => {
             this.$appHelper.setLoading();
-            this.$message.info("删除成功");
+            this.$appHelper.infoMsg("删除成功");
             this.$refs.aeDialog.flushData();
           })
           .catch((err) => {
@@ -112,12 +112,12 @@ export default {
                     this.$appHelper.setLoading();
                   });
               } else {
-                this.$message.error(resp.res_mes);
+                this.$appHelper.errorMsg(resp.res_mes);
                 this.$appHelper.setLoading();
               }
             });
           } else {
-            this.$message.error(resp.res_mes);
+            this.$appHelper.errorMsg(resp.res_mes);
             this.$appHelper.setLoading();
           }
         })
@@ -133,7 +133,7 @@ export default {
         this.$store.commit("setUnitLevelInfo", resp.res_val);
         return resp.res_val;
       } else {
-        this.$message.error(resp.res_mes);
+        this.$appHelper.errorMsg(resp.res_mes);
         return null;
       }
     },

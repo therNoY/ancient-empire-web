@@ -5,10 +5,12 @@
   <div class="unit-radio">
     <ae-button
       class="unit-radio-button"
-      :width="80"
+      :width="75"
+      :height="25"
+      :size="0.5"
       @onClick="chooseOtherUnit"
       :disabled="!editAble"
-      >选择单位</ae-button
+      >选 择</ae-button
     >
 
     <div class="unit">
@@ -78,11 +80,12 @@ export default {
   text-align: center;
   .unit {
     float: left;
-    padding-top: 10px;
+    padding-top: 3%;
   }
   .unit-radio-button {
     float: left;
-    height: 100%;
+    padding-left: 1%;
+    margin-top: 2%;
     width: 20%;
   }
 }

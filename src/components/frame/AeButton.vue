@@ -36,7 +36,7 @@ export default {
     },
     size: {
       type: Number,
-      default: 14,
+      default: 0.75,
     },
     disabled: {
       type: Boolean,
@@ -53,7 +53,7 @@ export default {
       if (this.disabled) {
         return {
           width: this.width + "%",
-          fontSize: this.size + "px",
+          fontSize: this.size + "em",
           height: this.height + "px",
           marginLeft: this.marginLeft + "%",
           cursor: "not-allowed",
@@ -61,7 +61,7 @@ export default {
       } else {
         return {
           width: this.width + "%",
-          fontSize: this.size + "px",
+          fontSize: this.size + "em",
           height: this.height + "px",
           marginLeft: this.marginLeft + "%",
           cursor: "pointer",
@@ -85,6 +85,7 @@ export default {
   border-right: 2px #494949 solid;
   border-bottom: 2px #494949 solid;
   border-radius: 3px;
+  overflow: hidden;
 }
 
 .ae-button:hover {

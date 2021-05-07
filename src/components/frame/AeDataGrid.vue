@@ -3,8 +3,8 @@
     <div class="ae-data-grid">
       <table v-if="data && data.length > 0">
         <tr v-if="showTitle && showTitle.length > 0">
-          <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
-            <div v-if="typeof key != 'function'">
+          <td v-for="(key, keyIndx) in showTitle" :key="keyIndx" :style="getTabelTdStyle(keyIndx)">
+            <div v-if="isNotFunction(key)">
               {{ key }}
             </div>
             <div v-else>
@@ -14,12 +14,12 @@
         </tr>
         <tr
           v-for="(item, index) in data"
-          v-bind:key="index"
+          :key="index"
           :style="getTabelItemStyle(index)"
           @click="clickItem(index)"
         >
-          <td v-for="(key, keyIndx) in showKey" v-bind:key="keyIndx">
-            <div v-if="typeof key != 'function'">
+          <td v-for="(key, keyIndx) in showKey" :key="keyIndx" :style="getTabelTdStyle(keyIndx)">
+            <div v-if="isNotFunction(key)">
               {{ item[key] }}
             </div>
             <div v-else>
@@ -32,7 +32,7 @@
         <table>
           <tr v-if="showTitle && showTitle.length > 0">
             <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
-              <div v-if="typeof key != 'function'">
+              <div v-if="isNotFunction(key)">
                 {{ key }}
               </div>
               <div v-else>
@@ -41,9 +41,10 @@
             </td>
           </tr>
         </table>
-        {{暂无}}
+        
       </div>
     </div>
+    
     <ae-page
       ref="aePage"
       v-if="page"
@@ -76,6 +77,9 @@ export default {
       type: Number,
       default: 0,
     },
+    tableConfig:{
+
+    }
   },
   data() {
     return {
@@ -86,6 +90,9 @@ export default {
     window.AeDataGridVue = this;
   },
   methods: {
+    isNotFunction(obj) {
+      return typeof obj != 'function'
+    },
     getTabelItemStyle(index) {
       if (index == this.selectIndex) {
         return {
@@ -95,6 +102,12 @@ export default {
       return {
         backgroundColor: "#444444",
       };
+    },
+    getTabelTdStyle(index) {
+      if (this.tableConfig[index] && this.tableConfig[index]["style"]) {
+        return this.tableConfig[index]["style"];
+      }
+      return {};
     },
     clickItem(index) {
       this.selectIndex = index;

@@ -1,6 +1,6 @@
-<!-- 
+<!--
     根据配置自动设置的表单
-    支持类型 
+    支持类型
     input, switchSelect, userMapSelect
  -->
 <template>
@@ -53,6 +53,20 @@
             :unitList="form.unitList"
           ></unit-radio>
         </div>
+        <div v-else-if="form.type == 'unitCheckbox'">
+          <unit-checkbox
+            :disabled="!edit || form.disabled"
+            v-model="formData[form.key]"
+          ></unit-checkbox>
+        </div>
+        <div v-else-if="form.type == 'editableAnimate'">
+          <editable-animate
+            :disabled="!edit || form.disabled"
+            v-model="formData[form.key]"
+            :singo="singo"
+            :template_id="templateId"
+          ></editable-animate>
+        </div>
       </div>
     </div>
   </div>
@@ -60,9 +74,12 @@
 
 <script>
 import UnitRadio from "../map_base/UnitRadio.vue";
+import UnitCheckbox from "../map_base/UnitCheckbox.vue";
 import UserMapSelect from "../map_base/UserMapSelect.vue";
+import EditableAnimate from "../map_base/EditableAnimate.vue";
+
 export default {
-  components: { UserMapSelect, UnitRadio },
+  components: { UserMapSelect, UnitRadio, UnitCheckbox, EditableAnimate },
   props: {
     formConfig: {
       type: Array,
@@ -79,6 +96,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    singo: {
+      type: Number,
+      default: 0,
+    },
+    templateId:{
+    }
   },
   data() {
     return {
@@ -91,7 +114,7 @@ export default {
         if (config.type == "rangeSelect") {
         }
         if (config.require && !this.formData[config.key]) {
-          this.$message.info(config.des + "不能为空");
+          this.$appHelper.infoMsg(config.des + "不能为空");
           throw new Error("数据" + config.des + "不完整");
         }
       }
@@ -124,7 +147,6 @@ export default {
   height: 40px;
   .ae-form-lable {
     width: 20%;
-    height: 25px;
     float: left;
     color: white;
     font-size: 14px;
@@ -133,7 +155,6 @@ export default {
   .ae-form-real-camp {
     width: 80%;
     float: left;
-    height: 43px;
   }
 }
 </style>

@@ -49,7 +49,7 @@ export default {
     },
     size:{
        type: Number,
-      default: 14,
+      default: 0.75,
     }
   },
   methods: {

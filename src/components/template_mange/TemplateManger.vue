@@ -6,6 +6,7 @@
       v-model="showModel"
       :showItem="showItem"
       :showTitle="showTitle"
+      :tableConfig="tableConfig"
       :titleButtons="titleButtonList"
       :titleSwitchSelect="titleSwitchSelect"
       :initQueryDataGrid="initQueryDataFunction"
@@ -17,10 +18,12 @@
     >
     </ae-complex-dialog>
     <template-deatil
+      ref="templateDeatil"
       v-model="showTempDetail"
       :templateDeatil="currentTemp"
       :model="model"
       @saveOrDel="flushData"
+      @downLoadTemp="downLoadTemp"
     ></template-deatil>
   </div>
 </template>
@@ -33,13 +36,13 @@ import {
   GetUserDraftTemplate,
   GetUserAttentionTemp,
   GetDownloadAbleTemplate,
+  DownloadTemplate,
 } from "@/api";
 
 import dialogShow from "../../mixins/frame/dialogShow.js";
 import TemplateDeatil from "./TemplateDeatil.vue";
 
 const showBindUnitRender = function (h, params) {
-  console.log(params);
   return h(
     PreviewUnitList,
     { props: { unit_list: params.bind_uint_list, showNum: 15 } },
@@ -67,41 +70,72 @@ export default {
       showItem: [
         "template_name",
         showBindUnitRender,
-        "link_num",
-        "count_start",
+        "create_user_name",
+        (h, p) => {
+          if (p.max_version && p.max_version > p.version) {
+            return h(
+              "b",
+              {},
+              "V" + p.version + "(可更新至V" + p.max_version + ")"
+            );
+          } else if (p.status == "0") {
+            return h("div", {}, "V" + p.version + "(草稿版本)");
+          } else {
+            return h("div", {}, "V" + p.version + "(最新版本)");
+          }
+        },
+        "update_time",
+        "down_load_count",
+        "start_count",
       ],
-      showTitle: ["模板名字", "单位预览", "下载次数", "总评价"],
-      footerButtonList: [
-        { name: "刷新", action: () => this.$refs.aeDialog.flushData() },
-        { name: "详情", action: this.showDetail },
+      showTitle: [
+        "模板名字",
+        "单位预览",
+        "作者",
+        "版本",
+        "更新时间",
+        "下载次数",
+        "总评价",
       ],
-      titleButtonList: [{ name: "新建", action: this.clickButton }],
+      tableConfig: {
+        1: { style: { width: "20%" } },
+      },
+      titleButtonList: [{ name: "新建", action: this.clickAddButton }],
       showTempDetail: false,
       currentTemp: {},
       model: "myTemp",
-      initQueryDataFunction:null,
+      initQueryDataFunction: null,
     };
   },
   created() {
-    this.initQueryDataFunction = GetUserTemplate
+    this.initQueryDataFunction = GetUserTemplate;
     window.TemplateMangerVue = this;
   },
   methods: {
-    clickButton() {
+    clickAddButton() {
       let parms = {};
-      GetUserDraftTemplate(parms).then((resp) => {
-        if (resp.res_code == 0) {
-          this.currentTemp = resp.res_val;
-          this.showTempDetail = true;
-        }
-      });
+      this.$appHelper.setLoading();
+      GetUserDraftTemplate(parms)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.currentTemp = resp.res_val;
+            this.model == "myTemp";
+            this.showTempDetail = true;
+          }
+          this.$appHelper.setLoading();
+        })
+        .catch((error) => {
+          this.$appHelper.setLoading();
+        });
     },
     flushData() {
       this.$refs.aeDialog.flushData();
     },
     showDetail() {
       console.log("查看详情");
-      this.currentTemp = JSON.parse(JSON.stringify(this.$refs.aeDialog.getDataGridSelect()));
+      this.currentTemp = JSON.parse(
+        JSON.stringify(this.$refs.aeDialog.getDataGridSelect())
+      );
       this.showTempDetail = true;
     },
     swtichSelectChange(value) {
@@ -113,8 +147,44 @@ export default {
         this.model = "download";
       }
     },
+    delTemp() {
+      console.log("删除模板");
+      this.$refs.templateDeatil.delTemp(
+        this.$refs.aeDialog.getDataGridSelect()
+      );
+    },
+
+    downLoadTemp(downloadComment) {
+      let args = {};
+      args.template_id = this.$refs.aeDialog.getDataGridSelect().id;
+      args.template_start = downloadComment.start;
+      args.template_comment = downloadComment.comment;
+      DownloadTemplate(args).then((resp) => {
+        if (resp.res_code == 0) {
+          this.$appHelper.infoMsg("下载成功");
+          this.flushData();
+        }
+      });
+    },
   },
-  computed: {},
+  computed: {
+    footerButtonList() {
+      let footerButtonList = [];
+      footerButtonList.push({ name: "详 情", action: this.showDetail });
+      if (this.model == "myTemp") {
+        footerButtonList.push({ name: "删 除", action: this.delTemp });
+      } else if (this.model == "myDownload") {
+        footerButtonList.push({ name: "删 除", action: this.delTemp });
+      } else if (this.model == "download") {
+        footerButtonList.push({
+          name: "下 载",
+          action: () =>
+            this.$refs.templateDeatil.$refs.startComment.showComment(),
+        });
+      }
+      return footerButtonList;
+    },
+  },
 };
 </script>
 

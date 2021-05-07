@@ -11,7 +11,7 @@
     <div class="ae-dialog-body-title">
       <ae-button-list
         v-if="titleButtons"
-        :size="14"
+        :size="0.7"
         :style="bodyTitleButtonStyle"
         :buttonList="titleButtons.map((a) => a.name)"
         :clickAction="titleButtons.map((a) => a.action)"
@@ -44,6 +44,7 @@
           :showTitle="showTitle"
           :page="page"
           :count="pageCount"
+          :tableConfig="tableConfig"
           @onPageNowChange="onPageNowChange"
         ></ae-data-grid>
       </div>
@@ -99,6 +100,7 @@ export default {
       type: Array,
       defult: [],
     },
+    // 表格data数据
     initQueryDataGrid: {
       type: Function,
     },
@@ -109,10 +111,13 @@ export default {
       type: Array,
       defult: [],
     },
+    tableConfig:{
+    },
     page: {
       type: Boolean,
       default: false,
     },
+    // 表单数据
     formConfig: {
       type: Array,
     },
@@ -228,7 +233,7 @@ export default {
           };
         } else {
           return {
-            width: "10%",
+            width: "15%",
           };
         }
       } else {
