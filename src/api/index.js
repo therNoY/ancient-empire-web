@@ -139,22 +139,36 @@ export const ChangeUserSetting = (args) => request('/api/user/useSetting', args,
 
 // 用户地图有关
 /**
- * 获取草稿地图
+ * 获取初始化地图
  * @returns 
  */
-export const GetInitUserMap = (args) => request('/api/userMap/draft', args, "POST");
+export const GetLastEditMap = (args) => request('/api/userMap/lastEdit', args, "POST");
+
 /**
- * 保存临时地图
+ * 创建草稿地图
  * @param {*} args 
  * @returns 
  */
-export const SaveTempMap = (args) => request('/api/userMap/saveTemp', args, "POST");
+export const CreateDraftMap = (args) => request('/api/userMap/createDraftMap', args, "POST");
+
+/**
+ * 更新下载地图的版本
+ * @param {*} args 
+ * @returns 
+ */
+export const UpdateMapVersion = (args) => request('/api/userMap/version/update', args, "POST");
+/**
+ * 修改地图基本信息
+ * @param {*} args 
+ * @returns 
+ */
+export const ChangeBaseInfo = (args) => request('/api/userMap/changeBaseInfo', args, "POST");
 /**
  * 保存地图
  * @param {*} args 
  * @returns 
  */
-export const SaveMap = (args) => request('/api/userMap', args, "POST");
+export const SaveUserMap = (args) => request('/api/userMap', args, "POST");
 /**
  * 优化地图
  * @param {*} args 
@@ -175,7 +189,7 @@ export const GetUserDownloadMap = (args) => request('/api/userMap/download/list'
  * 获取世界地图
  * @returns 
  */
-export const GetWorldMapList = () => request('/api/worldMap/list', '', "GET");
+export const GetWorldMapList = (args) => request('/api/worldMap/list', args, "POST");
 /**
  * 根据ID获取地图 可以不展示某些单位
  * @param {*} id 
@@ -189,12 +203,37 @@ export const GetUserMapById = (id) => request('/api/userMap/' + id, '', "GET");
  */
 export const GetUserMapWithConfig = (config) => request('/api/userMap/withConfig', config, "POST");
 
+/**
+ * 删除用户地图
+ * @param {*} id 
+ * @returns 
+ */
 export const DelUserMap = (id) => request('/api/userMap/' + id, '', "DELETE");
 
 /**
  * 获取遭遇地图
  */
 export const GetEncounterMap = (args) => request("/encounterMap", args, "POST");
+
+
+/**
+ * 下载地图
+ * @param {*} args 
+ * @returns 
+ */
+export const DownloadMap = (args) =>request("/api/userMap/download", args, 'POST')
+/**
+ * 删除用户下载
+ * @param {*} args 
+ * @returns 
+ */
+export const DelDownloadMap = (args) =>request("/api/userMap/download/delete", args, 'POST')
+
+/**
+ * 获取模板详情
+ * @param {*} id 
+ * @returns 
+ */
 export const GetUserTemp = (id) => request("/api/userTemp/" + id, '', "GET");
 
 // 初始化map 信息

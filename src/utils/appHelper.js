@@ -56,6 +56,23 @@ var appHelper = {
     eventBus.publish("showTip", mes)
   },
 
+  showInputDialog: function (title, label, fun, placeholder) {
+    let mes = {
+      title: title,
+      label: label,
+      callback: fun,
+      placeholder: placeholder,
+    }
+    eventBus.publish("showInputDialog", mes)
+  },
+
+  /**
+   * 获取登录用户的角色
+   */
+  getLoginRole:function(){
+    return store.user.role;
+  },
+
   // 获取地形的图片
   getRegionImg: function (type, color) {
     if (!color) {

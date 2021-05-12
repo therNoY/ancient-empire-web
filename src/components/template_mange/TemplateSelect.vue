@@ -9,6 +9,7 @@
       :titleSwitchSelect="titleSwitchSelect"
       :initQueryDataGrid="initQueryDataFunction"
       :footerButtons="footerButtonList"
+      :tableConfig="tableConfig"
       :width="40"
       @titleSwtichSelectChange="swtichSelectChange"
       page
@@ -27,7 +28,6 @@ import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import PreviewUnitList from "../map_base/PreviewUnitList.vue";
 import {
   GetUserTemplate,
-  GetUserDraftTemplate,
   GetUserAttentionTemp,
 } from "@/api";
 
@@ -69,6 +69,9 @@ export default {
         { name: "确定", action: this.selectTemp },
         { name: "详情", action: this.showDetail },
       ],
+      tableConfig: {
+        1: { style: { width: "50%" } },
+      },
       showTempDetail: false,
       currentTemp: {},
       initQueryDataFunction:null,

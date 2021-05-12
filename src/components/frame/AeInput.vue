@@ -7,6 +7,8 @@
       v-model="inputValue"
       :disabled="!editAble"
       :placeholder="placeholder"
+      :max="max"
+      :min="min"
     />
   </div>
 </template>
@@ -41,6 +43,12 @@ export default {
     label: {
       type: String,
     },
+    max:{
+      type:Number,
+    },
+    min:{
+      type:Number,
+    }
   },
   data() {
     return {

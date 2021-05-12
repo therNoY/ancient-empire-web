@@ -3,9 +3,9 @@ import { removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    admin_token: null,
-    token: '', // 普通token
+    token: '', // token
     user: {}, // 保存登录的用户
+    role: '',// 登录用户角色
   },
 
   mutations: {
@@ -16,10 +16,6 @@ const user = {
     setUser: (state, user) => {
       console.log("设置User");
       state.user = user
-    },
-    setAdminToken: (state, token) => {
-      console.log("设置AdminToken");
-      state.admin_token = token
     },
   },
 

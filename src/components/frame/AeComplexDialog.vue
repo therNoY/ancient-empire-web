@@ -49,7 +49,11 @@
         ></ae-data-grid>
       </div>
       <div class="main-body" v-else-if="showModel == 'showForm'">
-        <ae-form ref="aeForm" :formConfig="formConfig"></ae-form>
+        <ae-form
+          ref="aeForm"
+          :formConfig="formConfig"
+          :dataObj="dataObj"
+        ></ae-form>
       </div>
     </section>
 
@@ -111,8 +115,7 @@ export default {
       type: Array,
       defult: [],
     },
-    tableConfig:{
-    },
+    tableConfig: {},
     page: {
       type: Boolean,
       default: false,
@@ -127,6 +130,10 @@ export default {
     },
     closeTip: {
       type: String,
+    },
+    dataObj: {
+      type: Object,
+      default: null,
     },
     showCloseTip: {
       type: Boolean,
@@ -150,7 +157,7 @@ export default {
     close() {
       this.$emit("input", false);
     },
-    flushPageAndData(pageStart = 1){
+    flushPageAndData(pageStart = 1) {
       this.pageInfo.pageStart = pageStart;
       this.flushData();
     },
@@ -190,14 +197,23 @@ export default {
       });
     },
     open() {
-      console.log("初始化查询");
-      if (!this.titleSwitchSelect) {
+      if (!this.titleSwitchSelect && this.queryDataGrid) {
+        console.log("初始化查询");
         this.flushData();
       }
     },
     getDataGridSelect() {
       if (this.$refs.dataGrid) {
-        return this.$refs.dataGrid.getSelect();
+        let res = this.$refs.dataGrid.getSelect();
+        if (!res) {
+          this.$appHelper.warningMsg("请选择一行");
+          throw new Error("未选择数据");
+        } else {
+          return res;
+        }
+      } else {
+        this.$appHelper.warningMsg("请选择一行");
+        throw new Error("未选择数据");
       }
     },
     onPageNowChange(pageNow) {

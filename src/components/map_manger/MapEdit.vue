@@ -1,7 +1,7 @@
 <template>
   <div id="mapEdit">
     <!--可选单位-->
-    <div class="unit">
+    <div class="unit" v-if="flushUnitFlag">
       <div class="color_select" style="margin-top: 20px">
         <el-radio-group v-model="color" size="mini">
           <el-radio-button label="blue">蓝色</el-radio-button>
@@ -24,7 +24,7 @@
           class="un_select_unit"
           v-else
           :src="$appHelper.getUnitImg(unit.id, color)"
-          @click="getRegionTitle(unit)"
+          @click="getUnit(unit)"
         />
       </div>
       <div v-if="selectUnit && selectUnit.id" class="select_desc">
@@ -72,10 +72,9 @@
             :clickAction="[
               () => $router.push('/'),
               () => (showSelectTemp = true),
-              () => changeAction('painting'),
-              () => changeAction('delete'),
+              changeAction,
               changeMapSize,
-              saveMap,
+              () => (showChangeMsg = true),
               () => (showMapVisible = true),
             ]"
           ></ae-button-list>
@@ -116,36 +115,29 @@
       </div>
     </div>
 
-    <!--设置宽度弹出框-->
+    <!--设置宽度弹出框 改变大小新建-->
     <ae-base-dialog
       class="size_dialog"
       title="设置大小"
       v-model="reSizeDialog"
       :width="20"
     >
-      宽度：
-      <el-input-number size="mini" v-model="newMapRow"></el-input-number>
-      <br />高度：
-      <el-input-number size="mini" v-model="newMapColumn"></el-input-number>
-      <ae-button @onClick="getNewInitMap(newMapColumn, newMapRow)"
-        >确 定</ae-button
-      >
-    </ae-base-dialog>
-
-    <!--保存地图-->
-    <ae-base-dialog title="保存地图" v-model="saveMapDialog" :width="30">
-      <div style="padding: 2%">
-        <ae-input
-          v-model="saveMapName"
-          label="地图名字"
-          placeholder="请输入要保存的地图的名字"
-        ></ae-input>
-      </div>
-
-      <ae-button
-        style="margin-left: 65%; margin-top: 5%"
-        :width="65"
-        @onClick="saveDraftMap"
+      <ae-input label="名字：" v-model="currentMapInfo.map_name"></ae-input>
+      <ae-input
+        label="高度："
+        v-model="newMapColumn"
+        type="number"
+        :max="100"
+        :min="10"
+      ></ae-input>
+      <ae-input
+        label="高度："
+        v-model="newMapRow"
+        type="number"
+        :max="100"
+        :min="10"
+      ></ae-input>
+      <ae-button @onClick="createNewMapBySize(newMapColumn, newMapRow)"
         >确 定</ae-button
       >
     </ae-base-dialog>
@@ -164,42 +156,49 @@
     >
     </ae-complex-dialog>
 
-    <template-select v-model="showSelectTemp" @onSelect="selectNewTemp"></template-select>
+    <template-select
+      v-model="showSelectTemp"
+      @onSelect="createNewMapByTemplateId"
+    ></template-select>
 
     <!--预览地图-->
     <ae-map-preview
       v-model="previewVisible"
-      :mapId="currMap.map_id"
+      :mapId="currPreviewMap.map_id"
     ></ae-map-preview>
+
+    <!--用于保存或者发布-->
+    <ae-complex-dialog
+      v-model="showChangeMsg"
+      title="保存地图"
+      :formConfig="baseMapFormConfig"
+      :dataObj="currentMapInfo"
+      :footerButtons="changMapInfoButtons"
+    ></ae-complex-dialog>
   </div>
 </template>
 
 <script>
 import {
-  GetInitUserMap,
-  SaveTempMap,
+  GetLastEditMap,
   SimpleDrawing,
   GetUserMapList,
-  DelUserMap,
-  SaveMap,
+  SaveUserMap,
+  CreateDraftMap,
   ChangeUserSetting,
   GetUserMapById,
   GetUserTemplateBindUnit,
 } from "@/api";
 import RegionViewList from "../map_base/RegionViewList";
 import MapPreview from "./MapPreview.vue";
-import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import AeButtonList from "../frame/AeButtonList.vue";
-import AeComplexDialog from "../frame/AeComplexDialog.vue";
 import AeMapPreview from "./AeMapPreview.vue";
-import TemplateSelect from "../template_mange/TemplateSelect"
+import TemplateSelect from "../template_mange/TemplateSelect";
 export default {
   components: {
     RegionViewList,
     MapPreview,
-    AeBaseDialog,
     AeButtonList,
-    AeComplexDialog,
     AeMapPreview,
     TemplateSelect,
   },
@@ -216,9 +215,8 @@ export default {
 
       showItem: ["map_name"],
       showMapVisible: false,
-      saveMapDialog: false,
       previewVisible: false,
-      showSelectTemp:false,
+      showSelectTemp: false,
       initMapInfo: {},
       color: "blue",
       regionColor: "",
@@ -229,25 +227,47 @@ export default {
       // 有单位type 和 color 其他都没
       unitList: [],
       action: "painting", // 编辑模式
-      saveMapName: null, // 保存地图名
-      currMap: {},
-      editMapModel: "draft",
-      buttonList: ["主页", "新建", "绘画", "删除", "重置", "保存", "我的"],
+      currentMapInfo: { map_name: "", share: "1", map_id: null },
+      currPreviewMap: {}, // 准备预览的地图
+      buttonList: ["主页", "新建", "绘画", "重置", "保存", "我的"],
       myMapEditButtonList: [
-        { name: "删除", action: this.delMap },
         { name: "修改", action: this.editMap },
         { name: "预览", action: this.previewMap },
+      ],
+      flushUnitFlag: true, // 帮助刷新
+      currentTemplateId: null, // 当前模板ID
+
+      showChangeMsg: false,
+      baseMapFormConfig: [
+        {
+          type: "input",
+          key: "map_name",
+          des: "模板名称",
+        },
+        {
+          type: "switchSelect",
+          key: "share",
+          des: "是否共享",
+          items: [
+            { key: "1", value: "共享" },
+            { key: "0", value: "不共享" },
+          ],
+        },
+      ],
+      changMapInfoButtons: [
+        { name: "保存草稿", action: () => this.saveMap(0) },
+        { name: "发布版本", action: () => this.saveMap(1) },
       ],
     };
   },
   methods: {
     // 查看单位的说明
-    getUnitTitle(unit){
-      console.log(unit);
-      return unit.row + "行" + unit.column+"列"; 
+    getUnitTitle(unit) {
+      return unit.row + "行" + unit.column + "列";
     },
+    revertMap() {},
     previewMap() {
-      this.currMap = this.$refs.myMap.getDataGridSelect();
+      this.currPreviewMap = this.$refs.myMap.getDataGridSelect();
       this.previewVisible = true;
     },
     // 用户点击单位
@@ -261,10 +281,18 @@ export default {
       this.selectUnit = {};
     },
     // 改变行为
-    changeAction(action) {
-      this.action = action;
+    changeAction() {
+      if (this.action == "painting") {
+        this.buttonList.splice(0, 0);
+        this.buttonList[2] = "删除";
+        this.action = "delete";
+      } else {
+        this.buttonList.splice(0, 0);
+        this.buttonList[2] = "绘画";
+        this.action = "painting";
+      }
       this.$notify({
-        message: action + " 模式",
+        message: this.buttonList[2] + " 模式",
       });
     },
     // 点击单位地形
@@ -285,7 +313,9 @@ export default {
         this.doPainting();
       } else if (this.action == "delete") {
         // 删除就是画海
-        this.doPainting(index, "sea");
+        this.selectRegion = JSON.parse(JSON.stringify(this.selectRegion));
+        this.selectRegion["type"] = "sea";
+        this.doPainting();
       }
     },
     // 点击已有的单位
@@ -316,27 +346,36 @@ export default {
       });
     },
     // 获取新的初始化地图
-    getNewInitMap(row = this.mapRow, colum = this.mapColumn) {
+    createNewMapBySize() {
+      if (
+        !this.currentMapInfo.map_name ||
+        !this.newMapRow ||
+        !this.newMapColumn
+      ) {
+        this.$appHelper.errorMsg("输入有误");
+        return;
+      }
+      if (this.newMapRow < 10 || this.newMapColumn < 10) {
+        this.$appHelper.errorMsg("宽高最低是10");
+        return;
+      }
+
+      if (this.newMapRow > 100 || this.newMapColumn > 100) {
+        this.$appHelper.errorMsg("宽高最多是100哦!");
+        return;
+      }
+
       // 1. 保存用户的大小设定
       let args = {};
       args.map_init_row = row;
       args.map_init_column = colum;
       ChangeUserSetting(args);
-
-      this.userSetting.map_init_column = colum;
-      this.userSetting.map_init_row = row;
-      this.maps = [];
-      this.unitList = [];
-      for (let i = 0; i < row * colum; i++) {
-        let map = {};
-        map.color = "";
-        map.type = this.userSetting.map_init_region_type;
-        this.maps.push(map);
-      }
-      this.mapColumn = colum;
-      this.mapRow = row;
-      this.reSizeDialog = false;
-      this.$appHelper.infoMsg("重置成功");
+      this.createNewMap({
+        tempId: this.currentTemplateId,
+        mapRow: this.newMapRow,
+        mapCloumn: this.newMapColumn,
+        mapName: this.currentMapInfo.map_name,
+      });
     },
     // 执行绘画逻辑
     doPainting() {
@@ -351,16 +390,11 @@ export default {
         unit.column = this.currentEditInfo.column;
         this.unitList.push(unit);
       } else if (this.selectRegion.hasOwnProperty("type")) {
-        // 判断是不是 设置了自动优化
-        if (this.userSetting.simple_drawing) {
-          this.getSimpleDrawing(
-            this.currentEditInfo.index,
-            this.selectRegion.type
-          );
-        } else {
-          // 直接设置
-          this.updateMap(this.currentEditInfo.index, this.selectRegion.type);
-        }
+        // 地形需要优化 异步画地形
+        this.getSimpleDrawing(
+          this.currentEditInfo.index,
+          this.selectRegion.type
+        );
       }
     },
     // 优化简单绘画
@@ -382,14 +416,14 @@ export default {
         console.error(resp.resp_mes);
       }
     },
-    // 修改地图大小
+    // 修改地图地形
     updateMap(index, type) {
       this.maps[index].type = type;
       this.maps[index].color = this.regionColor;
       console.log("修改index 和 type", index, type);
     },
     // 保存地图
-    saveMap() {
+    saveMap(optType) {
       let args = {};
       this.unitList.forEach((u) => {
         if (u.id && !u.type_id) {
@@ -400,138 +434,137 @@ export default {
       args.regions = this.maps;
       args.row = this.mapRow;
       args.column = this.mapColumn;
-      if (this.editMapModel == "editMap") {
-        // 编辑模式直接保存
-        args.uuid = this.currMap.map_id;
-
-        SaveMap(args).then((resp) => {
+      args.opt_type = optType;
+      args.uuid = this.currentMapInfo.map_id;
+      args.share = this.currentMapInfo.share;
+      args.map_name = this.currentMapInfo.map_name;
+      this.$appHelper.setLoading();
+      SaveUserMap(args)
+        .then((resp) => {
           if (resp.res_code == 0) {
             this.$appHelper.infoMsg("保存成功");
             this.saveMapDialog = false;
           } else {
             this.$appHelper.errorMsg(resp.res_mes);
           }
+          this.showChangeMsg = false;
+          this.getLastEditMap();
+          this.$appHelper.setLoading();
+        })
+        .catch((err) => {
+          this.$appHelper.setLoading();
         });
-      } else if (this.editMapModel == "draft") {
-        this.saveMapDialog = true;
+    },
+    // 从创建过的地图里面选择编辑地图
+    editMap(editMap) {
+      if (!editMap) {
+        this.currPreviewMap = this.$refs.myMap.getDataGridSelect();
+        editMap = this.currPreviewMap;
       }
-    },
-    saveDraftMap() {
-      let args = {};
-      args.map_name = this.saveMapName;
-      args.template_id = this.initMapInfo.user_template.id;
-      args.units = this.unitList;
-      args.regions = this.maps;
-      args.row = this.mapRow;
-      args.column = this.mapColumn;
-      SaveMap(args).then((resp) => {
-        if (resp.res_code == 0) {
-          this.$appHelper.infoMsg("保存成功");
-        } else {
-          this.$appHelper.errorMsg(resp.res_mes);
-        }
-        this.saveMapDialog = false;
-      });
-    },
-    // 删除地图
-    delMap() {
-      this.currMap = this.$refs.myMap.getDataGridSelect();
-      let uuid = this.currMap.map_id;
-      this.$appHelper.showTip("将会删除当前地图", () => {
-        DelUserMap(uuid).then((resp) => {
-          if (resp.res_code == 0) {
-            this.$appHelper.infoMsg("删除成功");
-            this.$refs.myMap.flushData();
-          } else {
-            this.$appHelper.errorMsg(resp.res_mes);
-          }
-        });
-      });
-    },
-
-    // 编辑地图
-    editMap() {
-      this.currMap = this.$refs.myMap.getDataGridSelect();
-      if (!this.currMap) {
-        return;
-      }
-      GetUserMapById(this.currMap.map_id).then((resp) => {
+      GetUserMapById(editMap.map_id).then((resp) => {
         if (resp && resp.res_code == 0) {
           let userMap = resp.res_val;
           this.maps = userMap.regions;
           this.mapColumn = userMap.column;
           this.mapRow = userMap.row;
           this.unitList = userMap.units;
-          this.editMapModel = "editMap";
           this.showMapVisible = false;
+          this.currentMapInfo.map_name = userMap.map_name;
+          this.currentMapInfo.share = userMap.share;
+          this.currentMapInfo.map_id = userMap.uuid;
           if (resp.res_val.template_id) {
             let args = {};
-            args.template_id = resp.res_val.template_id
-            GetUserTemplateBindUnit(args).then(resp=>{
-              this.initMapInfo.unit_mes_list = resp.res_val;
-            })
+            args.template_id = resp.res_val.template_id;
+            GetUserTemplateBindUnit(args).then((resp) => {
+              this.flushUnitFlag = false;
+              this.initMapInfo.unit_mes_list = resp.res_val.unit_mes_list;
+              this.initMapInfo.region_mes = resp.res_val.region_mes;
+              this.flushUnitFlag = true;
+            });
           }
         }
       });
-      this.maps = this.currMap.regions;
-      this.mapColumn = this.currMap.column;
-      this.mapRow = this.currMap.row;
-      this.unitList = this.currMap.units;
-      this.editMapModel = "editMap";
-      this.showMapVisible = false;
     },
     // 初始化
-    init(tempId) {
-      let args  = {}
+    createNewMap({ tempId, mapRow, mapCloumn, mapName }) {
+      let args = {};
       args.template_id = tempId;
+      args.map_row = mapRow;
+      args.map_cloumn = mapCloumn;
+      args.map_name = mapName;
+
       this.$appHelper.setLoading();
-      GetInitUserMap(args).then((resp) => {
-        if (resp.res_code == 0) {
+      CreateDraftMap(args)
+        .then((resp) => {
+          if (resp.res_code == 0) {
+            this.currentMapInfo.map_name = mapName;
+            // 默认共享
+            this.currentMapInfo.share = "1";
+            this.currentMapInfo.map_id = this.initMapInfo.un_save_map.uuid;
+            this.initMapInfo = resp.res_val;
+            this.userSetting = resp.res_val.user_setting;
+            this.unitList = this.initMapInfo.un_save_map.units;
+            if (!this.unitList) {
+              this.unitList = [];
+            }
+            this.maps = this.initMapInfo.un_save_map.regions;
+            this.mapColumn = this.initMapInfo.un_save_map.column;
+            this.mapRow = this.initMapInfo.un_save_map.row;
+          } else {
+            this.$appHelper.errorMsg(resp.res_mes);
+          }
+          this.$appHelper.setLoading();
+        })
+        .catch((err) => {
+          this.$appHelper.setLoading();
+        });
+    },
+
+    createNewMapByTemplateId(tempId) {
+      console.log("新的模板Id");
+      this.$appHelper.showInputDialog("创建地图", "地图名称", (mapName) => {
+        this.createNewMap({
+          tempId: tempId,
+          mapName: mapName,
+          mapRow: this.mapRow,
+          mapCloumn: this.mapCloumn,
+        });
+      });
+    },
+    /**
+     * 获取上一个编辑的地图
+     */
+    getLastEditMap() {
+      GetLastEditMap().then((resp) => {
+        if (resp.res_code == "0") {
           this.initMapInfo = resp.res_val;
           this.userSetting = resp.res_val.user_setting;
           this.unitList = this.initMapInfo.un_save_map.units;
           if (!this.unitList) {
             this.unitList = [];
           }
+          this.currentMapInfo.map_name = resp.res_val.un_save_map.map_name;
+          this.currentMapInfo.share = resp.res_val.un_save_map.share;
+          this.currentMapInfo.map_id = resp.res_val.un_save_map.uuid;
+
           this.maps = this.initMapInfo.un_save_map.regions;
           this.mapColumn = this.initMapInfo.un_save_map.column;
           this.mapRow = this.initMapInfo.un_save_map.row;
-        } else {
-          this.$appHelper.errorMsg(resp.res_mes);
+          this.currentTemplateId = this.initMapInfo.user_template.id;
         }
-        this.$appHelper.setLoading();
-      }).catch(err=>{
-        this.$appHelper.setLoading();
-      })
-    },
-
-    selectNewTemp(tempId){
-      console.log("新的模板Id");
-      this.init(tempId);
-    },
-
-    // 销毁之前保存临时地图
-    saveTempMap() {
-      if (this.editMapModel == "draft") {
-        let userMap = {};
-        this.unitList.forEach((u) => {
-          if (u.id && !u.type_id) {
-            u.type_id = u.id;
-          }
-        });
-        userMap.units = this.unitList;
-        userMap.regions = this.maps;
-        userMap.row = this.mapRow;
-        userMap.column = this.mapColumn;
-        userMap.template_id = this.initMapInfo.user_template.id;
-        SaveTempMap(userMap);
-      }
+      });
     },
   },
   created() {
     // 1.获取初始化地图的宽高 初始化地图的type 获取已有地图的Id Name 获取可编辑的Unit 和 Region
     this.queryFunction = GetUserMapList;
-    this.init();
+    if (this.$route.params.mapId && this.$route.params.mapId != "0") {
+      let map = {};
+      map.map_id = this.$route.params.mapId;
+      this.editMap(map);
+    } else {
+      this.getLastEditMap();
+    }
 
     window.MapEditVue = this;
   },
@@ -561,7 +594,8 @@ export default {
     },
   },
   destroyed() {
-    this.saveTempMap();
+    // TODO 暂时不实现 需要判断没有保存的 需要与地图的回退和恢复一起实现
+    // this.saveMap("0");
   },
 };
 </script>
@@ -576,7 +610,8 @@ export default {
     margin-left: 1%;
     height: 100%;
     color: rgb(255, 255, 255);
-    .select_unit, .un_select_unit {
+    .select_unit,
+    .un_select_unit {
       float: left;
       margin-left: 20px;
       margin-top: 20px;

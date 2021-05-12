@@ -6,9 +6,7 @@ import GameIndex from '../components/game_core/Index.vue'
 import GameMonitor from '../components/game_core/GameMonitor.vue'
 import Demo from '@/components/Demo'
 
-import AdminLogin from '@/components/template_mange/AdminLogin'
 import UserRecord from '@/components/map_manger/UserRecord'
-import AdminRegion from '@/components/template_mange/AdminRegion'
 
 import WebSocket from '@/components/WebSocket'
 
@@ -41,15 +39,11 @@ export default new Router({
       name: 'GameIndex',
       component: GameIndex
     }, {
-      path: '/mapEdit',
+      path: '/mapEdit/:mapId',
       name: 'MapEdit',
       component: MapEdit,
-    },
-    {
-      path: '/admin/login',
-      name: 'AdminLogin',
-      component: AdminLogin
-    },{
+    }
+    ,{
       path: '/ws',
       name: 'WebSocket',
       component: WebSocket

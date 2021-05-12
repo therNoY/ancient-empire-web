@@ -8,6 +8,14 @@
       :closeTip="closeTip"
       @ok="tipOk"
     ></ae-tip>
+    <ae-input-dialog
+      ref="aeInputDialog"
+      :title="inputDialog.title"
+      :label="inputDialog.label"
+      :placeholder="inputDialog.placeholder"
+      v-model="showGlableInputDialog"
+      @ok="inputDialogOk"
+    ></ae-input-dialog>
     <ae-message
       :mes="mes"
       :show="show"
@@ -18,17 +26,25 @@
 </template>
 
 <script>
+import AeInputDialog from "./components/frame/AeInputDialog.vue";
 import AeLoading from "./components/frame/AeLoading.vue";
 import AeMessage from "./components/frame/AeMessage.vue";
 import AeTip from "./components/frame/AeTip.vue";
 export default {
-  components: { AeLoading, AeMessage, AeTip },
+  components: { AeLoading, AeMessage, AeTip, AeInputDialog },
   name: "App",
   data() {
     return {
       showGlableTip: false,
-      callback: null,
+      showGlableInputDialog: false,
+      tipCallback: null,
+      inputCallback: null,
       closeTip: null,
+      inputDialog:{
+        title:null,
+        label:null,
+        placeholder:"请输入..."
+      },
       mes: null,
       show: false,
       type: "info",
@@ -39,7 +55,7 @@ export default {
     showTip({ message, callback, buttonList }) {
       (this.buttonList = buttonList), (this.showGlableTip = true);
       this.closeTip = message;
-      this.callback = callback;
+      this.tipCallback = callback;
     },
     showMessage({ type, mes }) {
       this.type = type;
@@ -52,15 +68,28 @@ export default {
         this.show = false;
       }, 1000);
     },
+    showInputDialog({ title, label, placeholder, callback }) {
+      this.inputDialog.title = title;
+      this.inputDialog.label = label;
+      this.inputDialog.placeholder = placeholder;
+      this.showGlableInputDialog = true;
+      this.inputCallback = callback;
+    },
     tipOk() {
-      if (this.callback && this.callback instanceof Function) {
-        this.callback();
+      if (this.tipCallback && this.tipCallback instanceof Function) {
+        this.tipCallback();
       }
     },
+    inputDialogOk(res){
+      if (this.inputCallback && this.inputCallback instanceof Function) {
+        this.inputCallback(res);
+      }
+    }
   },
   created() {
     this.$eventBus.regist(this, "showTip");
     this.$eventBus.regist(this, "showMessage");
+    this.$eventBus.regist(this, "showInputDialog");
   },
 };
 </script>

@@ -247,7 +247,7 @@ export default {
       }
       Register(args).then((resp) => {
         if (resp.res_code == 0) {
-          this.$message("确认邮件已发出 请确认查收");
+          this.$appHelper.successMsg("确认邮件已发出 请确认查收");
           this.close();
         } else {
           this.$appHelper.errorMsg(resp.res_mes);

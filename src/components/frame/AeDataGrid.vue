@@ -104,7 +104,7 @@ export default {
       };
     },
     getTabelTdStyle(index) {
-      if (this.tableConfig[index] && this.tableConfig[index]["style"]) {
+      if (this.tableConfig && this.tableConfig[index] && this.tableConfig[index]["style"]) {
         return this.tableConfig[index]["style"];
       }
       return {};

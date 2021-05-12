@@ -1,9 +1,9 @@
 <template>
   <ae-base-dialog
+    id="aeMapPreview"
     v-if="!loading"
     :title="mapName"
-    :value="value"
-    id="aeMapPreview"
+    :value="showModel"
     @close="close"
     :width="$appHelper.getMapSize(currentMap.column)"
   >
@@ -35,7 +35,11 @@ import PointView from "../map_base/PointView.vue";
 import RegionViewList from "../map_base/RegionViewList.vue";
 import TombView from "../map_base/TombView.vue";
 import UnitViewList from "../map_base/UnitViewList.vue";
+import dialogShow from "../../mixins/frame/dialogShow.js";
+
 export default {
+  mixins: [dialogShow],
+
   components: {
     RegionViewList,
     UnitViewList,
@@ -100,6 +104,9 @@ export default {
     },
   },
   methods: {
+    onDialogCreate(){
+      this.initMap();
+    },
     initMap() {
       if (this.map) {
         this.currentMap = this.map;
@@ -111,15 +118,13 @@ export default {
             .then((resp) => {
               if (resp && resp.res_code == 0) {
                 this.currentMap = {};
-                this.currentMap.regions =
-                  resp.res_val.game_map.regions;
+                this.currentMap.regions = resp.res_val.game_map.regions;
                 this.currentMap.tombs = resp.res_val.tomb_list;
                 this.currentMap.row = resp.res_val.game_map.row;
-                this.currentMap.column =
-                  resp.res_val.game_map.column;
+                this.currentMap.column = resp.res_val.game_map.column;
                 this.currentMap.map_name = resp.res_val.record_name;
                 this.currentMap.currPoint = resp.res_val.curr_point;
-                
+
                 let army_list = resp.res_val.army_list;
                 this.currentMap.units = [];
                 for (let army of army_list) {
@@ -158,13 +163,6 @@ export default {
     close() {
       this.currentMap = {};
       this.$emit("input", false);
-    },
-  },
-  watch: {
-    value(v) {
-      if (v) {
-        this.initMap();
-      }
     },
   },
 };

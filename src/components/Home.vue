@@ -3,24 +3,30 @@
   <div class="home">
     <img class="logo" src="../assets/images/assist/logo.png" alt />
     <div class="buttons">
-      <button class="home_button" @click="clikUserInfo">玩家</button>
+      <button class="home_button" @click="clickUserInfo">玩家</button>
       <button class="home_button" @click="showChapter = true">战役</button>
-      <button class="home_button" @click="showEncounter= true">遭遇战</button>
-      <button class="home_button" @click="showNetGameDialog = true">多人游戏</button>
-      <button class="home_button" @click="showUserRecord = true">读取游戏</button>
+      <button class="home_button" @click="showEncounter = true">遭遇战</button>
+      <button class="home_button" @click="showNetGameDialog = true">
+        多人游戏
+      </button>
+      <button class="home_button" @click="showUserRecord = true">
+        读取游戏
+      </button>
       <!-- <button class="home_button" @click="router('setting')">我的设置</button> -->
-      <button class="home_button" @click="showUnitMange = true">单位管理</button>
-      <button class="home_button" @click="showTemplatManger = true">模板管理</button>
-      <button class="home_button" @click="router('mapEdit')">地图管理</button>
+      <button class="home_button" @click="showUnitMange = true">
+        单位管理
+      </button>
+      <button class="home_button" @click="showTemplatManger = true">
+        模板管理
+      </button>
+      <button class="home_button" @click="showMapManger = true">
+        地图管理
+      </button>
+      <button class="home_button" @click="router('mapEdit/0')">编辑地图</button>
       <!-- <button class="home_button" @click="router('demo')">帮助</button>   -->
-      <button class="home_button" @click="router('monitor')">监控</button>
+      <!-- <button class="home_button" @click="router('monitor')">监控</button> -->
     </div>
 
-    <my-dialog
-      v-if="dialogVisible"
-      @login="goLogin"
-      @close="dialogVisible = false"
-    >由于该功能需要联网，请先登录使用此功能</my-dialog>
     <user-info
       v-model="userInfoDialog"
       :user="loginUser"
@@ -38,21 +44,24 @@
     <unit-mes-manger v-model="showUnitMange"></unit-mes-manger>
     <!--用户记录-->
     <user-record v-model="showUserRecord"></user-record>
-    
+
     <!--章节选择-->
     <chapter-select v-model="showChapter"></chapter-select>
+
+    <map-manger v-model="showMapManger"></map-manger>
   </div>
 </template>
 
 <script>
 import UserInfo from "./UserInfo.vue";
-import RoomIndex from './net/room/RoomIndex.vue';
-import Encounter from './encounter/Encounter.vue';
-import UserRecord from './encounter/UserRecord.vue';
-import TemplateManger from "./template_mange/TemplateManger.vue"
-import UnitMesManger from "./template_mange/UnitMesManger.vue"
-import MapEdit from './map_manger/MapEdit.vue';
-import ChapterSelect from './encounter/ChapterSelect.vue';
+import RoomIndex from "./net/room/RoomIndex.vue";
+import Encounter from "./encounter/Encounter.vue";
+import UserRecord from "./encounter/UserRecord.vue";
+import TemplateManger from "./template_mange/TemplateManger.vue";
+import UnitMesManger from "./template_mange/UnitMesManger.vue";
+import MapManger from "./map_manger/MapManger.vue";
+import MapEdit from "./map_manger/MapEdit.vue";
+import ChapterSelect from "./encounter/ChapterSelect.vue";
 
 export default {
   components: {
@@ -63,80 +72,41 @@ export default {
     TemplateManger,
     UnitMesManger,
     MapEdit,
-    ChapterSelect
+    ChapterSelect,
+    MapManger,
   },
   data() {
     return {
       loginUser: {},
       dialogVisible: false,
       loginVisible: false,
-      registerVisible: false,
       userInfoDialog: false,
-      showNetGameDialog:false,
-      showEncounter:false,
-      showUserRecord:false,
-      showTemplatManger:false,
-      showUnitMange:false,
-      showMapEdit:false,
-      showChapter:false,
+      showNetGameDialog: false,
+      showEncounter: false,
+      showUserRecord: false,
+      showTemplatManger: false,
+      showUnitMange: false,
+      showMapEdit: false,
+      showChapter: false,
+      showMapManger: false,
     };
   },
   methods: {
     // 点击玩家时
-    clikUserInfo() {
+    clickUserInfo() {
       this.userInfoDialog = !this.userInfoDialog;
-    },
-    register() {
-      this.dialogVisible = false;
-      this.loginVisible = false;
-      this.registerVisible = true;
-    },
-    doRegister() {
-      console.log("注册");
     },
     logout() {
       this.userInfoDialog = false;
       this.loginUser = {};
     },
-    goLogin() {
-      this.dialogVisible = false;
-      this.loginVisible = true;
-    },
-    isHaveToken() {
-      console.log(this.$store.getters.token);
-      if (
-        this.$store.getters.token != null &&
-        this.$store.getters.token != ""
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     router(path) {
-      if (path == "mapEdit") {
-        if (!this.isHaveToken()) {
-          this.dialogVisible = true;
-        }else {
-          this.$router.push("/" + path);
-        }
-      }else {
-        this.$router.push("/" + path);
-      }
+      this.$router.push("/" + path);
     },
-    async get() {
-      let dog = {};
-      dog.id = 1;
-      dog.name = "小花";
-      const rep = await GetTest("api/get");
-      console.log(rep);
-    }
   },
   created() {
-    document
-      .querySelector("body")
-      .setAttribute("style", "background-color:#464846");
-  }
+    document.querySelector("body").setAttribute("style", "background-color:#464846");
+  },
 };
 </script>
 
