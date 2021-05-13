@@ -1,4 +1,4 @@
-<!--显示一个单位-->
+<!--显示一个单位详情信息-->
 <template>
   <div :style="unitSiteStyle" @click="clickUnit">
     <div class="unitImg">

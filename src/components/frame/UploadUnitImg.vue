@@ -16,9 +16,9 @@
           v-for="(item, index) in uploadImg"
           :key="item.key"
         >
-          <click-point @clickPoint="removeUnit(index)">
+          <ae-click-point @clickPoint="removeUnit(index)">
             <img :src="$appHelper.getUnitImg(item, 'temporary')" />
-          </click-point>
+          </ae-click-point>
         </div>
       </div>
       <ae-button-list
@@ -39,18 +39,12 @@
 <script>
 
 import UploadGameImg from "./UploadGameImg.vue";
-import ClickPoint from "../frame/ClickPoint.vue";
-import dialogShow from "../../mixins/frame/dialogShow.js";
-import AeButtonList from "../frame/AeButtonList.vue";
-import AeBaseDialog from "../frame/AeBaseDialog.vue";
+import dialogShow from "@/mixins/frame/dialogShow.js";
 import { CreateUnitImg } from "@/api";
 export default {
   mixins: [dialogShow],
   components: {
     UploadGameImg,
-    ClickPoint,
-    AeButtonList,
-    AeBaseDialog,
   },
   props: {
     unitId: {

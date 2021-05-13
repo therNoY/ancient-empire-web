@@ -24,12 +24,8 @@
 </template>
 
 <script>
-import AeForm from "../frame/AeForm.vue";
 
 export default {
-  components: {
-    AeForm,
-  },
   props: {
     formConfig: {
       type: Array,

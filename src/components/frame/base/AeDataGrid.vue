@@ -41,10 +41,10 @@
             </td>
           </tr>
         </table>
-        
+
       </div>
     </div>
-    
+
     <ae-page
       ref="aePage"
       v-if="page"
@@ -55,10 +55,7 @@
 </template>
 
 <script>
-import AeDynamic from "./AeDynamic.vue";
-import AePage from "./AePage.vue";
 export default {
-  components: { AePage, AeDynamic },
   props: {
     data: {
       type: Array,

@@ -68,16 +68,9 @@
 </template>
 
 <script>
-import AeBaseDialog from "./AeBaseDialog.vue";
-import AeButtonList from "./AeButtonList.vue";
-import AeDataGrid from "./AeDataGrid.vue";
-import AeForm from "./AeForm.vue";
+
 export default {
   components: {
-    AeButtonList,
-    AeDataGrid,
-    AeForm,
-    AeBaseDialog,
   },
   props: {
     value: {

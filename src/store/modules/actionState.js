@@ -5,8 +5,8 @@ const store = {
     action: [], // 单位可以有的action
     leftChanges: [], // 单位血量变化
     animates: [], // 展示的动画,
-    levelUpInfo: null,
-    levelUpSite: null,
+    levelUpInfo: null, // 单位升级详情
+    levelUpSite: null, // 单位升级位置
   },
   mutations: {
     setAction(state, action) {

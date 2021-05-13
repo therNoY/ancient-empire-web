@@ -1,6 +1,6 @@
 <template>
   <ae-base-dialog
-    id="aeMapPreview"
+    id="mapPreview"
     v-if="!loading"
     :title="mapName"
     :value="showModel"
@@ -30,12 +30,11 @@
 
 <script>
 import { GetUserMapWithConfig, GetRecordById } from "../../api";
-import AeBaseDialog from "../frame/AeBaseDialog.vue";
 import PointView from "../map_base/PointView.vue";
 import RegionViewList from "../map_base/RegionViewList.vue";
 import TombView from "../map_base/TombView.vue";
 import UnitViewList from "../map_base/UnitViewList.vue";
-import dialogShow from "../../mixins/frame/dialogShow.js";
+import dialogShow from "@/mixins/frame/dialogShow.js";
 
 export default {
   mixins: [dialogShow],
@@ -45,7 +44,6 @@ export default {
     UnitViewList,
     TombView,
     PointView,
-    AeBaseDialog,
   },
   /**
    * props设置默认值 指定类型
@@ -79,7 +77,7 @@ export default {
     };
   },
   created() {
-    window.AeMapPreviewVue = this;
+    window.MapPreviewVue = this;
     this.initMap();
   },
   computed: {
@@ -169,7 +167,7 @@ export default {
 </script>
 
 <style lang="scss" >
-#aeMapPreview {
+#mapPreview {
   .preview_map {
     position: absolute;
     float: left;

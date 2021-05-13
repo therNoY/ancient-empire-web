@@ -14,9 +14,9 @@
     >
 
     <div class="unit">
-      <click-point :disabled="!editAble" v-if="value" @clickPoint="deleteUnit">
+      <ae-click-point :disabled="!editAble" v-if="value" @clickPoint="deleteUnit">
         <unit :unit_id="value" :color="color"></unit>
-      </click-point>
+      </ae-click-point>
     </div>
 
     <unit-choose-list
@@ -29,11 +29,10 @@
 </template>
 
 <script>
-import ClickPoint from "../frame/ClickPoint.vue";
 import Unit from "./Unit.vue";
 import UnitChooseList from "./UnitChooseList.vue";
 export default {
-  components: { Unit, UnitChooseList, ClickPoint },
+  components: { Unit, UnitChooseList },
   props: {
     value: {},
     color: {

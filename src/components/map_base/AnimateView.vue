@@ -1,5 +1,5 @@
+<!--所有的动画特效-->
 <template>
-  <!--展示特效-->
   <div>
     <div v-for="(animate,index) in animates" :key="index">
       <img

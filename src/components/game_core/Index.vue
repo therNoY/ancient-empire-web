@@ -17,8 +17,8 @@
               :column="game.game_map.column"
               @clickRegion="clickRegion"
             />
-            <attach-view />
-            <tomb-view :tombs="tombs" />
+            <attach-area />
+            <tomb-view />
             <move-area :point="game.curr_point" />
             <army-view
               @unitOnClick="clickUnit"
@@ -29,11 +29,8 @@
             <action-view />
             <left-change />
             <animate-view />
-            <up-show-animate
-              v-model="$store.getters.actionState.levelUpInfo"
-              :site="$store.getters.actionState.levelUpSite"
-            ></up-show-animate>
-            <game-dialog></game-dialog>
+            <up-show-animate />
+            <game-dialog />
           </div>
         </el-main>
       </el-container>
@@ -50,7 +47,7 @@
       :curr_color="game.curr_color"
       :region="game.curr_region"
     />
-    <buy-unit></buy-unit>
+    <buy-unit/>
   </div>
 </template>
 
@@ -62,7 +59,7 @@ import RegionMes from "./map_mes/RegionMes.vue";
 import PointView from "../map_base/PointView.vue";
 import MoveArea from "../map_base/MoveArea.vue";
 import ActionView from "../map_base/ActionView.vue";
-import AttachView from "../map_base/AttachArea.vue";
+import AttachArea from "../map_base/AttachArea.vue";
 import LeftChange from "../map_base/LeftChangeView.vue";
 import AnimateView from "../map_base/AnimateView.vue";
 import TombView from "../map_base/TombView.vue";
@@ -80,7 +77,7 @@ export default {
     PointView,
     MoveArea,
     ActionView,
-    AttachView,
+    AttachArea,
     LeftChange,
     AnimateView,
     TombView,
@@ -132,9 +129,7 @@ export default {
         };
       }
     },
-    tombs() {
-      return this.$store.getters.game.tomb_list;
-    },
+
   },
   methods: {
     // 开启一个后台进程 计时器

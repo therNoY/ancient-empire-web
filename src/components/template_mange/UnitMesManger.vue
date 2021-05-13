@@ -60,27 +60,15 @@
     UpdateUnitVersion,
     RevertUnitVersion,
   } from "@/api";
-  import UnitRadio from "../map_base/UnitRadio.vue";
-  import AeTransfer from "../frame/AeTransfer.vue";
-  import dialogShow from "../../mixins/frame/dialogShow.js";
-  import AeBaseDialog from "../frame/AeBaseDialog.vue";
-  import AeComplexDialog from "../frame/AeComplexDialog.vue";
-  import AeButtonList from "../frame/AeButtonList.vue";
-  import StartComment from "../frame/StartComment.vue";
-  import AeForm from "../frame/AeForm.vue";
-  import AeDataGrid from "../frame/AeDataGrid.vue";
-  import UploadUnitImg from "../map_base/UploadUnitImg.vue";
+  import UnitRadio from "@frame/UnitRadio.vue";
+  import dialogShow from "@/mixins/frame/dialogShow.js";
+  import StartComment from "@frame/StartComment.vue";
+  import UploadUnitImg from "@frame/UploadUnitImg.vue";
   export default {
     mixins: [dialogShow],
     components: {
       UnitRadio,
-      AeTransfer,
-      AeBaseDialog,
-      AeComplexDialog,
-      AeButtonList,
       StartComment,
-      AeForm,
-      AeDataGrid,
       UploadUnitImg,
     },
     data() {

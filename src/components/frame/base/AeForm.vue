@@ -73,10 +73,10 @@
 </template>
 
 <script>
-import UnitRadio from "../map_base/UnitRadio.vue";
-import UnitCheckbox from "../map_base/UnitCheckbox.vue";
-import UserMapSelect from "../map_base/UserMapSelect.vue";
-import EditableAnimate from "../map_base/EditableAnimate.vue";
+import UnitRadio from "../UnitRadio.vue";
+import UnitCheckbox from "../UnitCheckbox.vue";
+import UserMapSelect from "../../map_manger/UserMapSelect";
+import EditableAnimate from "../EditableAnimate.vue";
 
 export default {
   components: { UserMapSelect, UnitRadio, UnitCheckbox, EditableAnimate },

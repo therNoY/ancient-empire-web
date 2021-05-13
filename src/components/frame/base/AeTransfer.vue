@@ -8,7 +8,7 @@
         {{ addAbleTitle }}
       </div>
       <div v-if="dataList.length > 0">
-        <click-point
+        <ae-click-point
           v-for="(item, index) in addAbleList"
           :key="index"
           value="+"
@@ -27,7 +27,7 @@
           <el-tag v-else effect="dark">{{
             showKey ? item[showKey] : item
           }}</el-tag>
-        </click-point>
+        </ae-click-point>
       </div>
     </div>
     <div class="transfer_right">
@@ -35,7 +35,7 @@
         {{ valueTitle }}
       </div>
       <div v-if="value.length > 0">
-        <click-point
+        <ae-click-point
           v-for="(item, index) in value"
           class="transfer_item"
           :disabled="disabled"
@@ -55,16 +55,14 @@
           <el-tag v-else type="success" effect="dark">{{
             showKey ? item[showKey] : item
           }}</el-tag>
-        </click-point>
+        </ae-click-point>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ClickPoint from "./ClickPoint.vue";
 export default {
-  components: { ClickPoint },
   props: {
     value: {
       type: Array,

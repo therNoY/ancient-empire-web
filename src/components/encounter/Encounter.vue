@@ -23,13 +23,11 @@ import {
   GetUnitLevelByTemp,
   MapInit,
 } from "@/api";
-import AeButtonList from "../frame/AeButtonList.vue";
-import UserMapSelect from "../map_base/UserMapSelect";
+import UserMapSelect from "../map_manger/UserMapSelect";
 
 export default {
   components: {
     UserMapSelect,
-    AeButtonList,
   },
   props: {
     value: {

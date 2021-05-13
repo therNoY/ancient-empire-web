@@ -2,7 +2,7 @@
   <div class="army_mes" :style="$appHelper.getBkColor(curr_color)">
     <!--当前回合信息-->
     <div class="bar_mes">
-      <el-tooltip content="金币1" placement="top" effect="light">
+      <el-tooltip content="金币" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_money.png" />
           <span>&nbsp;{{ currentArmy.money }}</span>
@@ -16,7 +16,7 @@
         </div>
       </el-tooltip>
 
-      <el-tooltip content="回合数" placement="top" effect="light">
+      <el-tooltip content="回合" placement="top" effect="light">
         <div>
           <img src="../../../assets/images/assist/bar_round.png" />
           <span>&nbsp;&nbsp;{{ currentArmy.current_round }}</span>

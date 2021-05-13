@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--升级-->
-    <div class="level_up" v-if="value">
+    <div class="level_up" v-if="showLevelUp">
       <img
         :src="upImg"
         :style="style"
@@ -13,11 +13,6 @@
 <script>
 export default {
   props:{
-    value:{
-      type:String,
-      default:null,
-    },
-    site:{}
   },
   data() {
     return {
@@ -32,6 +27,12 @@ export default {
     },
     upImg(){
       return this.$appHelper.getTemplateImg(this.value);
+    },
+    showLevelUp(){
+      return this.$store.getters.actionState.levelUpInfo;
+    },
+    site(){
+      return this.$store.getters.actionState.levelUpSite;
     }
   }
 };

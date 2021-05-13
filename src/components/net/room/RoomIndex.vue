@@ -1,6 +1,6 @@
 <template>
   <div>
-    
+
     <ae-complex-dialog
       ref="mainDiaglog"
       v-model="showModel"
@@ -35,25 +35,25 @@
       :armyConfigs="armyConfigList"
     ></join-room>
 
-    <ae-map-preview
+    <map-preview
       v-model="previewVisible"
       @close="closePreview"
       :mapId="previewMapId"
       :armyConfigList="armyConfigList"
-    ></ae-map-preview>
+    ></map-preview>
   </div>
 </template>
 
 <script>
 import { GetRoomListByPage, PlayerJoinRoom, CreateRoom } from "@/api";
 import JoinRoom from "./JoinRoom.vue";
-import AeMapPreview from "../../map_manger/AeMapPreview.vue";
-import dialogShow from "../../../mixins/frame/dialogShow.js";
+import MapPreview from "@frame/MapPreview.vue";
+import dialogShow from "@/mixins/frame/dialogShow.js";
 export default {
   mixins: [dialogShow],
   components: {
     JoinRoom,
-    AeMapPreview,
+    MapPreview,
   },
   props: {},
   data() {
@@ -148,7 +148,7 @@ export default {
     },
     clickJoinGameButton() {
       let selectMap = this.$refs.mainDiaglog.getDataGridSelect();
-     
+
       this.$appHelper.setLoading();
       let joinRoomSocket = this.$refs.joinRoom.joinRoomSocket(selectMap.room_id);
       joinRoomSocket.then((resp) => {

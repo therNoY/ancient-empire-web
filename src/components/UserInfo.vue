@@ -64,11 +64,7 @@
 <script>
 import { setUser, setToken } from "../utils/auth";
 import { Login, Register, ChangePwd } from "../api";
-import AeButtonList from "./frame/AeButtonList.vue";
-import AeForm from "./frame/AeForm.vue";
-import AeBaseDialog from "./frame/AeBaseDialog.vue";
 export default {
-  components: { AeButtonList, AeForm, AeBaseDialog },
   props: {
     value: {
       type: Boolean,

@@ -2,7 +2,8 @@
   <!--坟墓-->
   <div class="tomb">
     <img
-      v-for="tomb in tombs"
+      v-for="(tomb,index) in tombs"
+      :key="index"
       src="../../assets/images/unit/tomb.png"
       @click="operationTomb(tomb)"
       :style="{
@@ -17,9 +18,6 @@
 import eventype from "../../manger/eventType";
 export default {
   props:{
-    tombs:{
-      type:Array
-    }
   },
   methods:{
     // 鼠标点击坟墓
@@ -28,6 +26,9 @@ export default {
         // 点击了其他的单位 或者已经行动过了
         this.$appHelper.sendEvent(eventype.CLICK_TOMB, tomb);
       }
+    },
+    tombs() {
+      return this.$store.getters.game.tomb_list;
     },
   }
 };

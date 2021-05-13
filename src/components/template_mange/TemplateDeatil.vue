@@ -32,13 +32,12 @@
 </template>
 
 <script>
-import EditableAnimate from "../map_base/EditableAnimate.vue";
-import UnitRadio from "../map_base/UnitRadio.vue";
-import UnitCheckbox from "../map_base/UnitCheckbox.vue";
-import PreviewUnitList from "../map_base/PreviewUnitList.vue";
-import StartComment from "../frame/StartComment.vue";
-import dialogShow from "../../mixins/frame/dialogShow.js";
-import AeButtonList from "../frame/AeButtonList.vue";
+import EditableAnimate from "@frame/EditableAnimate.vue";
+import UnitRadio from "@frame/UnitRadio.vue";
+import UnitCheckbox from "@frame/UnitCheckbox.vue";
+import PreviewUnitList from "@frame/PreviewUnitList.vue";
+import StartComment from "@frame/StartComment.vue";
+import dialogShow from "@/mixins/frame/dialogShow.js";
 import {
   SaveTemplateInfo,
   RemoveUserTemplate,
@@ -46,7 +45,6 @@ import {
   UpdateUserTempAttention,
   RevertTemplateVersion,
 } from "@/api";
-import AeTabForm from "../frame/AeTabForm.vue";
 export default {
   mixins: [dialogShow],
   props: {
@@ -63,8 +61,6 @@ export default {
     UnitCheckbox,
     PreviewUnitList,
     StartComment,
-    AeButtonList,
-    AeTabForm,
   },
   data() {
     return {
@@ -253,7 +249,7 @@ export default {
         }
       });
     },
-    
+
     saveDraft() {
       let args = this.templateDeatil;
       args.relation_unit_list = this.templateDeatil.bind_uint_list.map(

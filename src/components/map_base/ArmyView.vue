@@ -14,6 +14,7 @@
 <script>
 import UnitViewList from "./UnitViewList.vue";
 export default {
+  props: ["armys", "singo"],
   components: {
     UnitViewList,
   },
@@ -23,7 +24,6 @@ export default {
       this.$emit("unitOnClick", unit);
     },
   },
-  props: ["armys", "singo"],
 };
 </script>
 

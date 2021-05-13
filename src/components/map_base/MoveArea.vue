@@ -4,7 +4,8 @@
     <!--可移动区域-->
     <div class="move_area" v-if="moveAreas && moveAreas.length > 0">
       <img
-        v-for="moveArea in moveAreas"
+        v-for="(moveArea,index) in moveAreas"
+        :key="'MOVEAREA_' + index"
         src="../../assets/images/assist/alpha.png"
         @click="showMoveLine(moveArea.row, moveArea.column)"
         :style="{
@@ -16,8 +17,8 @@
     <!--移动路线-->
     <div
       class="movePath"
-      v-if="moveLine && moveLine.length > 0"
       v-for="(pathPoint, index) in moveLine"
+      :key="'MOVELINE_' + index"
     >
       <div
         v-if="index < moveLine.length - 1"

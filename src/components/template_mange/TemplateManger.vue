@@ -29,8 +29,7 @@
 </template>
 
 <script>
-import AeBaseDialog from "../frame/AeBaseDialog.vue";
-import PreviewUnitList from "../map_base/PreviewUnitList.vue";
+import PreviewUnitList from "@frame/PreviewUnitList.vue";
 import {
   GetUserTemplate,
   GetUserDraftTemplate,
@@ -39,7 +38,7 @@ import {
   DownloadTemplate,
 } from "@/api";
 
-import dialogShow from "../../mixins/frame/dialogShow.js";
+import dialogShow from "@/mixins/frame/dialogShow.js";
 import TemplateDeatil from "./TemplateDeatil.vue";
 
 const showBindUnitRender = function (h, params) {
@@ -52,7 +51,7 @@ const showBindUnitRender = function (h, params) {
 
 export default {
   mixins: [dialogShow],
-  components: { AeBaseDialog, TemplateDeatil },
+  components: { TemplateDeatil },
   props: {},
   data() {
     return {

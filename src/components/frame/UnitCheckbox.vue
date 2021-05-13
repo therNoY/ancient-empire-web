@@ -17,12 +17,12 @@
         v-for="(unit, index) in localUnitList"
         :key="index"
       >
-        <click-point
+        <ae-click-point
           :disabled="disabled"
           @clickPoint="removeUnitFromList(unit, index)"
         >
           <unit class="unit" :unit_id="unit.id"></unit>
-        </click-point>
+        </ae-click-point>
       </div>
     </div>
 
@@ -39,12 +39,10 @@
 import { GetAddTempAbleUnit } from "@/api";
 import Unit from "./Unit.vue";
 import UnitChooseList from "./UnitChooseList.vue";
-import ClickPoint from "../frame/ClickPoint.vue";
 export default {
   components: {
     Unit,
     UnitChooseList,
-    ClickPoint,
   },
   props: {
     template_id: {},

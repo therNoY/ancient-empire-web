@@ -162,10 +162,10 @@
     ></template-select>
 
     <!--预览地图-->
-    <ae-map-preview
+    <map-preview
       v-model="previewVisible"
       :mapId="currPreviewMap.map_id"
-    ></ae-map-preview>
+    ></map-preview>
 
     <!--用于保存或者发布-->
     <ae-complex-dialog
@@ -190,16 +190,12 @@ import {
   GetUserTemplateBindUnit,
 } from "@/api";
 import RegionViewList from "../map_base/RegionViewList";
-import MapPreview from "./MapPreview.vue";
-import AeButtonList from "../frame/AeButtonList.vue";
-import AeMapPreview from "./AeMapPreview.vue";
+import MapPreview from "@frame/MapPreview.vue";
 import TemplateSelect from "../template_mange/TemplateSelect";
 export default {
   components: {
     RegionViewList,
     MapPreview,
-    AeButtonList,
-    AeMapPreview,
     TemplateSelect,
   },
   data() {

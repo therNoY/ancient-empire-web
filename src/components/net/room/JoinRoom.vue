@@ -61,7 +61,7 @@
     <div class="room_message">
       <room-message ref="roomMessage"></room-message>
     </div>
-    <ae-map-preview v-model="showPreview" :mapId="mapId"></ae-map-preview>
+    <map-preview v-model="showPreview" :mapId="mapId"></map-preview>
     <div class="bottom-button">
       <ae-button @onClick="showPreview = true">预览</ae-button>
       <ae-button>邀请</ae-button>
@@ -88,16 +88,14 @@ import {
   GetRecordById,
   GetUnitLevelByTemp,
 } from "../../../api";
-import dialogShow from "../../../mixins/frame/dialogShow.js";
-import AeButton from "../../frame/AeButton.vue";
-import AeMapPreview from "../../map_manger/AeMapPreview.vue";
+import dialogShow from "@/mixins/frame/dialogShow.js";
+import MapPreview from "@frame/MapPreview.vue";
 import RoomMessage from "../room/RoomMessage.vue";
 export default {
   mixins: [dialogShow],
   components: {
     RoomMessage,
-    AeButton,
-    AeMapPreview,
+    MapPreview,
   },
   data() {
     return {

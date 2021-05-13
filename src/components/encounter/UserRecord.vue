@@ -13,11 +13,11 @@
       page
     >
     </ae-complex-dialog>
-    <ae-map-preview
+    <map-preview
       v-model="showPreview"
       :mapId="mapId"
       isRecord
-    ></ae-map-preview>
+    ></map-preview>
   </div>
 </template>
 
@@ -30,9 +30,9 @@ import {
   DelUserRecord,
 } from "@/api";
 import dialogShow from "@/mixins/frame/dialogShow.js";
-import AeMapPreview from "../map_manger/AeMapPreview.vue";
+import MapPreview from "@frame/MapPreview.vue";
 export default {
-  components: { AeMapPreview },
+  components: { MapPreview },
   mixins: [dialogShow],
   props: {},
   data() {

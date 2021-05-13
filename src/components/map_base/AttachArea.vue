@@ -1,7 +1,11 @@
+<!--攻击范围区域-->
 <template>
   <div v-if="attachArea.length > 0">
-    <!--攻击范围区域-->
-    <div class="attach_area" v-for="attachArea in attachArea">
+    <div
+      class="attach_area"
+      v-for="(attachArea, index) in attachArea"
+      :key="index"
+    >
       <img
         src="../../assets/images/assist/alpha.png"
         @click="clickAttachArea(attachArea)"

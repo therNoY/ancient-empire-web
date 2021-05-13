@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import messageVue from "../components/frame/AeMessage"
+import messageVue from "../components/frame/base/AeMessage"
 const defaults = {
     show:false,
     text:'',
@@ -34,8 +34,8 @@ const messageBox = (options = {}) => {
       },options.duration)
     });
 
-   
+
     return instance;
   };
-  
+
   export default messageBox;

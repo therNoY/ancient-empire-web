@@ -3,14 +3,15 @@
     <!-- 血量变化的vue -->
     <!--减少的生命值-->
     <div
-      v-for="leftChange in leftChanges"
+      v-for="(leftChange,index) in leftChanges"
+      :key = "index"
       class="attach_num animated bounce"
       :style="{
         top: attachNumTop(leftChange.row),
         left: $appHelper.getPosition(leftChange.column),
       }"
     >
-      <img v-for="attachNum in leftChange.attach" :src="lifeCImg(attachNum)" />
+      <img v-for="(attachNum,index) in leftChange.attach" :key="'LIFE_' + index" :src="lifeCImg(attachNum)" />
     </div>
   </div>
 </template>

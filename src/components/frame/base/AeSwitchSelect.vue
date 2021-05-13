@@ -25,9 +25,7 @@
 </template>
 
 <script>
-import AeButton from "./AeButton.vue";
 export default {
-  components: { AeButton },
   props: {
     value: {},
     items: {

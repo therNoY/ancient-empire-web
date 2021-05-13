@@ -13,10 +13,7 @@
 </template>
 
 <script>
-import AeButtonList from "./AeButtonList.vue";
 export default {
-  components: { AeButtonList },
-
   props: {
     closeTip: {
       type: String,

@@ -32,9 +32,9 @@
         @dragend="handleDragEnd($event, item, index)"
       >
         <el-tooltip content="拖动改变顺序" placement="bottom" effect="light">
-          <click-point @clickPoint="clickPoint(index)">
+          <ae-click-point @clickPoint="clickPoint(index)">
             <img :src="$appHelper.getTemplateImg(item)" />
-          </click-point>
+          </ae-click-point>
         </el-tooltip>
       </div>
     </ae-base-dialog>
@@ -42,10 +42,9 @@
 </template>
 
 <script>
-import ClickPoint from "../frame/ClickPoint.vue";
 import UploadGameImg from "./UploadGameImg.vue";
 export default {
-  components: { ClickPoint, UploadGameImg },
+  components: { UploadGameImg },
   props: {
     value: {
       type: String,

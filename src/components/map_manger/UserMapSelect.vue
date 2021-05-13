@@ -106,12 +106,12 @@
       </div>
     </ae-base-dialog>
 
-    <ae-map-preview
+    <map-preview
       v-model="previewVisible"
       @close="close"
       :mapId="previewMapId"
       :armyConfigList="initArmys"
-    ></ae-map-preview>
+    ></map-preview>
   </div>
 </template>
 
@@ -122,18 +122,12 @@ import {
   GetUserDownloadMap,
   InitEncounterMap,
 } from "@/api";
-import MapPreview from "../map_manger/MapPreview.vue";
-import AeMapPreview from "../map_manger/AeMapPreview.vue";
-import AeBaseDialog from "../frame/AeBaseDialog.vue";
-import AeButton from "../frame/AeButton.vue";
-import blackStyle from "../../mixins/style/blackStyle";
+import MapPreview from "@frame/MapPreview.vue";
+import blackStyle from "@/mixins/style/blackStyle";
 export default {
   mixins: [blackStyle],
   components: {
     MapPreview,
-    AeMapPreview,
-    AeBaseDialog,
-    AeButton,
   },
   props: {
     label: {

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import Unit from "../map_base/Unit.vue";
+import Unit from "../Unit.vue";
 
 export default {
   components: { Unit },

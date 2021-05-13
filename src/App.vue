@@ -26,12 +26,7 @@
 </template>
 
 <script>
-import AeInputDialog from "./components/frame/AeInputDialog.vue";
-import AeLoading from "./components/frame/AeLoading.vue";
-import AeMessage from "./components/frame/AeMessage.vue";
-import AeTip from "./components/frame/AeTip.vue";
 export default {
-  components: { AeLoading, AeMessage, AeTip, AeInputDialog },
   name: "App",
   data() {
     return {

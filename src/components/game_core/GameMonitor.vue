@@ -59,7 +59,7 @@
 <script>
 import { GetUnitLevelByTemp } from "@/api";
 import { request } from "../../api/request";
-import MapPreview from "../map_manger/MapPreview.vue";
+import MapPreview from "@frame/MapPreview.vue";
 export default {
   components: { MapPreview },
   data() {
@@ -109,7 +109,7 @@ export default {
       const resp = await GetUnitLevelByTemp(tempId);
       if (resp.res_code == 0) {
         this.$store.commit("setUnitLevelInfo", resp.res_val);
-      } 
+      }
     },
     getData(key, index = "1") {
       let args = { game_id: this.gameId };

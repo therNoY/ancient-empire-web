@@ -1,3 +1,4 @@
+<!--简单显示单位-->
 <template>
   <div v-if="unit_id">
     <img v-show="singo % 2 == 0" :src="unitImg" />
