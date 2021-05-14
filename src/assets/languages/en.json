@@ -1,0 +1,10 @@
+{
+  "common":{
+    "player":"player",
+    "battle":"battle",
+    "encounter":"encounter",
+    "multiPlayerGame":"multiplayer Game",
+    "loadGame":"Load Game",
+    "unitManagement":"unit Management"
+  }
+}

@@ -11,17 +11,17 @@
       :footerButtons="footerButtonList"
       :width="65"
       showSearch
-      @titleSwtichSelectChange="swtichSelectChange"
+      @titleSwitchSelectChange="switchSelectChange"
       page
     >
     </ae-complex-dialog>
 
-    <template-deatil
-      ref="templateDeatil"
+    <template-detail
+      ref="TemplateDetail"
       v-model="showTempDetail"
-      :templateDeatil="templateDeatil"
+      :TemplateDetail="TemplateDetail"
       model="no"
-    ></template-deatil>
+    ></template-detail>
 
     <map-preview v-model="showMapDetail" :mapId="currentMap.map_id">
     </map-preview>
@@ -35,6 +35,7 @@ import {
   GetUserMapList,
   DownloadMap,
   DelDownloadMap,
+  DelUserMap,
   GetUserDownloadMap,
   ChangeBaseInfo,
   GetWorldMapList,
@@ -42,13 +43,13 @@ import {
 } from "@/api";
 import StartComment from "../frame/StartComment.vue";
 import dialogShow from "@/mixins/frame/dialogShow.js";
-import TemplateDeatil from "../template_mange/TemplateDeatil.vue";
+import TemplateDetail from "../template_mange/TemplateDetail.vue";
 import MapPreview from "@frame/MapPreview.vue";
 
 export default {
   mixins: [dialogShow],
   components: {
-    TemplateDeatil,
+    TemplateDetail,
     MapPreview,
     StartComment,
   },
@@ -97,7 +98,7 @@ export default {
         "总评价",
       ],
       showTempDetail: false,
-      templateDeatil: {},
+      TemplateDetail: {},
       showMapDetail: false,
       currentMap: {},
       model: "myMap",
@@ -127,10 +128,6 @@ export default {
           this.$appHelper.setLoading();
         });
     },
-    changeUserMapDeatil() {
-      this.currentMap = this.$refs.aeDialog.getDataGridSelect();
-      this.showChangeMsg = true;
-    },
     flushData() {
       this.$refs.aeDialog.flushData();
     },
@@ -138,7 +135,7 @@ export default {
       this.currentMap = this.$refs.aeDialog.getDataGridSelect();
       this.showMapDetail = true;
     },
-    swtichSelectChange(value) {
+    switchSelectChange(value) {
       if (value == "1") {
         this.model = "myMap";
       } else if (value == "2") {
@@ -146,26 +143,6 @@ export default {
       } else if (value == "3") {
         this.model = "download";
       }
-    },
-    saveMapDeatil() {
-      let args = {};
-      args.uuid = this.currentMap.map_id;
-      args.map_name = this.currentMap.map_name;
-      args.share = this.currentMap.share;
-      ChangeBaseInfo(args)
-        .then((resp) => {
-          if (resp.res_code == "0") {
-            this.$appHelper.successMsg("修改成功");
-            this.showChangeMsg = false;
-          }
-        })
-        .catch((error) => {
-          this.$appHelper.successMsg("修改失败");
-        });
-      console.log("修改地图详情");
-    },
-    revertMap() {
-      console.log("回退版本");
     },
     goEditMap() {
       this.currentMap = this.$refs.aeDialog.getDataGridSelect();

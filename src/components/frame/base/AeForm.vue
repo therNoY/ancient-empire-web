@@ -10,7 +10,7 @@
       v-bind:key="index"
       class="ae-form-item"
     >
-      <div class="ae-form-lable">
+      <div class="ae-form-label">
         {{ form.des }}
       </div>
       <div class="ae-form-real-camp">
@@ -145,7 +145,7 @@ export default {
 .ae-form-item {
   width: 100%;
   height: 40px;
-  .ae-form-lable {
+  .ae-form-label {
     width: 20%;
     float: left;
     color: white;

@@ -139,7 +139,7 @@ export default {
       RoomInit(args);
     },
 
-    onStartGame({ record_id }) {
+    startGame({ record_id }) {
       setTimeout(() => {
         this.$appHelper.setLoading();
         GetRecordById(record_id)
@@ -248,7 +248,7 @@ export default {
       joinArgs.type = "joinRoom";
       return this.$store.dispatch("connectRoomSocket", joinArgs);
     },
-    onChangeArmyMessage(message) {
+    roomChangeArmy(message) {
       console.log("玩家改变选择单位", message);
       for (let army of this.armyConfigList) {
         if (army.color == message.join_army) {
@@ -263,21 +263,21 @@ export default {
       }
       this.armyConfigList = JSON.parse(JSON.stringify(this.armyConfigList));
     },
-    onChangeRoomOwner(message) {
+    changeRoomOwner(message) {
       console.log("房间改变房主", message);
       this.roomOwner = message.user_id;
     },
   },
   created() {
     window.JoinRoomVue = this;
-    this.$eventBus.regist(this, "roomChangeArmy", "onChangeArmyMessage");
-    this.$eventBus.regist(this, "changeRoomOwner", "onChangeRoomOwner");
-    this.$eventBus.regist(this, "stratGame", "onStartGame");
+    this.$eventBus.regist(this, "roomChangeArmy");
+    this.$eventBus.regist(this, "changeRoomOwner");
+    this.$eventBus.regist(this, "startGame");
   },
   destroyed() {
     this.$eventBus.unRegist(this, "roomChangeArmy");
     this.$eventBus.unRegist(this, "changeRoomOwner");
-    this.$eventBus.unRegist(this, "stratGame");
+    this.$eventBus.unRegist(this, "startGame");
   },
   computed: {
     canJoinArmy() {

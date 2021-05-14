@@ -118,13 +118,13 @@
     <!--设置宽度弹出框 改变大小新建-->
     <ae-base-dialog
       class="size_dialog"
-      title="设置大小"
-      v-model="reSizeDialog"
-      :width="20"
+      title="设置新建地图大小"
+      v-model="showSetNewMapInfo"
+      :width="30"
     >
       <ae-input label="名字：" v-model="currentMapInfo.map_name"></ae-input>
       <ae-input
-        label="高度："
+        label="宽度："
         v-model="newMapColumn"
         type="number"
         :max="100"
@@ -202,7 +202,7 @@ export default {
     return {
       // 地图上的要被编辑的地图
       currentEditInfo: {},
-      reSizeDialog: false,
+      showSetNewMapInfo: false,
       mapRow: null,
       mapColumn: null,
       newMapColumn: null,
@@ -223,7 +223,7 @@ export default {
       // 有单位type 和 color 其他都没
       unitList: [],
       action: "painting", // 编辑模式
-      currentMapInfo: { map_name: "", share: "1", map_id: null },
+      currentMapInfo: { map_name: "", share: "1", map_id: null,template_id:null, },
       currPreviewMap: {}, // 准备预览的地图
       buttonList: ["主页", "新建", "绘画", "重置", "保存", "我的"],
       myMapEditButtonList: [
@@ -335,10 +335,11 @@ export default {
       }
     },
     changeMapSize() {
-      this.$appHelper.showTip("重置将会删除当前地图，从新载入新的地图", () => {
-        this.newMapColumn = this.mapColumn;
-        this.newMapRow = this.mapRow;
-        this.reSizeDialog = true;
+      this.$appHelper.showTip("重置将会情况当前地图，载入新的地图", () => {
+        for (let m of this.maps) {
+          m.type = "sea";
+        }
+        this.unitList = [];
       });
     },
     // 获取新的初始化地图
@@ -363,15 +364,16 @@ export default {
 
       // 1. 保存用户的大小设定
       let args = {};
-      args.map_init_row = row;
-      args.map_init_column = colum;
+      args.map_init_row = this.newMapRow;
+      args.map_init_column = this.newMapColumn;
       ChangeUserSetting(args);
       this.createNewMap({
-        tempId: this.currentTemplateId,
+        tempId: this.currentMapInfo.template_id,
         mapRow: this.newMapRow,
-        mapCloumn: this.newMapColumn,
+        mapColumn: this.newMapColumn,
         mapName: this.currentMapInfo.map_name,
       });
+      this.showSetNewMapInfo = false;
     },
     // 执行绘画逻辑
     doPainting() {
@@ -379,6 +381,9 @@ export default {
       if (this.selectUnit.hasOwnProperty("type")) {
         console.log("准备画单位");
         // 新增
+        if (!this.unitList) {
+          this.unitList = [];
+        }
         let unit = {};
         unit.color = this.color;
         unit.id = this.selectUnit.id;
@@ -421,11 +426,14 @@ export default {
     // 保存地图
     saveMap(optType) {
       let args = {};
-      this.unitList.forEach((u) => {
-        if (u.id && !u.type_id) {
-          u.type_id = u.id;
+      if (this.unitList) {
+        for(let u of this.unitList) {
+          if (u.id && !u.type_id) {
+            u.type_id = u.id;
+          }
         }
-      });
+      }
+
       args.units = this.unitList;
       args.regions = this.maps;
       args.row = this.mapRow;
@@ -482,11 +490,11 @@ export default {
       });
     },
     // 初始化
-    createNewMap({ tempId, mapRow, mapCloumn, mapName }) {
+    createNewMap({ tempId, mapRow, mapColumn, mapName }) {
       let args = {};
       args.template_id = tempId;
       args.map_row = mapRow;
-      args.map_cloumn = mapCloumn;
+      args.map_column = mapColumn;
       args.map_name = mapName;
 
       this.$appHelper.setLoading();
@@ -496,10 +504,10 @@ export default {
             this.currentMapInfo.map_name = mapName;
             // 默认共享
             this.currentMapInfo.share = "1";
-            this.currentMapInfo.map_id = this.initMapInfo.un_save_map.uuid;
             this.initMapInfo = resp.res_val;
             this.userSetting = resp.res_val.user_setting;
             this.unitList = this.initMapInfo.un_save_map.units;
+            this.currentMapInfo.map_id = this.initMapInfo.un_save_map.uuid;
             if (!this.unitList) {
               this.unitList = [];
             }
@@ -516,16 +524,11 @@ export default {
         });
     },
 
-    createNewMapByTemplateId(tempId) {
-      console.log("新的模板Id");
-      this.$appHelper.showInputDialog("创建地图", "地图名称", (mapName) => {
-        this.createNewMap({
-          tempId: tempId,
-          mapName: mapName,
-          mapRow: this.mapRow,
-          mapCloumn: this.mapCloumn,
-        });
-      });
+    createNewMapByTemplateId(tempId, templateName) {
+      console.log("新的模板Id", tempId);
+      this.showSetNewMapInfo = true;
+      this.currentMapInfo.template_id = tempId;
+      this.currentMapInfo.map_name = "我的" + templateName + "地图";
     },
     /**
      * 获取上一个编辑的地图

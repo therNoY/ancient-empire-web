@@ -13,18 +13,18 @@
       :footerButtons="footerButtonList"
       :width="65"
       showSearch
-      @titleSwtichSelectChange="swtichSelectChange"
+      @titleSwitchSelectChange="switchSelectChange"
       page
     >
     </ae-complex-dialog>
-    <template-deatil
-      ref="templateDeatil"
+    <template-detail
+      ref="TemplateDetail"
       v-model="showTempDetail"
-      :templateDeatil="currentTemp"
+      :TemplateDetail="currentTemp"
       :model="model"
       @saveOrDel="flushData"
       @downLoadTemp="downLoadTemp"
-    ></template-deatil>
+    ></template-detail>
   </div>
 </template>
 
@@ -39,7 +39,7 @@ import {
 } from "@/api";
 
 import dialogShow from "@/mixins/frame/dialogShow.js";
-import TemplateDeatil from "./TemplateDeatil.vue";
+import TemplateDetail from "./TemplateDetail.vue";
 
 const showBindUnitRender = function (h, params) {
   return h(
@@ -51,7 +51,7 @@ const showBindUnitRender = function (h, params) {
 
 export default {
   mixins: [dialogShow],
-  components: { TemplateDeatil },
+  components: { TemplateDetail },
   props: {},
   data() {
     return {
@@ -118,7 +118,7 @@ export default {
         .then((resp) => {
           if (resp.res_code == 0) {
             this.currentTemp = resp.res_val;
-            this.model == "myTemp";
+            this.model = "myTemp";
             this.showTempDetail = true;
           }
           this.$appHelper.setLoading();
@@ -137,7 +137,7 @@ export default {
       );
       this.showTempDetail = true;
     },
-    swtichSelectChange(value) {
+    switchSelectChange(value) {
       if (value == "1") {
         this.model = "myTemp";
       } else if (value == "2") {
@@ -148,7 +148,7 @@ export default {
     },
     delTemp() {
       console.log("删除模板");
-      this.$refs.templateDeatil.delTemp(
+      this.$refs.TemplateDetail.delTemp(
         this.$refs.aeDialog.getDataGridSelect()
       );
     },
@@ -178,7 +178,7 @@ export default {
         footerButtonList.push({
           name: "下 载",
           action: () =>
-            this.$refs.templateDeatil.$refs.startComment.showComment(),
+            this.$refs.TemplateDetail.$refs.startComment.showComment(),
         });
       }
       return footerButtonList;

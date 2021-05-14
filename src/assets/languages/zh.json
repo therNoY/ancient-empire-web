@@ -1,0 +1,10 @@
+{
+  "common":{
+    "player":"玩家",
+    "battle":"战役",
+    "encounter":"遭遇战",
+    "multiPlayerGame":"多人游戏",
+    "loadGame":"读取游戏",
+    "unitManagement":"单位管理"
+  }
+}

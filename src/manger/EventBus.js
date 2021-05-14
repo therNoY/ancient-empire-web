@@ -19,7 +19,7 @@ var eventBus = {
    * @param {*} queue 监听队列
    * @param {*} callBack 回调方法 为空取和队列同名的调用
    */
-  regist: function (component, queue, callBack) {
+  regist: function (component, queue, callBack = null) {
     if (!callBack) {
       callBack = queue;
     }
@@ -64,7 +64,7 @@ var eventBus = {
         if (reg.component && reg.component[reg.callBack]) {
           reg.component[reg.callBack](message);
         }
-        
+
       }
     }
   },

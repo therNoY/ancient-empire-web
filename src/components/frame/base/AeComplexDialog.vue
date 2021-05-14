@@ -91,11 +91,11 @@ export default {
     },
     titleButtons: {
       type: Array,
-      defult: [],
+      default: () => [],
     },
     footerButtons: {
       type: Array,
-      defult: [],
+      default: () => [],
     },
     // 表格data数据
     initQueryDataGrid: {
@@ -106,7 +106,7 @@ export default {
     },
     showItem: {
       type: Array,
-      defult: [],
+      default: () => [],
     },
     tableConfig: {},
     page: {
@@ -290,7 +290,7 @@ export default {
           break;
         }
       }
-      this.$emit("titleSwtichSelectChange", v);
+      this.$emit("titleSwitchSelectChange", v);
     },
   },
 };

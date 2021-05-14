@@ -45,12 +45,6 @@
       </el-form>
     </div>
     <div class="conten">
-      <json-viewer
-        :value="data"
-        :expand-depth="expandDepth"
-        copyable
-        previewMode
-      ></json-viewer>
       <map-preview v-if="previewVisible" v-model="previewVisible" :map="previewMap"></map-preview>
     </div>
   </div>

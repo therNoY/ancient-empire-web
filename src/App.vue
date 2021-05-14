@@ -3,7 +3,7 @@
     <router-view />
     <ae-loading style="z-index: 99999"></ae-loading>
     <ae-tip
-      v-model="showGlableTip"
+      v-model="showGlobalTip"
       :buttonList="buttonList"
       :closeTip="closeTip"
       @ok="tipOk"
@@ -13,7 +13,7 @@
       :title="inputDialog.title"
       :label="inputDialog.label"
       :placeholder="inputDialog.placeholder"
-      v-model="showGlableInputDialog"
+      v-model="showGlobalInputDialog"
       @ok="inputDialogOk"
     ></ae-input-dialog>
     <ae-message
@@ -30,8 +30,8 @@ export default {
   name: "App",
   data() {
     return {
-      showGlableTip: false,
-      showGlableInputDialog: false,
+      showGlobalTip: false,
+      showGlobalInputDialog: false,
       tipCallback: null,
       inputCallback: null,
       closeTip: null,
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     showTip({ message, callback, buttonList }) {
-      (this.buttonList = buttonList), (this.showGlableTip = true);
+      (this.buttonList = buttonList), (this.showGlobalTip = true);
       this.closeTip = message;
       this.tipCallback = callback;
     },
@@ -67,7 +67,7 @@ export default {
       this.inputDialog.title = title;
       this.inputDialog.label = label;
       this.inputDialog.placeholder = placeholder;
-      this.showGlableInputDialog = true;
+      this.showGlobalInputDialog = true;
       this.inputCallback = callback;
     },
     tipOk() {

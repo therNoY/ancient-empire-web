@@ -3,7 +3,7 @@
     <div class="ae-data-grid">
       <table v-if="data && data.length > 0">
         <tr v-if="showTitle && showTitle.length > 0">
-          <td v-for="(key, keyIndx) in showTitle" :key="keyIndx" :style="getTabelTdStyle(keyIndx)">
+          <td v-for="(key, keyIndex) in showTitle" :key="keyIndex" :style="getTableTdStyle(keyIndex)">
             <div v-if="isNotFunction(key)">
               {{ key }}
             </div>
@@ -15,10 +15,10 @@
         <tr
           v-for="(item, index) in data"
           :key="index"
-          :style="getTabelItemStyle(index)"
+          :style="getTableItemStyle(index)"
           @click="clickItem(index)"
         >
-          <td v-for="(key, keyIndx) in showKey" :key="keyIndx" :style="getTabelTdStyle(keyIndx)">
+          <td v-for="(key, keyIndx) in showKey" :key="keyIndx" :style="getTableTdStyle(keyIndx)">
             <div v-if="isNotFunction(key)">
               {{ item[key] }}
             </div>
@@ -31,7 +31,7 @@
       <div v-else>
         <table>
           <tr v-if="showTitle && showTitle.length > 0">
-            <td v-for="(key, keyIndx) in showTitle" v-bind:key="keyIndx">
+            <td v-for="(key, keyIndex) in showTitle" :key="keyIndex">
               <div v-if="isNotFunction(key)">
                 {{ key }}
               </div>
@@ -90,7 +90,7 @@ export default {
     isNotFunction(obj) {
       return typeof obj != 'function'
     },
-    getTabelItemStyle(index) {
+    getTableItemStyle(index) {
       if (index == this.selectIndex) {
         return {
           backgroundColor: "#5a5c59",
@@ -100,7 +100,7 @@ export default {
         backgroundColor: "#444444",
       };
     },
-    getTabelTdStyle(index) {
+    getTableTdStyle(index) {
       if (this.tableConfig && this.tableConfig[index] && this.tableConfig[index]["style"]) {
         return this.tableConfig[index]["style"];
       }

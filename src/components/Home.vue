@@ -3,18 +3,18 @@
   <div class="home">
     <img class="logo" src="../assets/images/assist/logo.png" alt />
     <div class="buttons">
-      <button class="home_button" @click="clickUserInfo">玩家</button>
-      <button class="home_button" @click="showChapter = true">战役</button>
-      <button class="home_button" @click="showEncounter = true">遭遇战</button>
+      <button class="home_button" @click="clickUserInfo">{{$t('common.player')}}</button>
+      <button class="home_button" @click="showChapter = true">{{$t('common.battle')}}</button>
+      <button class="home_button" @click="showEncounter = true">{{$t('common.encounter')}}</button>
       <button class="home_button" @click="showNetGameDialog = true">
-        多人游戏
+        {{$t('common.multiPlayerGame')}}
       </button>
       <button class="home_button" @click="showUserRecord = true">
-        读取游戏
+        {{$t('common.loadGame')}}
       </button>
       <!-- <button class="home_button" @click="router('setting')">我的设置</button> -->
       <button class="home_button" @click="showUnitMange = true">
-        单位管理
+        {{$t('common.unitManagement')}}
       </button>
       <button class="home_button" @click="showTemplatManger = true">
         模板管理

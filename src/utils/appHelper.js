@@ -2,7 +2,7 @@ import { imgUrl } from "../api/env"
 import store from "../store";
 import eventBus from "../manger/EventBus";
 
-var appHelper = {
+const appHelper = {
 
   store: store,
 
@@ -110,7 +110,7 @@ var appHelper = {
   getMapSize: function (num) {
     return num * 24 + "px";
   },
-  
+
   /**
    * 返回单位的图片位置
    * @param {} typeId 单位Id
@@ -123,7 +123,7 @@ var appHelper = {
 
   /**
    * 获取模板图片
-   * @param {*} img 
+   * @param {*} img
    */
   getTemplateImg: function (img) {
     return imgUrl + "template/" + img;
@@ -158,11 +158,11 @@ var appHelper = {
 
   /**
    * 发送事件
-   * @param {*} event 
-   * @param {*} initiateSite 
-   * @param {*} aimSite 
-   * @param {*} regionIndex 
-   * @param {*} unitId 
+   * @param {*} event
+   * @param {*} initiateSite
+   * @param {*} aimSite
+   * @param {*} regionIndex
+   * @param {*} unitId
    */
   sendEvent: function (event, initiateSite = null, aimSite = null, regionIndex, unitId) {
     this.store.dispatch("sendEvent", {

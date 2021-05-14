@@ -3,7 +3,7 @@
   <div class="ae-button-list" v-if="buttonList.length > 0">
     <div
       v-for="(button, index) in buttonList"
-      v-bind:key="index"
+      :key="index"
       class="ae-button-list-item"
     >
       <ae-button

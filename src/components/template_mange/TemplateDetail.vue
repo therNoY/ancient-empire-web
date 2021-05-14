@@ -2,7 +2,7 @@
   <div id="template_detail">
     <ae-base-dialog
       v-model="showModel"
-      :title="templateDeatil.template_name"
+      :title="TemplateDetail.template_name"
       :width="45"
       fixedDialog
       :top="9"
@@ -10,9 +10,9 @@
       <ae-tab-form
         ref="templateInfoForm"
         :edit="model == 'myTemp'"
-        :dataObj="templateDeatil"
+        :dataObj="TemplateDetail"
         :singo="singo"
-        :templateId="templateDeatil.id"
+        :templateId="TemplateDetail.id"
         :formConfig="templateInfoFormConfig"
       >
         <!--TODO 这里可以展示评论-->
@@ -48,7 +48,7 @@ import {
 export default {
   mixins: [dialogShow],
   props: {
-    templateDeatil: {},
+    TemplateDetail: {},
     // 查看模式 myTemp myDownload
     model: {
       type: String,
@@ -216,8 +216,8 @@ export default {
       this.$emit('downLoadTemp', comment)
     },
     saveTemp() {
-      let args = this.templateDeatil;
-      args.relation_unit_list = this.templateDeatil.bind_uint_list.map(
+      let args = this.TemplateDetail;
+      args.relation_unit_list = this.TemplateDetail.bind_uint_list.map(
         (u) => u.id
       );
       args.opt_type = "1";
@@ -229,11 +229,11 @@ export default {
         }
       });
     },
-    delTemp(templateDeatil = this.templateDeatil) {
+    delTemp(TemplateDetail = this.TemplateDetail) {
       let _this = this;
       this.$appHelper.showTip("确定要删除么？", () => {
         let args = {};
-        args.id = templateDeatil.id;
+        args.id = TemplateDetail.id;
         if (_this.model == "myTemp") {
           RemoveUserTemplate(args).then((resp) => {
             _this.$appHelper.infoMsg("删除成功");
@@ -251,8 +251,8 @@ export default {
     },
 
     saveDraft() {
-      let args = this.templateDeatil;
-      args.relation_unit_list = this.templateDeatil.bind_uint_list.map(
+      let args = this.TemplateDetail;
+      args.relation_unit_list = this.TemplateDetail.bind_uint_list.map(
         (u) => u.id
       );
       args.opt_type = "0";
@@ -267,10 +267,10 @@ export default {
     updateVersion() {
       let args = {};
       if (
-        this.templateDeatil.max_version &&
-        this.templateDeatil.max_version > this.templateDeatil.version
+        this.TemplateDetail.max_version &&
+        this.TemplateDetail.max_version > this.TemplateDetail.version
       ) {
-        args.template_id = this.templateDeatil.id;
+        args.template_id = this.TemplateDetail.id;
         this.$appHelper.setLoading();
         UpdateUserTempAttention(args)
           .then((resp) => {
@@ -289,7 +289,7 @@ export default {
       }
     },
     reverVersion() {
-      let template = this.templateDeatil;
+      let template = this.TemplateDetail;
       if (template.status == "0") {
         console.log("回退单位草稿版本");
         let args = {};
@@ -339,7 +339,7 @@ export default {
   },
   watch: {},
   created() {
-    window.TemplateDeatilVue = this;
+    window.TemplateDetailVue = this;
   },
 };
 </script>

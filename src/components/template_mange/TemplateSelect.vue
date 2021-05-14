@@ -11,15 +11,15 @@
       :footerButtons="footerButtonList"
       :tableConfig="tableConfig"
       :width="40"
-      @titleSwtichSelectChange="swtichSelectChange"
+      @titleSwitchSelectChange="switchSelectChange"
       page
     >
     </ae-complex-dialog>
-    <template-deatil
+    <template-detail
       v-model="showTempDetail"
-      :templateDeatil="currentTemp"
+      :TemplateDetail="currentTemp"
       model="no"
-    ></template-deatil>
+    ></template-detail>
   </div>
 </template>
 
@@ -31,7 +31,7 @@ import {
 } from "@/api";
 
 import dialogShow from "@/mixins/frame/dialogShow.js";
-import TemplateDeatil from "./TemplateDeatil.vue";
+import TemplateDetail from "./TemplateDetail.vue";
 
 const showBindUnitRender = function (h, params) {
   console.log(params);
@@ -44,7 +44,7 @@ const showBindUnitRender = function (h, params) {
 
 export default {
   mixins: [dialogShow],
-  components: { TemplateDeatil },
+  components: { TemplateDetail },
   props: {
   },
   data() {
@@ -89,10 +89,10 @@ export default {
     },
     selectTemp(){
       this.currentTemp = this.$refs.aeDialog.getDataGridSelect();
-      this.$emit("onSelect", this.currentTemp.id);
+      this.$emit("onSelect", this.currentTemp.id, this.currentTemp.template_name);
       this.$emit("input", false)
     },
-    swtichSelectChange(value) {
+    switchSelectChange(value) {
     },
   },
   computed: {},

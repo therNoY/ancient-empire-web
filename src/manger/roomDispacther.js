@@ -13,7 +13,7 @@ var roomDispatcher = {
     } else if (event.room_commend == 'CHANG_ROOM_OWNER') {
       eventBus.publish("changeRoomOwner", event)
     } else if (event.room_commend == 'START_GAME') {
-      eventBus.publish("stratGame", event)
+      eventBus.publish("startGame", event)
     }
   }
 }
