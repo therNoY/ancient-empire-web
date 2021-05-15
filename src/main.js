@@ -69,7 +69,7 @@ Vue.component("AeTransfer", AeTransfer);
  */
 const i18n = new VueI18n({
   // 定义默认语言为中文 
-  locale: 'en',
+  locale: 'zh',
   messages: {
     'zh': require('@assets/languages/zh.json'),
     'en': require('@assets/languages/en.json')

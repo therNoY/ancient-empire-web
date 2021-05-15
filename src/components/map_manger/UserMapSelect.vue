@@ -122,12 +122,14 @@ import {
   GetUserDownloadMap,
   InitEncounterMap,
 } from "@/api";
-import MapPreview from "@frame/MapPreview.vue";
+import MapPreview from "../frame/MapPreview.vue";
+import AeRadioButton from "../frame/AeRadioButton";
 import blackStyle from "@/mixins/style/blackStyle";
 export default {
   mixins: [blackStyle],
   components: {
     MapPreview,
+    AeRadioButton,
   },
   props: {
     label: {
